@@ -8,11 +8,11 @@ class Button1 extends StatelessWidget {
   final bool isEnabled;
 
   const Button1({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.isEnabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -14,7 +14,7 @@ class StarterView extends GetView<StarterController> {
     final textTheme = theme.textTheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -53,7 +53,7 @@ class StarterView extends GetView<StarterController> {
                   textAlign: TextAlign.center,
                   // Menggunakan headlineSmall (H3) dari TextTheme
                   style: textTheme.headlineSmall?.copyWith(
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

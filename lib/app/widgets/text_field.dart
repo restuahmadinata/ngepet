@@ -62,17 +62,17 @@ class CustomTextField extends StatelessWidget {
       onTap: onTap,
       
       // 1. Teks yang Diketik (TextFormField Style)
-      style: poppinsBodyLarge?.copyWith(color: colorScheme.onBackground),
+      style: poppinsBodyLarge.copyWith(color: colorScheme.onSurface),
       
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,
         
         // 2. Label Text Style (saat tidak fokus)
-        labelStyle: poppinsBodyLarge?.copyWith(color: AppColors.neutral600),
+        labelStyle: poppinsBodyLarge.copyWith(color: AppColors.neutral600),
         
         // 3. Hint Text Style
-        hintStyle: poppinsBodyLarge?.copyWith(color: AppColors.neutral500),
+        hintStyle: poppinsBodyLarge.copyWith(color: AppColors.neutral500),
         
         // Icon
         prefixIcon: prefixIcon,

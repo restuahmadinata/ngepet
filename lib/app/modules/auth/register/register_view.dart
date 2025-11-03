@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ngepet/app/widgets/button1.dart';
 import 'package:ngepet/app/widgets/text_field.dart';
-import 'login_controller.dart';
+import 'register_controller.dart';
 
-class LoginView extends GetView<LoginController> {
-  const LoginView({super.key});
+class RegisterView extends GetView<RegisterController> {
+  const RegisterView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class LoginView extends GetView<LoginController> {
 
                 
                 Text(
-                  "Login",
+                  "Register",
                   textAlign: TextAlign.center,
                   // Menggunakan headlineSmall (H3) dari TextTheme
                   style: textTheme.headlineSmall?.copyWith(
@@ -68,7 +68,17 @@ class LoginView extends GetView<LoginController> {
                 ),
                 const SizedBox(height: 40),
 
-                // 2. Input Email - MENGGUNAKAN CustomTextField
+
+                // 2. Input Nama - MENGGUNAKAN CustomTextField
+                CustomTextField(
+                  controller: controller.nameController,
+                  keyboardType: TextInputType.name,
+                  labelText: 'Nama',
+                  prefixIcon: Icon(Icons.person_outline, color: colorScheme.onSurfaceVariant),
+                ),
+                const SizedBox(height: 16),
+                
+                // 3. Input Email - MENGGUNAKAN CustomTextField
                 CustomTextField(
                   controller: controller.emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -77,7 +87,7 @@ class LoginView extends GetView<LoginController> {
                 ),
                 const SizedBox(height: 16),
 
-                // 3. Input Password - MENGGUNAKAN CustomTextField
+                // 4. Input Password - MENGGUNAKAN CustomTextField
                 Obx(() => CustomTextField(
                   controller: controller.passwordController,
                   obscureText: controller.isPasswordHidden.value,
@@ -98,12 +108,36 @@ class LoginView extends GetView<LoginController> {
                     },
                   ),
                 )),
+                const SizedBox(height: 16),
+
+
+                // 5. Konfirmasi Password - MENGGUNAKAN CustomTextField
+                Obx(() => CustomTextField(
+                  controller: controller.confirmPasswordController,
+                  obscureText: controller.isConfirmPasswordHidden.value,
+                  labelText: 'Konfirmasi Password',
+                  keyboardType: TextInputType.visiblePassword,
+                  prefixIcon: Icon(Icons.lock_outline, color: colorScheme.onSurfaceVariant),
+                  
+                  // Logika Icon Mata dimasukkan ke suffixIcon
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      controller.isConfirmPasswordHidden.value
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    onPressed: () {
+                      controller.isConfirmPasswordHidden.toggle();
+                    },
+                  ),
+                )),
                 const SizedBox(height: 32),
 
-                // 4. Login Button
+                // . Register Button
                 Button1(
-                  text: 'LOGIN',
-                  onPressed: controller.login,
+                  text: 'REGISTER',
+                  onPressed: controller.register,
                 ),
               ],
             ),
