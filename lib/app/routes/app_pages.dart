@@ -7,6 +7,10 @@ import '../modules/auth/register/register_binding.dart';
 import '../modules/auth/register/register_view.dart';
 import '../modules/home/home_view.dart';
 import '../modules/home/home_binding.dart';
+import '../modules/adopt/adopt_view.dart';
+import '../modules/event/event_view.dart';
+import '../modules/chat/chat_view.dart';
+import '../modules/profile/profile_view.dart';
 import '../modules/splash/splash_view.dart';
 import '../modules/splash/splash_binding.dart';
 import 'app_routes.dart';
@@ -46,11 +50,29 @@ class AppPages {
       binding: RegisterBinding(),
     ),
 
-    // --- USER HOME PAGE ---
+    // --- USER HOME PAGE (with Bottom Nav) ---
     GetPage(
       name: AppRoutes.userHome,
       page: () => const HomeView(),
       binding: HomeBinding(),
+    ),
+
+    // --- Bottom Nav Pages (for direct navigation if needed) ---
+    GetPage(
+      name: AppRoutes.adopt,
+      page: () => const AdoptView(),
+    ),
+    GetPage(
+      name: AppRoutes.event,
+      page: () => const EventView(),
+    ),
+    GetPage(
+      name: AppRoutes.chat,
+      page: () => const ChatView(),
+    ),
+    GetPage(
+      name: AppRoutes.profile,
+      page: () => const ProfileView(),
     ),
   ];
 }
