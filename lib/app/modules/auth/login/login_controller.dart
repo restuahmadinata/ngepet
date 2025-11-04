@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../controllers/auth_controller.dart'; // Import AuthController
 
 class LoginController extends GetxController {
   // Controller untuk input field
@@ -9,46 +10,25 @@ class LoginController extends GetxController {
   // State untuk menampilkan/menyembunyikan password
   var isPasswordHidden = true.obs;
 
+  // Dapatkan instance AuthController yang sudah di-manage oleh GetX
+  final AuthController authController = Get.find<AuthController>();
+
   // Method yang akan dipanggil saat tombol login ditekan
   void login() {
-    // Validasi sederhana (bisa Anda kembangkan)
+    // Validasi sederhana
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       Get.snackbar(
         "Error",
         "Email dan Password tidak boleh kosong",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
       );
       return;
     }
 
-    // Di sini Anda akan menambahkan logika untuk login dengan Firebase Auth
-    // Contoh:
-    // try {
-    //   await FirebaseAuth.instance.signInWithEmailAndPassword(
-    //     email: emailController.text,
-    //     password: passwordController.text,
-    //   );
-    //   Get.offAllNamed('/home'); // Arahkan ke halaman utama setelah berhasil
-    // } on FirebaseAuthException catch (e) {
-    //   Get.snackbar("Login Gagal", e.message ?? "Terjadi kesalahan");
-    // }
-
-    // Untuk sekarang, kita hanya print datanya ke konsol
-    print("Email: ${emailController.text}");
-    print("Password: ${passwordController.text}");
-
-     Get.snackbar(
-        "Berhasil",
-        "Login diproses (cek konsol untuk data)",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+    // Panggil fungsi signIn dari AuthController
+    authController.signIn(emailController.text, passwordController.text);
   }
 
-  // Membersihkan controller saat halaman ditutup untuk menghindari memory leak
   @override
   void onClose() {
     emailController.dispose();

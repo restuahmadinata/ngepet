@@ -34,23 +34,16 @@ dependencies:
   # google fonts poppins
   google_fonts: ^5.0.0
 
-  # # Firebase Core
-  # firebase_core:
+  # Firebase Core
+  firebase_core:
 
-  # # Database
-  # cloud_firestore:
+  # Database
+  cloud_firestore:
 
-  # # Auth
-  # firebase_auth:
+  # Auth
+  firebase_auth:
 
-  # # Analytics
-  # firebase_analytics:
-  # firebase_crashlytics:
-  # firebase_performance:
-
-  # # Storage
-  # firebase_storage:
-
+  # State Management
   get:
 
   # The following adds the Cupertino Icons font to your application.

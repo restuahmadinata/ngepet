@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "123456789",
-    "project_id": "ngepet-placeholder",
-    "storage_bucket": "ngepet-placeholder.appspot.com"
+    "project_number": "462680861825",
+    "project_id": "ngepet-b9a4b",
+    "storage_bucket": "ngepet-b9a4b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:123456789:android:abcdef0123456789",
+        "mobilesdk_app_id": "1:462680861825:android:14ca89a56dbe075618b180",
         "android_client_info": {
           "package_name": "com.example.ngepet"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDummyKeyForPlaceholder123456789"
+          "current_key": "AIzaSyCZ3w8ix7RKQIAIA6mShx_n8p4KdsTWmvQ"
         }
       ],
       "services": {
