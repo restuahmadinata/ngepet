@@ -76,8 +76,7 @@ class AppTheme {
     useMaterial3: true,
     brightness: Brightness.light,
     
-    // Warna Teks Dasar
-    scaffoldBackgroundColor: AppColors.background,
+  scaffoldBackgroundColor: AppColors.neutral100,
     
     // --- 1. Color Scheme ---
     colorScheme: ColorScheme.light(

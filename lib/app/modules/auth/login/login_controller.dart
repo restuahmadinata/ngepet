@@ -29,6 +29,19 @@ class LoginController extends GetxController {
     authController.signIn(emailController.text, passwordController.text);
   }
 
+  // Method untuk lupa password
+  void forgotPassword() {
+    if (emailController.text.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Masukkan email terlebih dahulu",
+        snackPosition: SnackPosition.TOP,
+      );
+      return;
+    }
+    authController.resetPassword(emailController.text);
+  }
+
   @override
   void onClose() {
     emailController.dispose();

@@ -73,6 +73,24 @@ class AuthController extends GetxController {
   Get.offAllNamed(AppRoutes.starter); // Kembali ke halaman starter setelah logout
   }
 
+  // Fungsi untuk Reset Password
+  Future<void> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      Get.snackbar(
+        "Reset Password",
+        "Email reset password telah dikirim ke $email",
+        snackPosition: SnackPosition.TOP,
+      );
+    } on FirebaseAuthException catch (e) {
+      Get.snackbar(
+        "Error",
+        e.message ?? "Terjadi kesalahan",
+        snackPosition: SnackPosition.TOP,
+      );
+    }
+  }
+
   // Mengambil Role dari Firestore
   Future<String?> getUserRole(String uid) async {
     try {

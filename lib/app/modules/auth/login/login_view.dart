@@ -98,7 +98,21 @@ class LoginView extends GetView<LoginController> {
                     },
                   ),
                 )),
+                const SizedBox(height: 16),
+
+                // Lupa Password
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: controller.forgotPassword,
+                    child: Text(
+                      'Lupa Password?',
+                      style: TextStyle(color: colorScheme.primary),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 32),
+
 
                 // 4. Login Button
                 Button1(

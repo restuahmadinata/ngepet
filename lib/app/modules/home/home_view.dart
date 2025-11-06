@@ -1,95 +1,91 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import '../adopt/adopt_view.dart';
 import '../event/event_view.dart';
 import '../chat/chat_view.dart';
 import '../profile/profile_view.dart';
 import 'home_controller.dart';
-import 'dart:math';
-
+import '../../widgets/rectangle_search_bar.dart';
+import '../../widgets/event_carousel.dart';
+import '../../widgets/pet_list.dart';
+import '../../widgets/custom_bottom_navigation_bar.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({Key? key}) : super(key: key);
 
+  // 1. Daftar halaman dipindahkan ke luar 'build' agar state-nya terjaga
+  final List<Widget> _pages = const [
+    AdoptView(),
+    EventView(),
+    HomePage(), // Index 2
+    ChatView(),
+    ProfileView(),
+  ];
+
+  // 2. Definisikan index untuk "Home" agar mudah dibaca
+  static const int _homeIndex = 2;
+
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = const [
-      AdoptView(),
-      EventView(),
-      HomePage(),
-      ChatView(),
-      ProfileView(),
-    ];
-
     return Obx(() {
       final currentIndex = controller.currentIndex.value;
       return Scaffold(
-        appBar: currentIndex == 2
+        // 3. Tambahan untuk memperbaiki masalah radius navbar
+        extendBody: true,
+        // 4. Gunakan constant '_homeIndex'
+        appBar: currentIndex == _homeIndex
             ? AppBar(
-                title: const Text('Halo, User'),
-                elevation: 0,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                foregroundColor: Theme.of(context).textTheme.titleLarge?.color,
-              )
-            : null,
-        body: _pages[currentIndex],
-        bottomNavigationBar: Container(
-          height: 100,
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(40),
-              topRight: Radius.circular(40),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(5, (index) {
-              final isSelected = currentIndex == index;
-              final iconPaths = [
-                'assets/images/nav_adopt.svg',
-                'assets/images/nav_event.svg',
-                'assets/images/nav_home.svg',
-                'assets/images/nav_chat.svg',
-                'assets/images/nav_profile.svg'
-              ];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: GestureDetector(
-                  onTap: () => controller.changePage(index),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    child: Container(
-                      padding: const EdgeInsets.only(bottom: 18),
-                      child: SvgPicture.asset(
-                        iconPaths[index],
-                        colorFilter: ColorFilter.mode(
-                          isSelected
-                              ? Theme.of(context).primaryColor
-                              : Theme.of(context).unselectedWidgetColor,
-                          BlendMode.srcIn,
-                        ),
-                        width: 24,
-                        height: 24,
+                title: Padding(
+                  padding: const EdgeInsets.only(top: 16, left: 16, bottom: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Halo, ${_getFirstName()}',
+                          style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.location_on,
+                              size: 18, color: Colors.grey),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Jakarta, Indonesia', // dummy data
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(color: Colors.grey),
+                          ),
+                        ],
                       ),
-                    ),
+                    ],
                   ),
                 ),
-              );
-            }),
-          ),
+                elevation: 0,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                foregroundColor:
+                    Theme.of(context).textTheme.titleLarge?.color,
+              )
+            : null,
+        
+        // Cukup panggil halaman dari list
+        body: _pages[currentIndex],
+
+        bottomNavigationBar: CustomBottomNavigationBar(
+          currentIndex: currentIndex,
+          onTap: controller.changePage,
         ),
       );
     });
+  }
+
+  String _getFirstName() {
+    final args = Get.arguments;
+    final name = args != null && args['name'] != null
+        ? args['name'] as String
+        : 'User';
+    return name.split(' ').first;
   }
 }
 
@@ -98,22 +94,88 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> dummyList = [
-      'Selamat datang di Beranda!',
-      'Ini adalah konten dummy random.',
-      'Semoga harimu menyenangkan!',
-      'Jangan lupa tersenyum hari ini.',
-      'Ayo eksplor fitur aplikasi!'
-    ];
-    final random = Random();
+    // 5. SafeArea diatur 'bottom: false' agar konten bisa scroll
+    //    di belakang navigation bar (karena ada extendBody: true)
     return SafeArea(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Text(
-            dummyList[random.nextInt(dummyList.length)],
-            style: Theme.of(context).textTheme.headlineSmall,
-            textAlign: TextAlign.center,
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RectangleSearchBar(),
+              const SizedBox(height: 24),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Acara Komunitas',
+                  style: GoogleFonts.poppins(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 12),
+              EventCarousel(),
+              const SizedBox(height: 24),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Rekomendasi Hewan',
+                  style: GoogleFonts.poppins(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 12),
+              PetListWidget(
+                pets: [
+                  {
+                    'imageUrl': 'https://images.unsplash.com/photo-1544568100-847a948585b9',
+                    'name': 'Areeliotus',
+                    'breed': 'Black Dawg',
+                    'age': '69 tahun',
+                    'shelter': 'Thug Hunter Victim Shelter',
+                    'location': 'Ngawi',
+                    'gender': 'Non-binary',
+                  },
+                  {
+                    'imageUrl': 'https://images.unsplash.com/photo-1574158622682-e40e69881006',
+                    'name': 'Buddy',
+                    'breed': 'Golden Retriever',
+                    'age': '1 tahun',
+                    'shelter': 'Shelter B',
+                    'location': 'Bandung',
+                    'gender': 'Jantan',
+                  },
+                  {
+                    'imageUrl': 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee',
+                    'name': 'Luna',
+                    'breed': 'Siamese',
+                    'age': '3 tahun',
+                    'shelter': 'Shelter C',
+                    'location': 'Surabaya',
+                    'gender': 'Betina',
+                  },
+                  {
+                    'imageUrl': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64',
+                    'name': 'Max',
+                    'breed': 'Bulldog',
+                    'age': '4 tahun',
+                    'shelter': 'Shelter D',
+                    'location': 'Yogyakarta',
+                    'gender': 'Jantan',
+                  },
+                  {
+                    'imageUrl': 'https://images.unsplash.com/photo-1516280030429-27679b3dc9cf',
+                    'name': 'Bella',
+                    'breed': 'Maine Coon',
+                    'age': '1.5 tahun',
+                    'shelter': 'Shelter E',
+                    'location': 'Semarang',
+                    'gender': 'Betina',
+                  },
+                ],
+              ),
+            ],
           ),
         ),
       ),

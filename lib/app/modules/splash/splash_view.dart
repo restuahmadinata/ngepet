@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../routes/app_routes.dart';
 
+
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
 
@@ -45,34 +46,37 @@ class _SplashViewState extends State<SplashView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue, Colors.lightBlueAccent],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: const Center(
+        color: Colors.white,
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.pets,
-                size: 100,
-                color: Colors.white,
-              ),
-              SizedBox(height: 20),
-              Text(
-                'NgePet',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                Image.asset(
+                  'assets/images/logo_ngepet.png', 
+                  width: 400,
+                  height: 300,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    final colorScheme = Theme.of(context).colorScheme;
+                    return Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        color: colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Icon(
+                        Icons.pets,
+                        size: 100,
+                        color: colorScheme.primary,
+                      ),
+                    );
+                  },
                 ),
-              ),
+                SizedBox(height: 32),
               SizedBox(height: 20),
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.green[500]!),
               ),
             ],
           ),
