@@ -1,18 +1,43 @@
 import 'package:get/get.dart';
-import '../modules/auth/login/login_binding.dart';
-import '../modules/auth/login/login_view.dart';
-import '../modules/auth/starter/starter_binding.dart';
-import '../modules/auth/starter/starter_view.dart';
-import '../modules/auth/register/register_binding.dart';
-import '../modules/auth/register/register_view.dart';
-import '../modules/home/home_view.dart';
-import '../modules/home/home_binding.dart';
-import '../modules/adopt/adopt_view.dart';
-import '../modules/event/event_view.dart';
-import '../modules/chat/chat_view.dart';
-import '../modules/profile/profile_view.dart';
-import '../modules/splash/splash_view.dart';
-import '../modules/splash/splash_binding.dart';
+
+// Auth Feature
+import '../features/auth/modules/login/login_binding.dart';
+import '../features/auth/modules/login/login_view.dart';
+import '../features/auth/modules/starter/starter_binding.dart';
+import '../features/auth/modules/starter/starter_view.dart';
+import '../features/auth/modules/register/register_binding.dart';
+import '../features/auth/modules/register/register_view.dart';
+import '../features/auth/modules/splash/splash_view.dart';
+import '../features/auth/modules/splash/splash_binding.dart';
+
+// User Feature
+import '../features/user/modules/home/home_view.dart';
+import '../features/user/modules/home/home_binding.dart';
+import '../features/user/modules/adopt/adopt_view.dart';
+import '../features/user/modules/chat/chat_view.dart';
+import '../features/user/modules/profile/profile_view.dart';
+
+// Shared Feature
+import '../features/shared/modules/event/event_view.dart';
+
+// Shelter Feature
+import '../features/shelter/modules/shelter/verification/verification_view.dart';
+import '../features/shelter/modules/shelter/verification/verification_binding.dart';
+import '../features/shelter/modules/shelter/home/shelter_home_view.dart';
+import '../features/shelter/modules/shelter/home/shelter_home_binding.dart';
+import '../features/shelter/modules/shelter/add_pet/add_pet_view.dart';
+import '../features/shelter/modules/shelter/add_pet/add_pet_binding.dart';
+import '../features/shelter/modules/shelter/add_event/add_event_view.dart';
+import '../features/shelter/modules/shelter/add_event/add_event_binding.dart';
+
+// Admin Feature
+import '../features/admin/modules/home/admin_home_view.dart';
+import '../features/admin/modules/home/admin_home_binding.dart';
+import '../features/admin/modules/user_management/user_management_view.dart';
+import '../features/admin/modules/user_management/user_management_binding.dart';
+import '../features/admin/modules/shelter_verification/shelter_verification_view.dart';
+import '../features/admin/modules/shelter_verification/shelter_verification_binding.dart';
+
 import 'app_routes.dart';
 
 class AppPages {
@@ -58,21 +83,58 @@ class AppPages {
     ),
 
     // --- Bottom Nav Pages (for direct navigation if needed) ---
+    GetPage(name: AppRoutes.adopt, page: () => const AdoptView()),
+    GetPage(name: AppRoutes.event, page: () => const EventView()),
+    GetPage(name: AppRoutes.chat, page: () => const ChatView()),
+    GetPage(name: AppRoutes.profile, page: () => const ProfileView()),
+
+    // --- VERIFICATION PAGE ---
     GetPage(
-      name: AppRoutes.adopt,
-      page: () => const AdoptView(),
+      name: AppRoutes.verification,
+      page: () => const VerificationView(),
+      binding: VerificationBinding(),
     ),
+
+    // --- SHELTER HOME PAGE ---
     GetPage(
-      name: AppRoutes.event,
-      page: () => const EventView(),
+      name: AppRoutes.shelterHome,
+      page: () => const ShelterHomeView(),
+      binding: ShelterHomeBinding(),
     ),
+
+    // --- SHELTER ADD PET PAGE ---
     GetPage(
-      name: AppRoutes.chat,
-      page: () => const ChatView(),
+      name: AppRoutes.shelterAddPet,
+      page: () => const AddPetView(),
+      binding: AddPetBinding(),
     ),
+
+    // --- SHELTER ADD EVENT PAGE ---
     GetPage(
-      name: AppRoutes.profile,
-      page: () => const ProfileView(),
+      name: AppRoutes.shelterAddEvent,
+      page: () => const AddEventView(),
+      binding: AddEventBinding(),
+    ),
+
+    // --- ADMIN HOME PAGE ---
+    GetPage(
+      name: AppRoutes.adminHome,
+      page: () => const AdminHomeView(),
+      binding: AdminHomeBinding(),
+    ),
+
+    // --- ADMIN USER MANAGEMENT PAGE ---
+    GetPage(
+      name: AppRoutes.adminUserManagement,
+      page: () => const UserManagementView(),
+      binding: UserManagementBinding(),
+    ),
+
+    // --- ADMIN SHELTER VERIFICATION PAGE ---
+    GetPage(
+      name: AppRoutes.adminShelterVerification,
+      page: () => const ShelterVerificationView(),
+      binding: ShelterVerificationBinding(),
     ),
   ];
 }

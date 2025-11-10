@@ -52,6 +52,12 @@ dependencies:
   # Image from network with caching
   cached_network_image: 
 
+  # Image picker for selecting images from gallery/camera
+  image_picker: ^1.0.7
+
+  # HTTP client for uploading to Cloudinary
+  http: ^1.1.0
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons:

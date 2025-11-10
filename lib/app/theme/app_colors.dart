@@ -7,10 +7,13 @@ class AppColors {
 
   // Warna Primer (Shade 500) dan Teks
   static const Color primary = green500;
-  static const Color accent = neutral500; // Menggunakan Neutral 500 sebagai warna aksen umum
-  static const Color background = neutral100; // Menggunakan Neutral 100 sebagai latar belakang utama
-  static const Color textDark = neutral900;  // Menggunakan Neutral 900 sebagai teks gelap
-  static const Color textLight = Colors.white; 
+  static const Color accent =
+      neutral500; // Menggunakan Neutral 500 sebagai warna aksen umum
+  static const Color background =
+      neutral100; // Menggunakan Neutral 100 sebagai latar belakang utama
+  static const Color textDark =
+      neutral900; // Menggunakan Neutral 900 sebagai teks gelap
+  static const Color textLight = Colors.white;
 
   // ===================================
   //           PALET HIJAU
@@ -25,7 +28,6 @@ class AppColors {
   static const Color green700 = Color(0xFF2F7231);
   static const Color green800 = Color(0xFF245826);
   static const Color green900 = Color(0xFF1C431D);
-
 
   // ===================================
   //           PALET NETRAL (NTRL)

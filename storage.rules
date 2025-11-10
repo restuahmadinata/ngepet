@@ -1,0 +1,39 @@
+rules_version = '2';
+
+// Firebase Storage Security Rules for NgePet App
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is a shelter
+    function isShelter() {
+      return isAuthenticated() && 
+             firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'shelter';
+    }
+    
+    // Pet images - only shelters can upload, everyone can read
+    match /pets/{petId}/{fileName} {
+      allow read: if true; // Public read
+      allow write: if isShelter(); // Only shelters can upload
+      allow delete: if isShelter(); // Only shelters can delete
+    }
+    
+    // Event images - only shelters can upload, everyone can read
+    match /events/{eventId}/{fileName} {
+      allow read: if true; // Public read
+      allow write: if isShelter(); // Only shelters can upload
+      allow delete: if isShelter(); // Only shelters can delete
+    }
+    
+    // Profile images - users can upload their own
+    match /profiles/{userId}/{fileName} {
+      allow read: if true; // Public read
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}

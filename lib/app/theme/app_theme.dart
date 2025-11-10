@@ -75,22 +75,21 @@ class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    
-  scaffoldBackgroundColor: AppColors.neutral100,
-    
+
+    scaffoldBackgroundColor: AppColors.neutral100,
+
     // --- 1. Color Scheme ---
     colorScheme: ColorScheme.light(
       primary: AppColors.primary,
-      onPrimary: AppColors.textLight,        
-      secondary: AppColors.accent,           
-      onSecondary: AppColors.textDark,      
-      surface: AppColors.neutral100,         
-      onSurface: AppColors.textDark,         
-      error: Colors.red,                     
+      onPrimary: AppColors.textLight,
+      secondary: AppColors.accent,
+      onSecondary: AppColors.textDark,
+      surface: AppColors.neutral100,
+      onSurface: AppColors.textDark,
+      error: Colors.red,
     ),
 
     // --- 2. Text Theme (Menggunakan cached text theme) ---
     textTheme: _buildTextTheme(),
-    
   );
 }
