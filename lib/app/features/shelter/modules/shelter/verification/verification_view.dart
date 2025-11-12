@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../common/widgets/text_field.dart';
 import '../../../../../common/widgets/button1.dart';
+import '../../../../../common/widgets/location_picker.dart';
 import '../../../../../theme/app_colors.dart';
 import 'verification_controller.dart';
 
@@ -20,7 +22,7 @@ class VerificationView extends GetView<VerificationController> {
             color: Colors.black,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
@@ -473,16 +475,6 @@ class VerificationView extends GetView<VerificationController> {
                   const SizedBox(height: 16),
 
                   CustomTextField(
-                    controller: controller.addressController,
-                    labelText: 'Alamat Lengkap *',
-                    hintText: 'Masukkan alamat lengkap shelter',
-                    prefixIcon: const Icon(Icons.location_on),
-                    validator: controller.validateRequired,
-                    keyboardType: TextInputType.multiline,
-                  ),
-                  const SizedBox(height: 16),
-
-                  CustomTextField(
                     controller: controller.phoneController,
                     labelText: 'Nomor Telepon *',
                     hintText: 'Masukkan nomor telepon yang bisa dihubungi',
@@ -507,6 +499,242 @@ class VerificationView extends GetView<VerificationController> {
                     hintText: 'Ceritakan sedikit tentang shelter Anda',
                     prefixIcon: const Icon(Icons.description),
                     keyboardType: TextInputType.multiline,
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Location Section
+                  Text(
+                    'Lokasi Shelter *',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.neutral700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Pilih lokasi shelter di peta untuk mengisi alamat secara otomatis',
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: AppColors.neutral600,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Display address if available
+                  Obx(() {
+                    if (controller.latitude.value != null && 
+                        controller.longitude.value != null &&
+                        controller.addressController.text.isNotEmpty) {
+                      return Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.green.shade200),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.location_on, 
+                                    color: Colors.green.shade700, size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Alamat Terpilih:',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.green.shade700,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              controller.addressController.text,
+                              style: GoogleFonts.poppins(
+                                fontSize: 13,
+                                color: AppColors.neutral700,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            if (controller.city.value.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                'Kota: ${controller.city.value}',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: AppColors.neutral600,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 4),
+                            Text(
+                              'Koordinat: ${controller.latitude.value!.toStringAsFixed(6)}, ${controller.longitude.value!.toStringAsFixed(6)}',
+                              style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                color: AppColors.neutral500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.orange.shade200),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.info, color: Colors.orange.shade700, size: 20),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Belum ada lokasi terpilih. Klik tombol di bawah untuk memilih.',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.orange.shade900,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+
+                  // Map picker button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () async {
+                        GeoPoint? initialLocation;
+                        if (controller.latitude.value != null && 
+                            controller.longitude.value != null) {
+                          initialLocation = GeoPoint(
+                            controller.latitude.value!,
+                            controller.longitude.value!,
+                          );
+                        }
+                        
+                        final result = await Get.to(() => LocationPickerView(
+                          initialLocation: initialLocation,
+                        ));
+                        
+                        if (result != null && result is GeoPoint) {
+                          controller.latitude.value = result.latitude;
+                          controller.longitude.value = result.longitude;
+                          
+                          // Reverse geocode to get address
+                          await controller.reverseGeocode(
+                            result.latitude,
+                            result.longitude,
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.map),
+                      label: Text(
+                        controller.latitude.value == null 
+                            ? 'Pilih Lokasi di Peta'
+                            : 'Ubah Lokasi',
+                        style: GoogleFonts.poppins(fontSize: 14),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Profile Photo Section
+                  Text(
+                    'Foto Profil Shelter',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.neutral700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: GestureDetector(
+                      onTap: controller.pickProfileImage,
+                      child: Stack(
+                        children: [
+                          Obx(() {
+                            // Show selected image or existing profile photo
+                            if (controller.profileImage.value != null) {
+                              return CircleAvatar(
+                                radius: 60,
+                                backgroundImage: FileImage(
+                                  controller.profileImage.value!,
+                                ),
+                              );
+                            } else if (controller.profileImageUrl.value != null) {
+                              return CircleAvatar(
+                                radius: 60,
+                                backgroundImage: NetworkImage(
+                                  controller.profileImageUrl.value!,
+                                ),
+                              );
+                            } else {
+                              return CircleAvatar(
+                                radius: 60,
+                                backgroundColor: AppColors.neutral300,
+                                child: Icon(
+                                  Icons.home_work,
+                                  size: 60,
+                                  color: AppColors.neutral600,
+                                ),
+                              );
+                            }
+                          }),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Text(
+                      'Ketuk untuk memilih foto (opsional)',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: AppColors.neutral600,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 24),
 

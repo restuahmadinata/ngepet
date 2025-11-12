@@ -100,6 +100,10 @@ class ShelterHomeController extends GetxController {
     Get.toNamed('/shelter/add-event');
   }
 
+  void goToEditProfile() {
+    Get.toNamed('/shelter/edit-profile');
+  }
+
   // Logout
   Future<void> logout() async {
     await Get.find<AuthController>().signOut();

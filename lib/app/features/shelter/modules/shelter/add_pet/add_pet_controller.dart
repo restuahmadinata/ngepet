@@ -36,6 +36,12 @@ class AddPetController extends GetxController {
   final typeOptions = ['Anjing', 'Kucing', 'Kelinci', 'Lainnya'];
 
   @override
+  void onInit() {
+    super.onInit();
+    _loadShelterAddress();
+  }
+
+  @override
   void onClose() {
     nameController.dispose();
     breedController.dispose();
@@ -43,6 +49,34 @@ class AddPetController extends GetxController {
     locationController.dispose();
     descriptionController.dispose();
     super.onClose();
+  }
+
+  // Load shelter address automatically
+  Future<void> _loadShelterAddress() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    try {
+      final shelterDoc = await _firestore
+          .collection('shelters')
+          .doc(user.uid)
+          .get();
+
+      if (shelterDoc.exists) {
+        final shelterData = shelterDoc.data();
+        final address = shelterData?['address'] ?? '';
+        final city = shelterData?['city'] ?? '';
+        
+        // Set location from shelter address
+        if (address.isNotEmpty) {
+          locationController.text = address;
+        } else if (city.isNotEmpty) {
+          locationController.text = city;
+        }
+      }
+    } catch (e) {
+      print('Error loading shelter address: $e');
+    }
   }
 
   // Pick images from gallery
@@ -77,10 +111,10 @@ class AddPetController extends GetxController {
     selectedImages.removeAt(index);
   }
 
-  // Upload images to ImgBB (GRATIS!)
-  Future<List<String>> _uploadImages(String petId) async {
-    List<String> imageUrls = [];
-
+  // Upload images to ImgBB and save to subcollection photos
+  Future<List<String>> _uploadImagesToSubcollection(String petId) async {
+    List<String> uploadedUrls = [];
+    
     // Check if API key is configured
     if (!ImgBBConfig.isConfigured) {
       Get.snackbar(
@@ -91,7 +125,7 @@ class AddPetController extends GetxController {
         colorText: Colors.white,
         duration: const Duration(seconds: 5),
       );
-      return imageUrls;
+      return uploadedUrls;
     }
 
     for (int i = 0; i < selectedImages.length; i++) {
@@ -115,8 +149,23 @@ class AddPetController extends GetxController {
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
           final String imageUrl = data['data']['url'];
-          imageUrls.add(imageUrl);
-          print('Debug - Image $i uploaded: $imageUrl');
+          
+          // Add to list
+          uploadedUrls.add(imageUrl);
+          
+          // Save to subcollection
+          await _firestore
+              .collection('pets')
+              .doc(petId)
+              .collection('photos')
+              .add({
+            'url': imageUrl,
+            'isPrimary': i == 0, // First image is primary
+            'order': i,
+            'uploadedAt': FieldValue.serverTimestamp(),
+          });
+          
+          print('Debug - Image $i uploaded to subcollection: $imageUrl');
         } else {
           print(
             'Error uploading image $i: ${response.statusCode} - ${response.body}',
@@ -126,8 +175,8 @@ class AddPetController extends GetxController {
         print('Error uploading image $i: $e');
       }
     }
-
-    return imageUrls;
+    
+    return uploadedUrls;
   }
 
   // Submit pet data
@@ -192,7 +241,7 @@ class AddPetController extends GetxController {
 
       final shelterName = shelterData?['shelterName'] ?? 'Shelter';
 
-      // Add pet to Firestore
+      // Add pet to Firestore (with imageUrls array - will be updated after upload)
       print('Debug - Adding pet to Firestore...');
       final docRef = await _firestore.collection('pets').add({
         'name': nameController.text.trim(),
@@ -205,28 +254,46 @@ class AddPetController extends GetxController {
         'status': 'available',
         'shelterId': user.uid,
         'shelterName': shelterName,
-        'imageUrls': [], // Will be updated after upload
+        'imageUrls': [], // Initialize empty array, will be updated after upload
         'createdAt': Timestamp.now(),
         'updatedAt': Timestamp.now(),
       });
 
       print('Debug - Pet added with ID: ${docRef.id}');
 
-      // Upload images if any
+      // Upload images to subcollection and update imageUrls array
       List<String> imageUrls = [];
       if (selectedImages.isNotEmpty) {
-        print('Debug - Uploading ${selectedImages.length} images...');
-        imageUrls = await _uploadImages(docRef.id);
-        print('Debug - Images uploaded: ${imageUrls.length}');
-
-        // Update pet document with image URLs
-        await docRef.update({'imageUrls': imageUrls});
+        print('Debug - Uploading ${selectedImages.length} images to subcollection...');
+        imageUrls = await _uploadImagesToSubcollection(docRef.id);
+        
+        // Update pet document with imageUrls array
+        if (imageUrls.isNotEmpty) {
+          await docRef.update({
+            'imageUrls': imageUrls,
+            'updatedAt': Timestamp.now(),
+          });
+          print('Debug - Updated pet document with ${imageUrls.length} image URLs');
+        }
       } else {
-        // Use placeholder if no images
-        imageUrls = [
-          'https://via.placeholder.com/300x300?text=${selectedType.value}',
-        ];
-        await docRef.update({'imageUrls': imageUrls});
+        // Add placeholder photo
+        final placeholderUrl = 'https://via.placeholder.com/300x300?text=${selectedType.value}';
+        imageUrls = [placeholderUrl];
+        
+        // Add to subcollection
+        await docRef.collection('photos').add({
+          'url': placeholderUrl,
+          'isPrimary': true,
+          'order': 0,
+          'uploadedAt': FieldValue.serverTimestamp(),
+        });
+        
+        // Update pet document with placeholder
+        await docRef.update({
+          'imageUrls': imageUrls,
+          'updatedAt': Timestamp.now(),
+        });
+        print('Debug - Added placeholder image');
       }
 
       Get.snackbar(

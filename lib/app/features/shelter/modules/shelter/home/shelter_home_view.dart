@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../theme/app_colors.dart';
 import 'shelter_home_controller.dart';
 
@@ -128,6 +126,26 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 32),
+
+              // Profile section
+              Text(
+                'Profil Shelter',
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              _buildMenuCard(
+                'Edit Profil Shelter',
+                'Perbarui informasi dan data shelter Anda',
+                Icons.edit,
+                Colors.blue,
+                controller.goToEditProfile,
               ),
               const SizedBox(height: 32),
 
@@ -354,61 +372,5 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
         ],
       ),
     );
-  }
-
-  // Temporary helper method to update user role to shelter
-  Future<void> _updateCurrentUserToShelter() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      try {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .update({'role': 'shelter', 'shelterName': 'Test Shelter'});
-
-        Get.snackbar(
-          'Berhasil',
-          'Role user berhasil diubah menjadi shelter',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-
-        // Refresh data
-        controller.refreshData();
-      } catch (e) {
-        print('Error updating user role: $e');
-
-        // If document doesn't exist, create it
-        try {
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .set({
-                'uid': user.uid,
-                'email': user.email,
-                'role': 'shelter',
-                'shelterName': 'Test Shelter',
-                'name': 'Test User',
-                'createdAt': FieldValue.serverTimestamp(),
-              });
-
-          Get.snackbar(
-            'Berhasil',
-            'Data user shelter berhasil dibuat',
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
-          );
-
-          controller.refreshData();
-        } catch (e2) {
-          Get.snackbar(
-            'Error',
-            'Gagal mengubah role: $e2',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-        }
-      }
-    }
   }
 }

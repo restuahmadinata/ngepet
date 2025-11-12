@@ -57,11 +57,12 @@ class RegisterController extends GetxController {
           .collection('users')
           .doc(userCredential.user!.uid)
           .set({
-            'uid': userCredential.user!.uid,
-            'name': nameController.text.trim(),
+            'userId': userCredential.user!.uid,
+            'fullName': nameController.text.trim(),
             'email': emailController.text.trim(),
-            'role': 'user',
+            'accountStatus': 'active',
             'createdAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
           });
 
       // Langsung masuk ke halaman userHome, kirim nama user

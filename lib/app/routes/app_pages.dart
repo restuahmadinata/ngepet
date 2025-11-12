@@ -16,6 +16,8 @@ import '../features/user/modules/home/home_binding.dart';
 import '../features/user/modules/adopt/adopt_view.dart';
 import '../features/user/modules/chat/chat_view.dart';
 import '../features/user/modules/profile/profile_view.dart';
+import '../features/user/modules/profile/edit_profile/edit_profile_view.dart';
+import '../features/user/modules/profile/edit_profile/edit_profile_binding.dart';
 
 // Shared Feature
 import '../features/shared/modules/event/event_view.dart';
@@ -29,6 +31,8 @@ import '../features/shelter/modules/shelter/add_pet/add_pet_view.dart';
 import '../features/shelter/modules/shelter/add_pet/add_pet_binding.dart';
 import '../features/shelter/modules/shelter/add_event/add_event_view.dart';
 import '../features/shelter/modules/shelter/add_event/add_event_binding.dart';
+import '../features/shelter/modules/shelter/profile/edit_shelter_profile_view.dart';
+import '../features/shelter/modules/shelter/profile/edit_shelter_profile_binding.dart';
 
 // Admin Feature
 import '../features/admin/modules/home/admin_home_view.dart';
@@ -88,6 +92,13 @@ class AppPages {
     GetPage(name: AppRoutes.chat, page: () => const ChatView()),
     GetPage(name: AppRoutes.profile, page: () => const ProfileView()),
 
+    // --- EDIT PROFILE PAGE ---
+    GetPage(
+      name: AppRoutes.editProfile,
+      page: () => const EditProfileView(),
+      binding: EditProfileBinding(),
+    ),
+
     // --- VERIFICATION PAGE ---
     GetPage(
       name: AppRoutes.verification,
@@ -114,6 +125,13 @@ class AppPages {
       name: AppRoutes.shelterAddEvent,
       page: () => const AddEventView(),
       binding: AddEventBinding(),
+    ),
+
+    // --- EDIT SHELTER PROFILE PAGE ---
+    GetPage(
+      name: AppRoutes.editShelterProfile,
+      page: () => const EditShelterProfileView(),
+      binding: EditShelterProfileBinding(),
     ),
 
     // --- ADMIN HOME PAGE ---

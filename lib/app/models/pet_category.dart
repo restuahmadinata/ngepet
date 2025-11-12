@@ -1,20 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model untuk kategori hewan peliharaan
-/// Digunakan untuk mengelola jenis hewan dan ras-rasnya
+/// Model untuk kategori hewan
+/// Collection: kategori_hewan/{kategoriId}
 class PetCategory {
-  final String id;
-  final String type; // Anjing, Kucing, Kelinci, dll
-  final List<String> breeds; // Daftar ras untuk jenis hewan ini
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  final String kategoriId;
+  final String namaKategori; // Anjing, Kucing, Kelinci, Burung, dll
+  final String deskripsi;
 
   PetCategory({
-    required this.id,
-    required this.type,
-    required this.breeds,
-    this.createdAt,
-    this.updatedAt,
+    required this.kategoriId,
+    required this.namaKategori,
+    required this.deskripsi,
   });
 
   /// Factory constructor untuk membuat PetCategory dari Firestore document
@@ -22,54 +18,45 @@ class PetCategory {
     final data = doc.data() as Map<String, dynamic>;
     
     return PetCategory(
-      id: doc.id,
-      type: data['type'] ?? '',
-      breeds: List<String>.from(data['breeds'] ?? []),
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
-      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
+      kategoriId: doc.id,
+      namaKategori: data['namaKategori'] ?? data['type'] ?? '',
+      deskripsi: data['deskripsi'] ?? data['description'] ?? '',
     );
   }
 
   /// Factory constructor untuk membuat PetCategory dari Map
   factory PetCategory.fromMap(Map<String, dynamic> data, String id) {
     return PetCategory(
-      id: id,
-      type: data['type'] ?? '',
-      breeds: List<String>.from(data['breeds'] ?? []),
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
-      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
+      kategoriId: id,
+      namaKategori: data['namaKategori'] ?? data['type'] ?? '',
+      deskripsi: data['deskripsi'] ?? data['description'] ?? '',
     );
   }
 
   /// Konversi PetCategory ke Map untuk disimpan di Firestore
   Map<String, dynamic> toMap() {
     return {
-      'type': type,
-      'breeds': breeds,
-      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : FieldValue.serverTimestamp(),
-      'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : FieldValue.serverTimestamp(),
+      'kategoriId': kategoriId,
+      'namaKategori': namaKategori,
+      'deskripsi': deskripsi,
     };
   }
 
   /// Copy dengan perubahan tertentu
   PetCategory copyWith({
-    String? id,
-    String? type,
-    List<String>? breeds,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    String? kategoriId,
+    String? namaKategori,
+    String? deskripsi,
   }) {
     return PetCategory(
-      id: id ?? this.id,
-      type: type ?? this.type,
-      breeds: breeds ?? this.breeds,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      kategoriId: kategoriId ?? this.kategoriId,
+      namaKategori: namaKategori ?? this.namaKategori,
+      deskripsi: deskripsi ?? this.deskripsi,
     );
   }
 
   @override
   String toString() {
-    return 'PetCategory(id: $id, type: $type, breeds: ${breeds.length} breeds)';
+    return 'PetCategory(kategoriId: $kategoriId, namaKategori: $namaKategori)';
   }
 }

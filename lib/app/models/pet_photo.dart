@@ -1,18 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// Model untuk foto hewan peliharaan
-/// Disimpan sebagai subcollection di bawah setiap pet document:
-/// pets/{petId}/photos/{photoId}
+/// Subcollection: pets/{hewanId}/photos/{fotoId}
 class PetPhoto {
-  final String id;
-  final String url; // URL foto dari ImgBB atau Firebase Storage
+  final String fotoId;
+  final String urlFoto; // URL foto dari ImgBB atau Firebase Storage
   final bool isPrimary; // Apakah ini foto utama/thumbnail
   final int order; // Urutan foto (0 = pertama)
   final DateTime? uploadedAt;
 
   PetPhoto({
-    required this.id,
-    required this.url,
+    required this.fotoId,
+    required this.urlFoto,
     this.isPrimary = false,
     this.order = 0,
     this.uploadedAt,
@@ -23,8 +22,8 @@ class PetPhoto {
     final data = doc.data() as Map<String, dynamic>;
     
     return PetPhoto(
-      id: doc.id,
-      url: data['url'] ?? '',
+      fotoId: doc.id,
+      urlFoto: data['urlFoto'] ?? data['url'] ?? '',
       isPrimary: data['isPrimary'] ?? false,
       order: data['order'] ?? 0,
       uploadedAt: (data['uploadedAt'] as Timestamp?)?.toDate(),
@@ -34,8 +33,8 @@ class PetPhoto {
   /// Factory constructor untuk membuat PetPhoto dari Map
   factory PetPhoto.fromMap(Map<String, dynamic> data, String id) {
     return PetPhoto(
-      id: id,
-      url: data['url'] ?? '',
+      fotoId: id,
+      urlFoto: data['urlFoto'] ?? data['url'] ?? '',
       isPrimary: data['isPrimary'] ?? false,
       order: data['order'] ?? 0,
       uploadedAt: (data['uploadedAt'] as Timestamp?)?.toDate(),
@@ -45,7 +44,8 @@ class PetPhoto {
   /// Konversi PetPhoto ke Map untuk disimpan di Firestore
   Map<String, dynamic> toMap() {
     return {
-      'url': url,
+      'fotoId': fotoId,
+      'urlFoto': urlFoto,
       'isPrimary': isPrimary,
       'order': order,
       'uploadedAt': uploadedAt != null 
@@ -56,15 +56,15 @@ class PetPhoto {
 
   /// Copy dengan perubahan tertentu
   PetPhoto copyWith({
-    String? id,
-    String? url,
+    String? fotoId,
+    String? urlFoto,
     bool? isPrimary,
     int? order,
     DateTime? uploadedAt,
   }) {
     return PetPhoto(
-      id: id ?? this.id,
-      url: url ?? this.url,
+      fotoId: fotoId ?? this.fotoId,
+      urlFoto: urlFoto ?? this.urlFoto,
       isPrimary: isPrimary ?? this.isPrimary,
       order: order ?? this.order,
       uploadedAt: uploadedAt ?? this.uploadedAt,
@@ -73,6 +73,6 @@ class PetPhoto {
 
   @override
   String toString() {
-    return 'PetPhoto(id: $id, isPrimary: $isPrimary, order: $order)';
+    return 'PetPhoto(fotoId: $fotoId, isPrimary: $isPrimary, order: $order)';
   }
 }

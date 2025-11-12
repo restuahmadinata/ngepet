@@ -10,6 +10,7 @@ import '../../../../common/widgets/rectangle_search_bar.dart';
 import '../../../../common/widgets/event_carousel.dart';
 import '../../../../common/widgets/pet_list.dart';
 import '../../../../common/widgets/custom_bottom_navigation_bar.dart';
+import '../../../../utils/pet_photo_helper.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -192,35 +193,77 @@ class HomePage extends StatelessWidget {
         }
 
         // Convert Firestore data to format expected by PetListWidget
-        final petsData = snapshot.data!.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
+        // Now fetch photos from subcollection
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: _buildPetsWithPhotos(snapshot.data!.docs),
+          builder: (context, petsSnapshot) {
+            if (petsSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          // Get image URL - prioritize imageUrls array, fallback to imageUrl field
-          String imageUrl = 'https://via.placeholder.com/300x300?text=Pet';
-          if (data['imageUrls'] != null &&
-              (data['imageUrls'] as List).isNotEmpty) {
-            imageUrl = (data['imageUrls'] as List)[0].toString();
-          } else if (data['imageUrl'] != null) {
-            imageUrl = data['imageUrl'].toString();
-          }
+            if (!petsSnapshot.hasData || petsSnapshot.data!.isEmpty) {
+              return Center(
+                child: Text(
+                  'Tidak ada data hewan',
+                  style: GoogleFonts.poppins(color: Colors.grey),
+                ),
+              );
+            }
 
-          return {
-            'imageUrl': imageUrl,
-            'name': (data['name'] ?? 'Nama Hewan').toString(),
-            'breed': (data['breed'] ?? 'Ras').toString(),
-            'age': (data['age'] ?? 'Umur').toString(),
-            'shelter': (data['shelterName'] ?? 'Shelter').toString(),
-            'shelterName': (data['shelterName'] ?? 'Shelter').toString(),
-            'location': (data['location'] ?? 'Lokasi').toString(),
-            'gender': (data['gender'] ?? 'Jantan').toString(),
-            'description': (data['description'] ?? '').toString(),
-            'type': (data['type'] ?? '').toString(),
-            'imageUrls': data['imageUrls'] ?? [imageUrl],
-          };
-        }).toList();
-
-        return PetListWidget(pets: petsData);
+            return PetListWidget(pets: petsSnapshot.data!);
+          },
+        );
       },
     );
+  }
+
+  // Helper function to fetch pets with their photos from subcollection
+  Future<List<Map<String, dynamic>>> _buildPetsWithPhotos(
+      List<QueryDocumentSnapshot> docs) async {
+    final List<Map<String, dynamic>> petsData = [];
+    
+    for (var doc in docs) {
+      final data = doc.data() as Map<String, dynamic>;
+      
+      // Get primary photo from subcollection
+      String imageUrl = 'https://via.placeholder.com/300x300?text=Pet';
+      List<String> imageUrls = [];
+      
+      try {
+        final helper = PetPhotoHelper();
+        final photos = await helper.getPetPhotoUrls(doc.id);
+        
+        if (photos.isNotEmpty) {
+          imageUrls = photos;
+          imageUrl = photos[0];
+        } else if (data['imageUrls'] != null &&
+            (data['imageUrls'] as List).isNotEmpty) {
+          // Fallback to old imageUrls field for backward compatibility
+          imageUrls = (data['imageUrls'] as List)
+              .map((e) => e.toString())
+              .toList();
+          imageUrl = imageUrls[0];
+        }
+      } catch (e) {
+        print('Error fetching photos for pet ${doc.id}: $e');
+      }
+
+      petsData.add({
+        'petId': doc.id,
+        'imageUrl': imageUrl,
+        'name': (data['name'] ?? 'Nama Hewan').toString(),
+        'breed': (data['breed'] ?? 'Ras').toString(),
+        'age': (data['age'] ?? 'Umur').toString(),
+        'shelter': (data['shelterName'] ?? 'Shelter').toString(),
+        'shelterName': (data['shelterName'] ?? 'Shelter').toString(),
+        'location': (data['location'] ?? 'Lokasi').toString(),
+        'gender': (data['gender'] ?? 'Jantan').toString(),
+        'description': (data['description'] ?? '').toString(),
+        'type': (data['type'] ?? '').toString(),
+        'imageUrls': imageUrls.isNotEmpty ? imageUrls : [imageUrl],
+      });
+    }
+    
+    return petsData;
   }
 }

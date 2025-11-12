@@ -55,6 +55,7 @@ class StarterView extends GetView<StarterController> {
                   style: textTheme.headlineSmall?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
+                    
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -93,31 +94,13 @@ class StarterView extends GetView<StarterController> {
                 ),
                 const SizedBox(height: 24),
 
-                // Button 3: Daftar Sebagai Shelter
-                OutlinedButton(
+
+                // Button 3: Daftar (Secondary Action)
+                Button2(
+                  text: 'DAFTAR SEBAGAI SHELTER',
                   onPressed: controller.goToShelterRegistration,
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: BorderSide(color: colorScheme.primary, width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.store, color: colorScheme.primary),
-                      const SizedBox(width: 8),
-                      Text(
-                        'DAFTAR SEBAGAI SHELTER',
-                        style: textTheme.labelLarge?.copyWith(
-                          color: colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
+                const SizedBox(height: 24),
               ],
             ),
           ),

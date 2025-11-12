@@ -9,10 +9,12 @@ abstract class AppRoutes {
   static const event = _Paths.event;
   static const chat = _Paths.chat;
   static const profile = _Paths.profile;
+  static const editProfile = _Paths.editProfile;
   static const verification = _Paths.verification;
   static const shelterHome = _Paths.shelterHome;
   static const shelterAddPet = _Paths.shelterAddPet;
   static const shelterAddEvent = _Paths.shelterAddEvent;
+  static const editShelterProfile = _Paths.editShelterProfile;
   static const adminHome = _Paths.adminHome;
   static const adminUserManagement = _Paths.adminUserManagement;
   static const adminShelterVerification = _Paths.adminShelterVerification;
@@ -29,10 +31,12 @@ abstract class _Paths {
   static const event = '/event';
   static const chat = '/chat';
   static const profile = '/profile';
+  static const editProfile = '/edit-profile';
   static const verification = '/verification';
   static const shelterHome = '/shelter-home';
   static const shelterAddPet = '/shelter/add-pet';
   static const shelterAddEvent = '/shelter/add-event';
+  static const editShelterProfile = '/shelter/edit-profile';
   static const adminHome = '/admin-home';
   static const adminUserManagement = '/admin/user-management';
   static const adminShelterVerification = '/admin/shelter-verification';
