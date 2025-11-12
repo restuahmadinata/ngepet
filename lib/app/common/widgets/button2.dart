@@ -17,7 +17,6 @@ class Button2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ambil warna teks dasar (Dark Text) dari tema
-    final colorScheme = Theme.of(context).colorScheme;
     final textStyle = GoogleFonts.poppins(
       fontSize: 16,
       fontWeight: FontWeight.w600,

@@ -124,16 +124,6 @@ class VerificationController extends GetxController {
         
         // Create new Firebase Auth account
         try {
-          Get.snackbar(
-            "Mohon Tunggu",
-            "Membuat akun shelter...",
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.blue,
-            colorText: Colors.white,
-            duration: const Duration(seconds: 2),
-            showProgressIndicator: true,
-          );
-          
           UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
             email: emailController.text.trim(),
             password: passwordController.text.trim(),
@@ -172,16 +162,6 @@ class VerificationController extends GetxController {
       }
 
       // Create or update shelter document in shelters collection
-      Get.snackbar(
-        "Mohon Tunggu",
-        "Mengirim pengajuan verifikasi...",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.blue,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-        showProgressIndicator: true,
-      );
-      
       await _firestore.collection('shelters').doc(user.uid).set({
         'uid': user.uid,
         'email': user.email,

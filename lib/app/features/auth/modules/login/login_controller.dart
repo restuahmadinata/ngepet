@@ -33,16 +33,6 @@ class LoginController extends GetxController {
 
     isLoading.value = true;
     
-    // Tampilkan feedback bahwa sistem sedang memproses
-    Get.snackbar(
-      "Mohon Tunggu",
-      "Sedang memproses login...",
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.blue,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 2),
-      showProgressIndicator: true,
-    );
 
     try {
       // Panggil fungsi signIn dari AuthController
@@ -68,16 +58,7 @@ class LoginController extends GetxController {
     }
     
     isLoading.value = true;
-    
-    Get.snackbar(
-      "Mohon Tunggu",
-      "Mengirim email reset password...",
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.blue,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 2),
-      showProgressIndicator: true,
-    );
+  
     
     try {
       await authController.resetPassword(emailController.text);

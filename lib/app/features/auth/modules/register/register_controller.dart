@@ -43,14 +43,7 @@ class RegisterController extends GetxController {
     }
 
     isLoading.value = true;
-    Get.snackbar(
-      "Mohon tunggu",
-      "Sedang memproses registrasi...",
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.blue,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 2),
-    );
+    
     try {
       // Register ke Firebase Auth
       UserCredential userCredential = await FirebaseAuth.instance

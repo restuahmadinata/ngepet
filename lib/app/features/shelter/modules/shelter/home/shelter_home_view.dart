@@ -17,18 +17,14 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
           'Dashboard Shelter',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
-        backgroundColor: AppColors.primary,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.person_add, color: Colors.white),
-            onPressed: () => _updateCurrentUserToShelter(),
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
+            icon: const Icon(Icons.logout, color: Colors.black),
             onPressed: () => _showLogoutDialog(context),
           ),
         ],

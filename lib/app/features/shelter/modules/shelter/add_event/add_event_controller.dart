@@ -186,17 +186,6 @@ class AddEventController extends GetxController {
 
     try {
       isLoading.value = true;
-      
-      // Show progress notification
-      Get.snackbar(
-        "Mohon Tunggu",
-        "Menyimpan data event...",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.blue,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-        showProgressIndicator: true,
-      );
 
       // Get shelter information from shelters collection
       final shelterDoc = await _firestore
