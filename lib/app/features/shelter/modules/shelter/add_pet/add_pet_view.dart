@@ -354,34 +354,6 @@ class AddPetView extends GetView<AddPetController> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Location (Auto-filled from shelter)
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomTextField(
-                        controller: controller.locationController,
-                        labelText: 'Lokasi *',
-                        hintText: 'Alamat shelter',
-                        prefixIcon: const Icon(Icons.location_on),
-                        validator: controller.validateRequired,
-                        readOnly: true,
-                      ),
-                      const SizedBox(height: 4),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: Text(
-                          'Lokasi otomatis menggunakan alamat shelter',
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            color: AppColors.neutral600,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
                   // Description
                   CustomTextField(
                     controller: controller.descriptionController,
