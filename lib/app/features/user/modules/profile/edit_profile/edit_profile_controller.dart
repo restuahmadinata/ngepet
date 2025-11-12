@@ -68,6 +68,17 @@ class EditProfileController extends GetxController {
         selectedGender.value = userData.jenisKelamin;
         selectedDate.value = userData.tanggalLahir;
         profileImageUrl.value = userData.fotoProfil;
+        
+        // Load latitude and longitude if available
+        final data = doc.data();
+        if (data != null) {
+          if (data['latitude'] != null) {
+            latitude.value = (data['latitude'] as num).toDouble();
+          }
+          if (data['longitude'] != null) {
+            longitude.value = (data['longitude'] as num).toDouble();
+          }
+        }
       }
     } catch (e) {
       Get.snackbar(
@@ -304,6 +315,8 @@ class EditProfileController extends GetxController {
             : phoneNumberController.text.trim(),
         'alamat': address.value.isEmpty ? null : address.value,
         'kota': city.value.isEmpty ? null : city.value,
+        'latitude': latitude.value,
+        'longitude': longitude.value,
         'jenisKelamin': selectedGender.value,
         'tanggalLahir': selectedDate.value != null 
             ? Timestamp.fromDate(selectedDate.value!) 

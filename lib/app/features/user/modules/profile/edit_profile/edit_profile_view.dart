@@ -280,14 +280,17 @@ class EditProfileView extends GetView<EditProfileController> {
                                 ),
                               ),
                             ],
-                            const SizedBox(height: 4),
-                            Text(
-                              'Koordinat: ${controller.latitude.value!.toStringAsFixed(6)}, ${controller.longitude.value!.toStringAsFixed(6)}',
-                              style: GoogleFonts.poppins(
-                                fontSize: 11,
-                                color: AppColors.neutral500,
+                            if (controller.latitude.value != null && 
+                                controller.longitude.value != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                'Koordinat: ${controller.latitude.value!.toStringAsFixed(6)}, ${controller.longitude.value!.toStringAsFixed(6)}',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: AppColors.neutral500,
+                                ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                       );
@@ -296,7 +299,7 @@ class EditProfileView extends GetView<EditProfileController> {
                   }),
 
                   // Map picker button
-                  SizedBox(
+                  Obx(() => SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () async {
@@ -338,7 +341,7 @@ class EditProfileView extends GetView<EditProfileController> {
                         ),
                       ),
                     ),
-                  ),
+                  )),
                   const SizedBox(height: 32),
 
                   // Save Button
