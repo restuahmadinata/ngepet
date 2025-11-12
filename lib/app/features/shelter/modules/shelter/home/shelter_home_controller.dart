@@ -20,17 +20,24 @@ class ShelterHomeController extends GetxController {
     _loadStats();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    // Reload data when page is ready (useful when returning from add pet/event)
+    refreshData();
+  }
+
   // Load shelter basic data
   Future<void> _loadShelterData() async {
     final user = _auth.currentUser;
     if (user == null) return;
 
     try {
-      // Get shelter name from users collection
-      final userDoc = await _firestore.collection('users').doc(user.uid).get();
-      if (userDoc.exists) {
-        final data = userDoc.data();
-        shelterName.value = data?['shelterName'] ?? data?['name'] ?? 'Shelter';
+      // Get shelter name from shelters collection
+      final shelterDoc = await _firestore.collection('shelters').doc(user.uid).get();
+      if (shelterDoc.exists) {
+        final data = shelterDoc.data();
+        shelterName.value = data?['shelterName'] ?? 'Shelter';
       }
     } catch (e) {
       print('Error loading shelter data: $e');

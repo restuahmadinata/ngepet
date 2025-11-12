@@ -140,10 +140,10 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
     final String uid = request['uid'] ?? '';
     final String shelterName = request['shelterName'] ?? 'No Name';
     final String email = request['email'] ?? 'No Email';
-    final String phone = request['shelterPhone'] ?? '-';
-    final String address = request['shelterAddress'] ?? '-';
-    final String description = request['shelterDescription'] ?? '-';
-    final String legalNumber = request['shelterLegalNumber'] ?? '-';
+    final String phone = request['phone'] ?? '-';
+    final String address = request['address'] ?? '-';
+    final String description = request['description'] ?? '-';
+    final String legalNumber = request['legalNumber'] ?? '-';
     final String verificationStatus =
         request['verificationStatus'] ?? 'pending';
     

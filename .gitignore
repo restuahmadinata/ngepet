@@ -53,6 +53,55 @@ firebase_options.dart
 firebase.json
 .firebase/
 .firebaserc
+firebase-debug.log
+firebase-debug.log.*
+firestore-debug.log
+firestore-debug.log.*
+ui-debug.log
+ui-debug.log.*
+
+# Firebase Functions
+/functions/.firebase/
+functions/.firebase/
+
+# Firebase Hosting
+.firebase/hosting.*
+
+# Firebase Storage
+.firebase/storage.*
+
+# Firebase Auth
+.firebase/auth.*
+
+# Firebase Database
+.firebase/database.*
+
+# Firebase Remote Config
+.firebase/remoteconfig.*
+
+# Firebase Performance Monitoring
+.firebase/performance.*
+
+# Firebase Crashlytics
+.firebase/crashlytics.*
+
+# Firebase Analytics
+.firebase/analytics.*
+
+# Firebase Cloud Messaging
+.firebase/messaging.*
+
+# Firebase In-App Messaging
+.firebase/inappmessaging.*
+
+# Firebase Dynamic Links
+.firebase/dynamiclinks.*
+
+# Firebase ML Kit
+.firebase/mlkit.*
+
+# Firebase Test Lab
+.firebase/testlab.*
 
 # Local configuration
 /android/local.properties
@@ -62,8 +111,54 @@ firebase.json
 .env
 .env.local
 .env.*.local
+.env.production
+.env.staging
+.env.development
 
 # API Keys & Secrets
 **/apikey.dart
 **/secrets.dart
 **/api_keys.dart
+**/imgbb_config.dart
+**/config.dart
+**/keys.dart
+**/credentials.dart
+**/auth_config.dart
+**/firebase_config.dart
+**/api_config.dart
+
+# Service Account Keys
+*.p12
+*.pem
+service-account.json
+service-account-key.json
+firebase-service-account.json
+
+# OAuth & Authentication
+oauth_client_id.json
+client_secret.json
+credentials.json
+
+# Platform-specific Firebase configs
+/android/app/src/main/assets/google-services.json
+/android/app/src/debug/google-services.json
+/android/app/src/release/google-services.json
+/ios/Runner/GoogleService-Info.plist
+/ios/Runner/GoogleService-Info-debug.plist
+/ios/Runner/GoogleService-Info-release.plist
+/macos/Runner/GoogleService-Info.plist
+/windows/Runner/GoogleService-Info.plist
+/linux/Runner/GoogleService-Info.plist
+
+# Firebase CLI cache
+.firebase/cache/
+.firebase/tmp/
+
+# FlutterFire generated files
+lib/firebase_options.dart
+lib/firebase_options_*.dart
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+macos/Runner/GoogleService-Info.plist
+windows/Runner/GoogleService-Info.plist
+linux/Runner/GoogleService-Info.plist

@@ -71,7 +71,6 @@ class UserManagementView extends GetView<UserManagementController> {
     final String uid = user['uid'] ?? '';
     final String name = user['name'] ?? 'No Name';
     final String email = user['email'] ?? 'No Email';
-    final String role = user['role'] ?? 'user';
     final bool isActive = user['isActive'] ?? true;
 
     return Card(
@@ -88,11 +87,7 @@ class UserManagementView extends GetView<UserManagementController> {
                 CircleAvatar(
                   backgroundColor: AppColors.primary.withOpacity(0.1),
                   child: Icon(
-                    role == 'admin'
-                        ? Icons.admin_panel_settings
-                        : role == 'shelter'
-                        ? Icons.store
-                        : Icons.person,
+                    Icons.person,
                     color: AppColors.primary,
                   ),
                 ),
@@ -153,22 +148,22 @@ class UserManagementView extends GetView<UserManagementController> {
             const SizedBox(height: 12),
             Row(
               children: [
-                // Role Badge
+                // User Badge
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: _getRoleColor(role).withOpacity(0.1),
+                    color: AppColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    controller.getRoleName(role),
+                    'User',
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: _getRoleColor(role),
+                      color: AppColors.primary,
                     ),
                   ),
                 ),
@@ -177,25 +172,13 @@ class UserManagementView extends GetView<UserManagementController> {
                 PopupMenuButton<String>(
                   icon: Icon(Icons.more_vert, color: AppColors.neutral600),
                   onSelected: (value) {
-                    if (value == 'change_role') {
-                      _showChangeRoleDialog(uid, role);
-                    } else if (value == 'toggle_status') {
+                    if (value == 'toggle_status') {
                       controller.toggleUserStatus(uid, isActive);
                     } else if (value == 'delete') {
                       _showDeleteConfirmation(uid, name);
                     }
                   },
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'change_role',
-                      child: Row(
-                        children: [
-                          Icon(Icons.swap_horiz, color: AppColors.neutral700),
-                          const SizedBox(width: 8),
-                          const Text('Ubah Role'),
-                        ],
-                      ),
-                    ),
                     PopupMenuItem(
                       value: 'toggle_status',
                       child: Row(
@@ -226,59 +209,6 @@ class UserManagementView extends GetView<UserManagementController> {
           ],
         ),
       ),
-    );
-  }
-
-  Color _getRoleColor(String role) {
-    switch (role) {
-      case 'admin':
-        return Colors.purple;
-      case 'shelter':
-        return AppColors.green700;
-      case 'user':
-      default:
-        return AppColors.primary;
-    }
-  }
-
-  void _showChangeRoleDialog(String uid, String currentRole) {
-    Get.dialog(
-      AlertDialog(
-        title: Text(
-          'Ubah Role User',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildRoleOption('user', 'User Biasa', uid, currentRole),
-            _buildRoleOption('shelter', 'Shelter', uid, currentRole),
-            _buildRoleOption('admin', 'Admin', uid, currentRole),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Batal')),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRoleOption(
-    String roleValue,
-    String roleLabel,
-    String uid,
-    String currentRole,
-  ) {
-    return RadioListTile<String>(
-      title: Text(roleLabel),
-      value: roleValue,
-      groupValue: currentRole,
-      onChanged: (value) {
-        if (value != null && value != currentRole) {
-          controller.updateUserRole(uid, value);
-          Get.back();
-        }
-      },
     );
   }
 

@@ -17,10 +17,9 @@ class ShelterVerificationController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Ambil semua user dengan role 'shelter' dan status verifikasi 'pending'
+      // Ambil semua shelter dengan status verifikasi 'pending' dari koleksi shelters
       final snapshot = await _firestore
-          .collection('users')
-          .where('role', isEqualTo: 'shelter')
+          .collection('shelters')
           .where('verificationStatus', isEqualTo: 'pending')
           .get();
 
@@ -40,29 +39,22 @@ class ShelterVerificationController extends GetxController {
 
   Future<void> approveVerification(String uid, String shelterName) async {
     try {
-      // Get the shelter data from user document
-      final userDoc = await _firestore.collection('users').doc(uid).get();
+      // Get the shelter data from shelters collection
+      final shelterDoc = await _firestore.collection('shelters').doc(uid).get();
       
-      if (!userDoc.exists) {
+      if (!shelterDoc.exists) {
         Get.snackbar(
           'Error',
-          'Data user tidak ditemukan',
+          'Data shelter tidak ditemukan',
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
       }
 
-      final userData = userDoc.data()!;
-
-      // Update user with approved status and shelter data
-      await _firestore.collection('users').doc(uid).update({
+      // Update shelter with approved status
+      await _firestore.collection('shelters').doc(uid).update({
         'verificationStatus': 'approved',
         'isVerified': true,
-        'role': 'shelter',
-        // Keep the shelter data that was submitted
-        'name': userData['shelterName'] ?? userData['name'],
-        'phone': userData['shelterPhone'] ?? userData['phone'],
-        'address': userData['shelterAddress'] ?? userData['address'],
         'approvedAt': FieldValue.serverTimestamp(),
         'rejectionReason': FieldValue.delete(), // Remove rejection reason if any
       });
@@ -89,11 +81,12 @@ class ShelterVerificationController extends GetxController {
     String reason,
   ) async {
     try {
-      await _firestore.collection('users').doc(uid).update({
+      // Update shelter document with rejected status
+      await _firestore.collection('shelters').doc(uid).update({
         'verificationStatus': 'rejected',
         'isVerified': false,
         'rejectionReason': reason,
-        'role': 'user', // Kembalikan ke user biasa
+        'rejectedAt': FieldValue.serverTimestamp(),
       });
 
       Get.snackbar(
@@ -116,10 +109,9 @@ class ShelterVerificationController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Ambil semua user dengan role 'shelter'
+      // Ambil semua shelter dari koleksi shelters
       final snapshot = await _firestore
-          .collection('users')
-          .where('role', isEqualTo: 'shelter')
+          .collection('shelters')
           .get();
 
       verificationRequests.value = snapshot.docs.map((doc) {

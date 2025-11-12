@@ -25,6 +25,11 @@ class VerificationView extends GetView<VerificationController> {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Obx(() {
+        // Show approved notification if status is approved
+        if (controller.verificationStatus.value == 'approved') {
+          return _buildApprovedNotification();
+        }
+
         // Show rejection notification if status is rejected
         if (controller.verificationStatus.value == 'rejected') {
           return _buildRejectionNotification();
@@ -35,9 +40,124 @@ class VerificationView extends GetView<VerificationController> {
           return _buildPendingStatus();
         }
 
-        // Show form for new submission or approved status
+        // Show form for new submission
         return _buildVerificationForm();
       }),
+    );
+  }
+
+  Widget _buildApprovedNotification() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      size: 80,
+                      color: Colors.green,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Selamat!',
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.green[50],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.green[200]!),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            'Pengajuan Diterima',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green[900],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Verifikasi shelter Anda telah disetujui oleh admin. Anda sekarang dapat mengakses dashboard shelter.',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: Colors.green[800],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => controller.goToShelterHome(),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.dashboard, color: Colors.white),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Menuju Dashboard Shelter',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => controller.backToStarter(),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  side: BorderSide(color: AppColors.neutral400),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text(
+                  'Kembali',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.neutral600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -137,7 +257,7 @@ class VerificationView extends GetView<VerificationController> {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () => Get.back(),
+                onPressed: () => controller.backToStarter(),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   side: BorderSide(color: AppColors.neutral400),
@@ -205,7 +325,7 @@ class VerificationView extends GetView<VerificationController> {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () => controller.backToStarter(),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     side: BorderSide(color: AppColors.neutral400),
@@ -258,6 +378,89 @@ class VerificationView extends GetView<VerificationController> {
                     ),
                   ),
                   const SizedBox(height: 32),
+
+                  // Email and password fields for new users (not logged in)
+                  Obx(() {
+                    if (!controller.isExistingUser.value) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Informasi Akun',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          CustomTextField(
+                            controller: controller.emailController,
+                            labelText: 'Email *',
+                            hintText: 'Masukkan email Anda',
+                            prefixIcon: const Icon(Icons.email),
+                            validator: controller.validateRequired,
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          const SizedBox(height: 16),
+                          Obx(
+                            () => CustomTextField(
+                              controller: controller.passwordController,
+                              labelText: 'Password *',
+                              hintText: 'Minimal 6 karakter',
+                              prefixIcon: const Icon(Icons.lock),
+                              obscureText: controller.isPasswordHidden.value,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  controller.isPasswordHidden.value
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  controller.isPasswordHidden.value =
+                                      !controller.isPasswordHidden.value;
+                                },
+                              ),
+                              validator: controller.validateRequired,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Obx(
+                            () => CustomTextField(
+                              controller: controller.confirmPasswordController,
+                              labelText: 'Konfirmasi Password *',
+                              hintText: 'Ulangi password Anda',
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              obscureText: controller.isConfirmPasswordHidden.value,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  controller.isConfirmPasswordHidden.value
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  controller.isConfirmPasswordHidden.value =
+                                      !controller.isConfirmPasswordHidden.value;
+                                },
+                              ),
+                              validator: controller.validateRequired,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Text(
+                            'Informasi Shelter',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }),
 
                   // Form fields
                   CustomTextField(
@@ -386,7 +589,7 @@ class VerificationView extends GetView<VerificationController> {
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(
-                      onPressed: () => Get.back(),
+                      onPressed: () => controller.backToStarter(),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         side: BorderSide(color: AppColors.neutral400),

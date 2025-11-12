@@ -7,6 +7,8 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../../../config/imgbb_config.dart';
+import '../../../../../routes/app_routes.dart';
+import '../home/shelter_home_controller.dart';
 
 class AddEventController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -184,15 +186,49 @@ class AddEventController extends GetxController {
 
     try {
       isLoading.value = true;
+      
+      // Show progress notification
+      Get.snackbar(
+        "Mohon Tunggu",
+        "Menyimpan data event...",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.blue,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+        showProgressIndicator: true,
+      );
 
-      // Get shelter information
+      // Get shelter information from shelters collection
       final shelterDoc = await _firestore
-          .collection('users')
+          .collection('shelters')
           .doc(user.uid)
           .get();
+
+      if (!shelterDoc.exists) {
+        Get.snackbar(
+          "Error",
+          "Data shelter tidak ditemukan. Silakan daftar sebagai shelter terlebih dahulu.",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
       final shelterData = shelterDoc.data();
-      final shelterName =
-          shelterData?['shelterName'] ?? shelterData?['name'] ?? 'Shelter';
+      final verificationStatus = shelterData?['verificationStatus'];
+      final shelterName = shelterData?['shelterName'] ?? 'Shelter';
+
+      if (verificationStatus != 'approved') {
+        Get.snackbar(
+          "Error",
+          "Shelter Anda belum diverifikasi. Status: $verificationStatus",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
 
       // Combine date and time
       DateTime eventDateTime = selectedDate.value!;
@@ -238,15 +274,26 @@ class AddEventController extends GetxController {
 
       Get.snackbar(
         "Berhasil",
-        "Event berhasil ditambahkan",
+        "Event '${titleController.text.trim()}' berhasil ditambahkan",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
+        duration: const Duration(seconds: 3),
       );
 
-      // Clear form and go back
+      // Clear form
       _clearForm();
-      Get.back();
+      
+      // Navigate back to shelter home and refresh data
+      Get.offAllNamed(AppRoutes.shelterHome);
+      
+      // Refresh shelter home data
+      try {
+        final shelterHomeController = Get.find<ShelterHomeController>();
+        await shelterHomeController.refreshData();
+      } catch (e) {
+        print('Debug - Could not refresh shelter home: $e');
+      }
     } catch (e) {
       Get.snackbar(
         "Error",

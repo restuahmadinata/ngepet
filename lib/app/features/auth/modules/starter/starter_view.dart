@@ -64,18 +64,59 @@ class StarterView extends GetView<StarterController> {
                 // Button 1: Masuk (Primary Action)
                 Button1(
                   text: 'MASUK',
-                  onPressed: () {
-                    controller.goToLogin();
-                  },
+                  onPressed: controller.goToLogin,
                 ),
                 const SizedBox(height: 16),
 
                 // Button 2: Daftar (Secondary Action)
                 Button2(
                   text: 'DAFTAR',
-                  onPressed: () {
-                    controller.goToRegister();
-                  },
+                  onPressed: controller.goToRegister,
+                ),
+                const SizedBox(height: 24),
+
+                // --- 4. DIVIDER ---
+                Row(
+                  children: [
+                    Expanded(child: Divider(color: colorScheme.outline)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Atau',
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider(color: colorScheme.outline)),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                // Button 3: Daftar Sebagai Shelter
+                OutlinedButton(
+                  onPressed: controller.goToShelterRegistration,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    side: BorderSide(color: colorScheme.primary, width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.store, color: colorScheme.primary),
+                      const SizedBox(width: 8),
+                      Text(
+                        'DAFTAR SEBAGAI SHELTER',
+                        style: textTheme.labelLarge?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

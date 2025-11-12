@@ -149,8 +149,27 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 32),
 
-                // . Register Button
-                Button1(text: 'REGISTER', onPressed: controller.register),
+                // 6. Register Button dengan Loading Indicator
+                Obx(
+                  () => controller.isLoading.value
+                      ? Center(
+                          child: Column(
+                            children: [
+                              CircularProgressIndicator(
+                                color: colorScheme.primary,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Sedang mendaftar...',
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Button1(text: 'REGISTER', onPressed: controller.register),
+                ),
               ],
             ),
           ),

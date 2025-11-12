@@ -25,28 +25,61 @@ class AuthController extends GetxController {
         email: email,
         password: password,
       );
-      // Ambil data user dari Firestore
+      // Ambil data dari Firestore
       final uid = userCredential.user?.uid;
       if (uid != null) {
-        final doc = await _firestore.collection('users').doc(uid).get();
-        final data = doc.data();
-        final name = data?['name'] ?? 'User';
-        final role = data?['role'] ?? 'user';
-
-        print('🔍 Login - User Name: $name');
-        print('🔍 Login - User Role: $role');
-
-        // Redirect berdasarkan role
-        if (role == 'admin') {
+        // Check in admins collection first
+        final adminDoc = await _firestore.collection('admins').doc(uid).get();
+        
+        if (adminDoc.exists) {
+          final data = adminDoc.data();
+          final name = data?['name'] ?? 'Admin';
+          
+          print('🔍 Login - Admin Name: $name');
           print('✅ Redirecting to Admin Home');
           Get.offAllNamed(AppRoutes.adminHome, arguments: {'name': name});
-        } else if (role == 'shelter') {
-          print('✅ Redirecting to Shelter Home');
-          Get.offAllNamed(AppRoutes.shelterHome, arguments: {'name': name});
-        } else {
+          return;
+        }
+
+        // Check in users collection
+        final userDoc = await _firestore.collection('users').doc(uid).get();
+        
+        if (userDoc.exists) {
+          final data = userDoc.data();
+          final name = data?['name'] ?? 'User';
+
+          print('🔍 Login - User Name: $name');
           print('✅ Redirecting to User Home');
           Get.offAllNamed(AppRoutes.userHome, arguments: {'name': name});
+          return;
         }
+
+        // Check in shelters collection
+        final shelterDoc = await _firestore.collection('shelters').doc(uid).get();
+        
+        if (shelterDoc.exists) {
+          final data = shelterDoc.data();
+          final name = data?['shelterName'] ?? 'Shelter';
+          final verificationStatus = data?['verificationStatus'];
+          
+          print('🔍 Login - Shelter Name: $name');
+          print('🔍 Login - Verification Status: $verificationStatus');
+
+          // Check verification status
+          if (verificationStatus == 'approved') {
+            print('✅ Redirecting to Shelter Home');
+            Get.offAllNamed(AppRoutes.shelterHome, arguments: {'name': name});
+          } else {
+            // If pending or rejected, redirect to verification page
+            print('⚠️ Shelter not verified, redirecting to Verification');
+            Get.offAllNamed(AppRoutes.verification);
+          }
+          return;
+        }
+
+        // If not found in any collection, default to user home
+        print('⚠️ User not found in any collection, redirecting to User Home');
+        Get.offAllNamed(AppRoutes.userHome);
       } else {
         // Jika UID tidak ditemukan, default ke user home
         Get.offAllNamed(AppRoutes.userHome);

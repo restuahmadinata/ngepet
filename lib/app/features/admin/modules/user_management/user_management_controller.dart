@@ -19,6 +19,7 @@ class UserManagementController extends GetxController {
   Future<void> fetchUsers() async {
     try {
       isLoading.value = true;
+      // Only fetch users collection (not shelters)
       final snapshot = await _firestore.collection('users').get();
       users.value = snapshot.docs.map((doc) {
         return {'uid': doc.id, ...doc.data()};
@@ -36,11 +37,12 @@ class UserManagementController extends GetxController {
 
   Future<void> updateUserRole(String uid, String newRole) async {
     try {
-      await _firestore.collection('users').doc(uid).update({'role': newRole});
-
+      // Tidak perlu update role lagi karena users hanya untuk user biasa
+      // Field 'role' sudah tidak digunakan
+      
       Get.snackbar(
-        'Sukses',
-        'Role user berhasil diubah menjadi $newRole',
+        'Info',
+        'User sudah berada di koleksi yang tepat',
         snackPosition: SnackPosition.BOTTOM,
       );
 
@@ -101,15 +103,7 @@ class UserManagementController extends GetxController {
   }
 
   String getRoleName(String role) {
-    switch (role) {
-      case 'user':
-        return 'User';
-      case 'shelter':
-        return 'Shelter';
-      case 'admin':
-        return 'Admin';
-      default:
-        return 'Unknown';
-    }
+    // All users in 'users' collection are regular users
+    return 'User';
   }
 }

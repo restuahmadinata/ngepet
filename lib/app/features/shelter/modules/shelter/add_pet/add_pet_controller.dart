@@ -7,6 +7,8 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../../../config/imgbb_config.dart';
+import '../../../../../routes/app_routes.dart';
+import '../home/shelter_home_controller.dart';
 
 class AddPetController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -152,17 +154,28 @@ class AddPetController extends GetxController {
 
     try {
       isLoading.value = true;
+      
+      // Show progress notification
+      Get.snackbar(
+        "Mohon Tunggu",
+        "Menyimpan data hewan...",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.blue,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+        showProgressIndicator: true,
+      );
 
-      // Get shelter information and verify role
+      // Get shelter information from shelters collection
       final shelterDoc = await _firestore
-          .collection('users')
+          .collection('shelters')
           .doc(user.uid)
           .get();
 
       if (!shelterDoc.exists) {
         Get.snackbar(
           "Error",
-          "Data user tidak ditemukan di database",
+          "Data shelter tidak ditemukan. Silakan daftar sebagai shelter terlebih dahulu.",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -171,16 +184,16 @@ class AddPetController extends GetxController {
       }
 
       final shelterData = shelterDoc.data();
-      final userRole = shelterData?['role'];
+      final verificationStatus = shelterData?['verificationStatus'];
 
-      print('Debug - User UID: ${user.uid}');
-      print('Debug - User Role: $userRole');
+      print('Debug - Shelter UID: ${user.uid}');
+      print('Debug - Verification Status: $verificationStatus');
       print('Debug - Shelter Data: $shelterData');
 
-      if (userRole != 'shelter') {
+      if (verificationStatus != 'approved') {
         Get.snackbar(
           "Error",
-          "Akses ditolak. Hanya shelter yang dapat menambah hewan. Role Anda: $userRole",
+          "Shelter Anda belum diverifikasi. Status: $verificationStatus",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -188,8 +201,7 @@ class AddPetController extends GetxController {
         return;
       }
 
-      final shelterName =
-          shelterData?['shelterName'] ?? shelterData?['name'] ?? 'Shelter';
+      final shelterName = shelterData?['shelterName'] ?? 'Shelter';
 
       // Add pet to Firestore
       print('Debug - Adding pet to Firestore...');
@@ -230,16 +242,28 @@ class AddPetController extends GetxController {
 
       Get.snackbar(
         "Berhasil",
-        "Data hewan berhasil ditambahkan",
+        "Hewan '${nameController.text.trim()}' berhasil ditambahkan ke daftar adopsi",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
+        duration: const Duration(seconds: 3),
       );
 
-      print('Debug - Success message shown, clearing form and navigating back');
-      // Clear form and go back
+      print('Debug - Success message shown, clearing form and navigating to shelter home');
+      
+      // Clear form
       _clearForm();
-      Get.back();
+      
+      // Navigate back to shelter home and refresh data
+      Get.offAllNamed(AppRoutes.shelterHome);
+      
+      // Refresh shelter home data
+      try {
+        final shelterHomeController = Get.find<ShelterHomeController>();
+        await shelterHomeController.refreshData();
+      } catch (e) {
+        print('Debug - Could not refresh shelter home: $e');
+      }
     } catch (e) {
       Get.snackbar(
         "Error",

@@ -16,6 +16,12 @@ class AdoptController extends GetxController {
 class AdoptView extends StatelessWidget {
   const AdoptView({super.key});
 
+  Future<void> _refreshData() async {
+    // Add a small delay to show the refresh indicator
+    await Future.delayed(const Duration(milliseconds: 500));
+    // Data will automatically refresh because we're using StreamBuilder
+  }
+
   @override
   Widget build(BuildContext context) {
     final AdoptController controller = Get.put(AdoptController());
@@ -34,83 +40,87 @@ class AdoptView extends StatelessWidget {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                RectangleSearchBar(
-                  hintText: 'cari hewan',
-                  onChanged: (value) {
-                    // Handle search
-                  },
-                  controller: TextEditingController(),
-                ),
-                const SizedBox(height: 24),
-                Obx(
-                  () => Row(
-                    children: [
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () => controller.changeTab(0),
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 16,
-                            ),
-                            child: Text(
-                              'Exploring',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: controller.selectedTab.value == 0
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color: controller.selectedTab.value == 0
-                                    ? Colors.black
-                                    : Colors.grey,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: () => controller.changeTab(1),
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 16,
-                              horizontal: 16,
-                            ),
-                            child: Text(
-                              'Following',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: controller.selectedTab.value == 1
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color: controller.selectedTab.value == 1
-                                    ? Colors.black
-                                    : Colors.grey,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+        child: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  RectangleSearchBar(
+                    hintText: 'cari hewan',
+                    onChanged: (value) {
+                      // Handle search
+                    },
+                    controller: TextEditingController(),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Obx(
-                  () => controller.selectedTab.value == 0
-                      ? _buildPetStream()
-                      : _buildFollowingPets(),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                  Obx(
+                    () => Row(
+                      children: [
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => controller.changeTab(0),
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 16,
+                              ),
+                              child: Text(
+                                'Exploring',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: controller.selectedTab.value == 0
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: controller.selectedTab.value == 0
+                                      ? Colors.black
+                                      : Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => controller.changeTab(1),
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 16,
+                              ),
+                              child: Text(
+                                'Following',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: controller.selectedTab.value == 1
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: controller.selectedTab.value == 1
+                                      ? Colors.black
+                                      : Colors.grey,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Obx(
+                    () => controller.selectedTab.value == 0
+                        ? _buildPetStream()
+                        : _buildFollowingPets(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

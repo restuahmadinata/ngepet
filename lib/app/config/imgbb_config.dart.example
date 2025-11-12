@@ -1,0 +1,11 @@
+class ImgBBConfig {
+  // Ganti dengan API key Anda dari https://api.imgbb.com/
+  static const String apiKey = 'YOUR_IMGBB_API_KEY';
+
+  // URL endpoint ImgBB
+  static const String uploadEndpoint = 'https://api.imgbb.com/1/upload';
+
+  // Validate if API key is set
+  static bool get isConfigured =>
+      apiKey != 'YOUR_IMGBB_API_KEY' && apiKey.isNotEmpty;
+}

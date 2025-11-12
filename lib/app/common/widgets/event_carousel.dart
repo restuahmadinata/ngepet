@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
+import '../../features/shared/modules/event_detail/event_detail_view.dart';
 
 class EventCarousel extends StatefulWidget {
   const EventCarousel({super.key});
@@ -80,11 +82,17 @@ class _EventCarouselState extends State<EventCarousel> {
             imageUrl = data['imageUrl'].toString();
           }
 
+          // Return complete event data for detail view
           return {
             'image': imageUrl,
+            'imageUrl': imageUrl,
+            'imageUrls': data['imageUrls'] ?? [imageUrl],
             'title': data['title']?.toString() ?? 'Event Title',
             'date': data['date']?.toString() ?? 'TBA',
+            'time': data['time']?.toString() ?? '',
             'shelter': data['shelter']?.toString() ?? 'Shelter',
+            'location': data['location']?.toString() ?? 'Lokasi',
+            'description': data['description']?.toString() ?? 'Deskripsi event',
           };
         }).toList();
 
@@ -93,7 +101,7 @@ class _EventCarouselState extends State<EventCarousel> {
     );
   }
 
-  Widget _buildCarousel(List<Map<String, String>> events) {
+  Widget _buildCarousel(List<Map<String, dynamic>> events) {
     return Column(
       children: [
         SizedBox(
@@ -103,60 +111,69 @@ class _EventCarouselState extends State<EventCarousel> {
             onPageChanged: _onPageChanged,
             itemBuilder: (context, index) {
               final event = events[index];
-              return Stack(
-                fit: StackFit.expand,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: CachedNetworkImage(
-                      imageUrl: event['image']!,
-                      placeholder: (context, url) =>
-                          Container(color: Colors.grey.shade200),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
+              return GestureDetector(
+                onTap: () {
+                  // Navigate to event detail
+                  Get.to(
+                    () => EventDetailView(eventData: event),
+                    transition: Transition.cupertino,
+                  );
+                },
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.black.withOpacity(0.5),
-                          Colors.transparent,
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
+                      child: CachedNetworkImage(
+                        imageUrl: event['image']!,
+                        placeholder: (context, url) =>
+                            Container(color: Colors.grey.shade200),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                  Positioned(
-                    left: 16,
-                    right: 16,
-                    bottom: 24,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          event['title']!,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.black.withOpacity(0.5),
+                            Colors.transparent,
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '${event['date']} | ${event['shelter']}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      left: 16,
+                      right: 16,
+                      bottom: 24,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            event['title']!,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '${event['date']} | ${event['shelter']}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               );
             },
           ),

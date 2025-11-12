@@ -6,50 +6,106 @@ service cloud.firestore {
     // Helper function to check if user is admin
     function isAdmin() {
       return request.auth != null 
-        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
     
-    // Helper function to check if user is shelter
+    // Helper function to check if user is verified shelter
+    function isVerifiedShelter() {
+      return request.auth != null 
+        && exists(/databases/$(database)/documents/shelters/$(request.auth.uid))
+        && get(/databases/$(database)/documents/shelters/$(request.auth.uid)).data.verificationStatus == 'approved';
+    }
+    
+    // Helper function to check if user is any shelter (even not verified)
     function isShelter() {
       return request.auth != null 
-        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'shelter';
+        && exists(/databases/$(database)/documents/shelters/$(request.auth.uid));
     }
     
-    // Users collection
+    // Admins collection (NEW - separate collection for administrators)
+    match /admins/{adminId} {
+      // Read: admin can read their own data
+      allow read: if request.auth != null && request.auth.uid == adminId;
+      
+      // Create/Update/Delete: only through Firebase Console (no write from app for security)
+      allow write: if false;
+    }
+    
+    // Users collection (for regular users only)
     match /users/{userId} {
-      // Read: user can read their own data OR admin can read all users
+      // Read: authenticated users can read their own data OR admin can read all users
       allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
       
-      // Write: user can write their own data OR admin can write any user data
-      allow write: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      // Update: user can update their own data OR admin can update any user data
+      allow update: if request.auth != null && (request.auth.uid == userId || isAdmin());
       
       // Create: anyone authenticated can create (for registration)
-      allow create: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      
+      // Delete: only admin can delete users
+      allow delete: if isAdmin();
     }
     
-    // Pets collection - shelter users can create, everyone can read
+    // Shelters collection (NEW - separate collection for shelters)
+    match /shelters/{shelterId} {
+      // Read: shelter can read their own data OR admin can read all shelters OR any authenticated user (for public shelter info)
+      allow read: if request.auth != null;
+      
+      // Create: anyone authenticated can create (for shelter registration)
+      allow create: if request.auth != null && request.auth.uid == shelterId;
+      
+      // Update: shelter can update their own data (for re-submission) OR admin can update (for verification)
+      allow update: if request.auth != null && (request.auth.uid == shelterId || isAdmin());
+      
+      // Delete: only admin can delete shelters
+      allow delete: if isAdmin();
+    }
+    
+    // Pets collection - only verified shelters can create/update/delete
     match /pets/{petId} {
+      // Read: anyone authenticated can read
       allow read: if request.auth != null;
-      allow create, update, delete: if isShelter() || isAdmin();
+      
+      // Create: only verified shelters or admin
+      allow create: if isVerifiedShelter() || isAdmin();
+      
+      // Update/Delete: only the shelter that owns the pet or admin
+      allow update, delete: if isAdmin() || 
+        (isVerifiedShelter() && request.auth.uid == resource.data.shelterId);
     }
     
-    // Events collection - shelter users can create, everyone can read
+    // Events collection - only verified shelters can create/update/delete
     match /events/{eventId} {
+      // Read: anyone authenticated can read
       allow read: if request.auth != null;
-      allow create, update, delete: if isShelter() || isAdmin();
+      
+      // Create: only verified shelters or admin
+      allow create: if isVerifiedShelter() || isAdmin();
+      
+      // Update/Delete: only the shelter that owns the event or admin
+      allow update, delete: if isAdmin() || 
+        (isVerifiedShelter() && request.auth.uid == resource.data.shelterId);
     }
     
-    // Shelter verifications - authenticated users can create their own, admin can read all
-    match /shelter_verifications/{userId} {
-      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
-      allow write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Adoption requests (if implemented later)
+    // Adoption requests
     match /adoption_requests/{requestId} {
-      allow read, write: if request.auth != null;
+      // Read: user can read their own requests OR shelter can read requests for their pets OR admin can read all
+      allow read: if request.auth != null && 
+        (request.auth.uid == resource.data.userId || 
+         request.auth.uid == resource.data.shelterId || 
+         isAdmin());
+      
+      // Create: any authenticated user can create adoption request
+      allow create: if request.auth != null;
+      
+      // Update: only the requester or shelter owner or admin can update
+      allow update: if request.auth != null && 
+        (request.auth.uid == resource.data.userId || 
+         request.auth.uid == resource.data.shelterId || 
+         isAdmin());
+      
+      // Delete: only admin or the requester can delete
+      allow delete: if request.auth.uid == resource.data.userId || isAdmin();
     }
   }
 }

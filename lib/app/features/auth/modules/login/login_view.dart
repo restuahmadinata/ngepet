@@ -112,18 +112,45 @@ class LoginView extends GetView<LoginController> {
                 // Lupa Password
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    onPressed: controller.forgotPassword,
-                    child: Text(
-                      'Lupa Password?',
-                      style: TextStyle(color: colorScheme.primary),
+                  child: Obx(
+                    () => TextButton(
+                      onPressed: controller.isLoading.value 
+                          ? null 
+                          : controller.forgotPassword,
+                      child: Text(
+                        'Lupa Password?',
+                        style: TextStyle(
+                          color: controller.isLoading.value 
+                              ? colorScheme.outline 
+                              : colorScheme.primary,
+                        ),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 32),
 
-                // 4. Login Button
-                Button1(text: 'LOGIN', onPressed: controller.login),
+                // 4. Login Button dengan Loading Indicator
+                Obx(
+                  () => controller.isLoading.value
+                      ? Center(
+                          child: Column(
+                            children: [
+                              CircularProgressIndicator(
+                                color: colorScheme.primary,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Sedang login...',
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Button1(text: 'LOGIN', onPressed: controller.login),
+                ),
               ],
             ),
           ),

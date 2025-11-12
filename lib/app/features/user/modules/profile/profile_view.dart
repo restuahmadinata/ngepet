@@ -120,13 +120,6 @@ class ProfileView extends StatelessWidget {
                           // Handle adoption status
                         },
                       ),
-                      _buildMenuItem(
-                        icon: Icons.store,
-                        title: 'Daftar Menjadi Shelter',
-                        onTap: () {
-                          Get.toNamed('/verification');
-                        },
-                      ),
                     ],
                   ),
                 ),
