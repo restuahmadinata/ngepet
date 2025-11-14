@@ -47,11 +47,11 @@ class StarterView extends GetView<StarterController> {
                 ),
                 const SizedBox(height: 32),
 
-                // --- 2. TEKS DUMMY (Headline Medium) ---
+                // --- 2. DUMMY TEXT (Headline Medium) ---
                 Text(
-                  "Ayo, mulai kenalan dengan para pet lucu di NgePet!",
+                  "Let's start meeting cute pets at NgePet!",
                   textAlign: TextAlign.center,
-                  // Menggunakan headlineSmall (H3) dari TextTheme
+                  // Using headlineSmall (H3) from TextTheme
                   style: textTheme.headlineSmall?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
@@ -60,18 +60,18 @@ class StarterView extends GetView<StarterController> {
                 ),
                 const SizedBox(height: 40),
 
-                // --- 3. BUTTONS (Masuk & Daftar) ---
+                // --- 3. BUTTONS (Login & Register) ---
 
-                // Button 1: Masuk (Primary Action)
+                // Button 1: Login (Primary Action)
                 Button1(
-                  text: 'MASUK',
+                  text: 'LOGIN',
                   onPressed: controller.goToLogin,
                 ),
                 const SizedBox(height: 16),
 
                 // Button 2: Daftar (Secondary Action)
                 Button2(
-                  text: 'DAFTAR',
+                  text: 'REGISTER',
                   onPressed: controller.goToRegister,
                 ),
                 const SizedBox(height: 24),
@@ -83,7 +83,7 @@ class StarterView extends GetView<StarterController> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        'Atau',
+                        'Or',
                         style: textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -97,7 +97,7 @@ class StarterView extends GetView<StarterController> {
 
                 // Button 3: Daftar (Secondary Action)
                 Button2(
-                  text: 'DAFTAR SEBAGAI SHELTER',
+                  text: 'REGISTER AS SHELTER',
                   onPressed: controller.goToShelterRegistration,
                 ),
                 const SizedBox(height: 24),

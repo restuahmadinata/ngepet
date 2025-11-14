@@ -1,64 +1,64 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model untuk Admin
+/// Model for Admin
 /// Collection: admins/{adminId}
 class Admin {
   final String adminId;
-  final String namaAdmin;
+  final String adminName;
   final DateTime? createdAt;
 
   Admin({
     required this.adminId,
-    required this.namaAdmin,
+    required this.adminName,
     this.createdAt,
   });
 
-  /// Factory constructor untuk membuat Admin dari Firestore document
+  /// Factory constructor to create Admin from Firestore document
   factory Admin.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     
     return Admin(
       adminId: doc.id,
-      namaAdmin: data['namaAdmin'] ?? data['name'] ?? '',
+      adminName: data['adminName'] ?? '',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
     );
   }
 
-  /// Factory constructor untuk membuat Admin dari Map
+  /// Factory constructor to create Admin from Map
   factory Admin.fromMap(Map<String, dynamic> data, String id) {
     return Admin(
       adminId: id,
-      namaAdmin: data['namaAdmin'] ?? data['name'] ?? '',
+      adminName: data['adminName'] ?? '',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
     );
   }
 
-  /// Konversi Admin ke Map untuk disimpan di Firestore
+  /// Convert Admin to Map for saving to Firestore
   Map<String, dynamic> toMap() {
     return {
       'adminId': adminId,
-      'namaAdmin': namaAdmin,
+      'adminName': adminName,
       'createdAt': createdAt != null 
           ? Timestamp.fromDate(createdAt!) 
           : FieldValue.serverTimestamp(),
     };
   }
 
-  /// Copy dengan perubahan tertentu
+  /// Copy with specific changes
   Admin copyWith({
     String? adminId,
-    String? namaAdmin,
+    String? adminName,
     DateTime? createdAt,
   }) {
     return Admin(
       adminId: adminId ?? this.adminId,
-      namaAdmin: namaAdmin ?? this.namaAdmin,
+      adminName: adminName ?? this.adminName,
       createdAt: createdAt ?? this.createdAt,
     );
   }
 
   @override
   String toString() {
-    return 'Admin(adminId: $adminId, namaAdmin: $namaAdmin)';
+    return 'Admin(adminId: $adminId, adminName: $adminName)';
   }
 }

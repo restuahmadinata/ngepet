@@ -58,7 +58,7 @@ class _EventCarouselState extends State<EventCarousel> {
                   Icon(Icons.event, size: 48, color: Colors.grey[400]),
                   const SizedBox(height: 8),
                   Text(
-                    'Belum ada event',
+                    'No events yet',
                     style: GoogleFonts.poppins(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -84,15 +84,22 @@ class _EventCarouselState extends State<EventCarousel> {
 
           // Return complete event data for detail view
           return {
+            'eventId': doc.id,
+            'shelterId': data['shelterId']?.toString() ?? '',
             'image': imageUrl,
             'imageUrl': imageUrl,
             'imageUrls': data['imageUrls'] ?? [imageUrl],
-            'title': data['title']?.toString() ?? 'Event Title',
-            'date': data['date']?.toString() ?? 'TBA',
-            'time': data['time']?.toString() ?? '',
-            'shelter': data['shelter']?.toString() ?? 'Shelter',
-            'location': data['location']?.toString() ?? 'Lokasi',
-            'description': data['description']?.toString() ?? 'Deskripsi event',
+            'eventTitle': data['eventTitle']?.toString() ?? data['title']?.toString() ?? 'Event Title',
+            'title': data['eventTitle']?.toString() ?? data['title']?.toString() ?? 'Event Title',
+            'eventDate': data['eventDate']?.toString() ?? data['date']?.toString() ?? 'TBA',
+            'date': data['eventDate']?.toString() ?? data['date']?.toString() ?? 'TBA',
+            'startTime': data['startTime']?.toString() ?? data['time']?.toString() ?? '',
+            'time': data['startTime']?.toString() ?? data['time']?.toString() ?? '',
+            'shelterName': data['shelterName']?.toString() ?? data['shelter']?.toString() ?? 'Shelter',
+            'shelter': data['shelterName']?.toString() ?? data['shelter']?.toString() ?? 'Shelter',
+            'location': data['location']?.toString() ?? 'Location',
+            'eventDescription': data['eventDescription']?.toString() ?? data['description']?.toString() ?? 'Event description',
+            'description': data['eventDescription']?.toString() ?? data['description']?.toString() ?? 'Event description',
           };
         }).toList();
 

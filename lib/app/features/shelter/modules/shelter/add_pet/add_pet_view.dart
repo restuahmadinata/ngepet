@@ -14,7 +14,7 @@ class AddPetView extends GetView<AddPetController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Tambah Hewan',
+          'Add Pet',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
             color: Colors.black,
@@ -47,7 +47,7 @@ class AddPetView extends GetView<AddPetController> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Lengkapi data hewan dengan benar. Data ini akan dilihat oleh calon adopter.',
+                            'Complete the pet data correctly. This data will be viewed by potential adopters.',
                             style: GoogleFonts.poppins(
                               fontSize: 12,
                               color: Colors.blue[800],
@@ -61,7 +61,7 @@ class AddPetView extends GetView<AddPetController> {
 
                   // Image picker section
                   Text(
-                    'Foto Hewan',
+                    'Pet Photos',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -95,14 +95,14 @@ class AddPetView extends GetView<AddPetController> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Pilih Foto Hewan',
+                                    'Select Pet Photos',
                                     style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       color: AppColors.neutral600,
                                     ),
                                   ),
                                   Text(
-                                    'Bisa pilih banyak foto',
+                                    'You can select multiple photos',
                                     style: GoogleFonts.poppins(
                                       fontSize: 12,
                                       color: AppColors.neutral500,
@@ -205,7 +205,7 @@ class AddPetView extends GetView<AddPetController> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '${controller.selectedImages.length} foto dipilih. Foto pertama akan jadi thumbnail.',
+                                      '${controller.selectedImages.length} photos selected. The first photo will be the thumbnail.',
                                       style: GoogleFonts.poppins(
                                         fontSize: 12,
                                         color: AppColors.neutral600,
@@ -219,7 +219,7 @@ class AddPetView extends GetView<AddPetController> {
                                       size: 18,
                                     ),
                                     label: Text(
-                                      'Pilih Lagi',
+                                      'Select More',
                                       style: GoogleFonts.poppins(fontSize: 12),
                                     ),
                                   ),
@@ -233,8 +233,8 @@ class AddPetView extends GetView<AddPetController> {
                   // Pet name
                   CustomTextField(
                     controller: controller.nameController,
-                    labelText: 'Nama Hewan *',
-                    hintText: 'Masukkan nama hewan',
+                    labelText: 'Pet Name *',
+                    hintText: 'Enter pet name',
                     prefixIcon: const Icon(Icons.pets),
                     validator: controller.validateRequired,
                   ),
@@ -242,7 +242,7 @@ class AddPetView extends GetView<AddPetController> {
 
                   // Pet type dropdown
                   Text(
-                    'Jenis Hewan *',
+                    'Pet Type *',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -262,7 +262,7 @@ class AddPetView extends GetView<AddPetController> {
                           value: controller.selectedType.value,
                           isExpanded: true,
                           hint: Text(
-                            'Pilih jenis hewan',
+                            'Select pet type',
                             style: GoogleFonts.poppins(color: Colors.grey),
                           ),
                           items: controller.typeOptions.map((String type) {
@@ -285,8 +285,8 @@ class AddPetView extends GetView<AddPetController> {
                   // Breed
                   CustomTextField(
                     controller: controller.breedController,
-                    labelText: 'Ras/Breed *',
-                    hintText: 'Contoh: Golden Retriever, Persia, dll',
+                    labelText: 'Breed *',
+                    hintText: 'Example: Golden Retriever, Persian, etc',
                     prefixIcon: const Icon(Icons.category),
                     validator: controller.validateRequired,
                   ),
@@ -295,8 +295,8 @@ class AddPetView extends GetView<AddPetController> {
                   // Age
                   CustomTextField(
                     controller: controller.ageController,
-                    labelText: 'Umur *',
-                    hintText: 'Contoh: 2 tahun, 6 bulan',
+                    labelText: 'Age *',
+                    hintText: 'Example: 2 years, 6 months',
                     prefixIcon: const Icon(Icons.cake),
                     validator: controller.validateAge,
                   ),
@@ -304,7 +304,7 @@ class AddPetView extends GetView<AddPetController> {
 
                   // Gender dropdown
                   Text(
-                    'Jenis Kelamin *',
+                    'Gender *',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -357,9 +357,9 @@ class AddPetView extends GetView<AddPetController> {
                   // Description
                   CustomTextField(
                     controller: controller.descriptionController,
-                    labelText: 'Deskripsi (Opsional)',
+                    labelText: 'Description (Optional)',
                     hintText:
-                        'Ceritakan tentang karakter, kebiasaan, atau kondisi khusus hewan',
+                        'Tell about the pet\'s character, habits, or special conditions',
                     prefixIcon: const Icon(Icons.description),
                     keyboardType: TextInputType.multiline,
                   ),
@@ -396,7 +396,7 @@ class AddPetView extends GetView<AddPetController> {
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
-                                    'Menyimpan...',
+                                    'Saving...',
                                     style: GoogleFonts.poppins(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
@@ -407,7 +407,7 @@ class AddPetView extends GetView<AddPetController> {
                               ),
                             )
                           : Button1(
-                              text: 'Simpan Data Hewan',
+                              text: 'Save Pet Data',
                               onPressed: () => controller.submitPet(),
                             ),
                     ),
@@ -427,7 +427,7 @@ class AddPetView extends GetView<AddPetController> {
                         ),
                       ),
                       child: Text(
-                        'Batal',
+                        'Cancel',
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

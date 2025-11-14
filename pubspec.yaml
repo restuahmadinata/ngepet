@@ -55,7 +55,7 @@ dependencies:
   # Image picker for selecting images from gallery/camera
   image_picker: ^1.0.7
 
-  # HTTP client for uploading to Cloudinary
+  # HTTP client
   http: ^1.1.0
 
   # OpenStreetMap for FREE location picker (no API key needed!)

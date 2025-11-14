@@ -74,7 +74,7 @@ class EditShelterProfileController extends GetxController {
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Gagal memuat data: ${e.toString()}",
+        "Failed to load data: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -95,8 +95,8 @@ class EditShelterProfileController extends GetxController {
       if (image != null) {
         profileImage.value = File(image.path);
         Get.snackbar(
-          "Berhasil",
-          "Foto profil shelter dipilih",
+          "Success",
+          "Shelter profile photo selected",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -106,7 +106,7 @@ class EditShelterProfileController extends GetxController {
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Gagal memilih foto: ${e.toString()}",
+        "Failed to select photo: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -121,7 +121,7 @@ class EditShelterProfileController extends GetxController {
     if (!ImgBBConfig.isConfigured) {
       Get.snackbar(
         "Error",
-        "ImgBB API key belum dikonfigurasi",
+        "ImgBB API key not configured",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -152,7 +152,7 @@ class EditShelterProfileController extends GetxController {
       print('Error uploading profile image: $e');
       Get.snackbar(
         "Error",
-        "Gagal upload foto: ${e.toString()}",
+        "Failed to upload photo: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -221,8 +221,8 @@ class EditShelterProfileController extends GetxController {
           city.value = cityName ?? '';
           
           Get.snackbar(
-            "Berhasil",
-            "Alamat berhasil diisi otomatis",
+            "Success",
+            "Address filled automatically",
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.green,
             colorText: Colors.white,
@@ -234,7 +234,7 @@ class EditShelterProfileController extends GetxController {
       print('Error reverse geocoding: $e');
       Get.snackbar(
         "Info",
-        "Tidak dapat mengisi alamat otomatis. Silakan isi manual jika diperlukan.",
+        "Cannot fill address automatically. Please fill manually if needed.",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
@@ -248,7 +248,7 @@ class EditShelterProfileController extends GetxController {
     if (!formKey.currentState!.validate()) {
       Get.snackbar(
         "Error",
-        "Mohon lengkapi form dengan benar",
+        "Please complete the form correctly",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -260,7 +260,7 @@ class EditShelterProfileController extends GetxController {
     if (user == null) {
       Get.snackbar(
         "Error",
-        "Anda harus login terlebih dahulu",
+        "You must login first",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -303,8 +303,8 @@ class EditShelterProfileController extends GetxController {
       // Then show success notification
       await Future.delayed(const Duration(milliseconds: 300));
       Get.snackbar(
-        "Berhasil",
-        "Profil shelter berhasil diperbarui",
+        "Success",
+        "Shelter profile has been updated",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -316,7 +316,7 @@ class EditShelterProfileController extends GetxController {
       
       Get.snackbar(
         "Error",
-        "Gagal memperbarui profil: ${e.toString()}",
+        "Failed to update profile: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -328,17 +328,17 @@ class EditShelterProfileController extends GetxController {
   // Validators
   String? validateRequired(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Field ini wajib diisi';
+      return 'This field is required';
     }
     return null;
   }
 
   String? validatePhone(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Nomor telepon wajib diisi';
+      return 'Phone number is required';
     }
     if (!RegExp(r'^[\d\s\+\-\(\)]+$').hasMatch(value)) {
-      return 'Format nomor telepon tidak valid';
+      return 'Invalid phone number format';
     }
     return null;
   }

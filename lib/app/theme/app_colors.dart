@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Warna Primer (Shade 500) dan Teks
+  // Primary Color (Shade 500) and Text
   static const Color primary = green500;
   static const Color accent =
-      neutral500; // Menggunakan Neutral 500 sebagai warna aksen umum
+      neutral500; // Using Neutral 500 as general accent color
   static const Color background =
-      neutral100; // Menggunakan Neutral 100 sebagai latar belakang utama
+      neutral100; // Using Neutral 100 as main background
   static const Color textDark =
-      neutral900; // Menggunakan Neutral 900 sebagai teks gelap
+      neutral900; // Using Neutral 900 as dark text
   static const Color textLight = Colors.white;
 
   // ===================================

@@ -49,8 +49,8 @@ class AddEventController extends GetxController {
       if (images.isNotEmpty) {
         selectedImages.value = images.map((image) => File(image.path)).toList();
         Get.snackbar(
-          "Berhasil",
-          "${images.length} foto dipilih",
+          "Success",
+          "${images.length} photos selected",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -60,7 +60,7 @@ class AddEventController extends GetxController {
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Gagal memilih foto: ${e.toString()}",
+        "Failed to select photos: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -81,7 +81,7 @@ class AddEventController extends GetxController {
     if (!ImgBBConfig.isConfigured) {
       Get.snackbar(
         "Error",
-        "ImgBB API key belum dikonfigurasi. Silakan cek file imgbb_config.dart",
+        "ImgBB API key not configured. Please check imgbb_config.dart file",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -164,7 +164,7 @@ class AddEventController extends GetxController {
     if (selectedDate.value == null) {
       Get.snackbar(
         "Error",
-        "Silakan pilih tanggal event",
+        "Please select event date",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -176,7 +176,7 @@ class AddEventController extends GetxController {
     if (user == null) {
       Get.snackbar(
         "Error",
-        "Anda harus login sebagai shelter terlebih dahulu",
+        "You must login as a shelter first",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -196,7 +196,7 @@ class AddEventController extends GetxController {
       if (!shelterDoc.exists) {
         Get.snackbar(
           "Error",
-          "Data shelter tidak ditemukan. Silakan daftar sebagai shelter terlebih dahulu.",
+          "Shelter data not found. Please register as a shelter first.",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -211,7 +211,7 @@ class AddEventController extends GetxController {
       if (verificationStatus != 'approved') {
         Get.snackbar(
           "Error",
-          "Shelter Anda belum diverifikasi. Status: $verificationStatus",
+          "Your shelter is not verified yet. Status: $verificationStatus",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -233,17 +233,17 @@ class AddEventController extends GetxController {
 
       // Add event to Firestore
       final docRef = await _firestore.collection('events').add({
-        'title': titleController.text.trim(),
-        'description': descriptionController.text.trim(),
+        'eventTitle': titleController.text.trim(),
+        'eventDescription': descriptionController.text.trim(),
         'location': locationController.text.trim(),
-        'date':
+        'eventDate':
             '${selectedDate.value!.day}/${selectedDate.value!.month}/${selectedDate.value!.year}',
-        'time': selectedTime.value != null ? timeController.text : '',
+        'eventTime': selectedTime.value != null ? timeController.text : '',
         'dateTime': Timestamp.fromDate(eventDateTime),
-        'shelter': shelterName,
+        'shelterName': shelterName,
         'shelterId': user.uid,
         'imageUrls': [], // Will be updated after upload
-        'status': 'upcoming',
+        'eventStatus': 'upcoming',
         'createdAt': Timestamp.now(),
         'updatedAt': Timestamp.now(),
       });
@@ -262,8 +262,8 @@ class AddEventController extends GetxController {
       }
 
       Get.snackbar(
-        "Berhasil",
-        "Event '${titleController.text.trim()}' berhasil ditambahkan",
+        "Success",
+        "Event '${titleController.text.trim()}' has been added",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -286,7 +286,7 @@ class AddEventController extends GetxController {
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Gagal menambahkan event: ${e.toString()}",
+        "Failed to add event: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -310,27 +310,27 @@ class AddEventController extends GetxController {
   // Validation methods
   String? validateRequired(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Field ini wajib diisi';
+      return 'This field is required';
     }
     return null;
   }
 
   String? validateTitle(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Judul event wajib diisi';
+      return 'Event title is required';
     }
     if (value.length < 5) {
-      return 'Judul event minimal 5 karakter';
+      return 'Event title must be at least 5 characters';
     }
     return null;
   }
 
   String? validateDescription(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Deskripsi event wajib diisi';
+      return 'Event description is required';
     }
     if (value.length < 10) {
-      return 'Deskripsi minimal 10 karakter';
+      return 'Description must be at least 10 characters';
     }
     return null;
   }

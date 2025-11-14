@@ -89,7 +89,7 @@ class AppTheme {
       error: Colors.red,
     ),
 
-    // --- 2. Text Theme (Menggunakan cached text theme) ---
+    // --- 2. Text Theme (Using cached text theme) ---
     textTheme: _buildTextTheme(),
   );
 }

@@ -65,7 +65,7 @@ class ProfileView extends StatelessWidget {
           final user = controller.userData.value;
           if (user == null) {
             return const Center(
-              child: Text('Data user tidak ditemukan'),
+              child: Text('User data not found'),
             );
           }
 
@@ -82,9 +82,9 @@ class ProfileView extends StatelessWidget {
                         radius: 90,
                         backgroundColor: Colors.grey[200],
                         child: ClipOval(
-                          child: user.fotoProfil != null
+                          child: user.profilePhoto != null
                               ? CachedNetworkImage(
-                                  imageUrl: user.fotoProfil!,
+                                  imageUrl: user.profilePhoto!,
                                   width: 180,
                                   height: 180,
                                   fit: BoxFit.cover,
@@ -110,14 +110,14 @@ class ProfileView extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        user.namaLengkap,
+                        user.fullName,
                         style: GoogleFonts.poppins(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      if (user.alamat != null && user.alamat!.isNotEmpty)
+                      if (user.address != null && user.address!.isNotEmpty)
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -126,7 +126,7 @@ class ProfileView extends StatelessWidget {
                             const SizedBox(width: 4),
                             Flexible(
                               child: Text(
-                                user.alamat!,
+                                user.address!,
                                 style: GoogleFonts.poppins(
                                   fontSize: 13,
                                   color: Colors.grey,
@@ -138,7 +138,7 @@ class ProfileView extends StatelessWidget {
                             ),
                           ],
                         ),
-                      if (user.noTelepon != null) ...[
+                      if (user.phoneNumber != null) ...[
                         const SizedBox(height: 8),
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -147,7 +147,7 @@ class ProfileView extends StatelessWidget {
                                 size: 20, color: Colors.grey),
                             const SizedBox(width: 4),
                             Text(
-                              user.noTelepon!,
+                              user.phoneNumber!,
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 color: Colors.grey,
@@ -172,19 +172,19 @@ class ProfileView extends StatelessWidget {
                       children: [
                         _buildMenuItem(
                           icon: Icons.edit,
-                          title: 'Edit Profil',
+                          title: 'Edit Profile',
                           onTap: controller.goToEditProfile,
                         ),
                         _buildMenuItem(
                           icon: Icons.info,
-                          title: 'Tentang Kami',
+                          title: 'About Us',
                           onTap: () {
                             // Handle about us
                           },
                         ),
                         _buildMenuItem(
                           icon: Icons.assignment,
-                          title: 'Status Pengajuan Adopsi',
+                          title: 'Adoption Request Status',
                           onTap: () {
                             // Handle adoption status
                           },
@@ -204,7 +204,7 @@ class ProfileView extends StatelessWidget {
                     ),
                     child: _buildMenuItem(
                       icon: Icons.logout,
-                      title: 'Keluar',
+                      title: 'Logout',
                       textColor: Colors.red,
                       onTap: () async {
                         await Get.find<AuthController>().signOut();

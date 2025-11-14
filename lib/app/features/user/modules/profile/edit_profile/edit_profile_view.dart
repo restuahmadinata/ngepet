@@ -19,7 +19,7 @@ class EditProfileView extends GetView<EditProfileController> {
         backgroundColor: AppColors.primary,
         elevation: 0,
         title: Text(
-          'Edit Profil',
+          'Edit Profile',
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -99,7 +99,7 @@ class EditProfileView extends GetView<EditProfileController> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Ketuk untuk mengubah foto',
+                          'Tap to change photo',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             color: AppColors.neutral600,
@@ -114,8 +114,8 @@ class EditProfileView extends GetView<EditProfileController> {
                   const SizedBox(height: 8),
                   CustomTextField(
                     controller: controller.fullNameController,
-                    labelText: 'Nama Lengkap',
-                    hintText: 'Masukkan nama lengkap',
+                    labelText: 'Full Name',
+                    hintText: 'Enter your full name',
                     prefixIcon: const Icon(Icons.person),
                     validator: controller.validateRequired,
                   ),
@@ -125,8 +125,8 @@ class EditProfileView extends GetView<EditProfileController> {
                   const SizedBox(height: 8),
                   CustomTextField(
                     controller: controller.phoneNumberController,
-                    labelText: 'Nomor Telepon',
-                    hintText: 'Contoh: 08123456789',
+                    labelText: 'Phone Number',
+                    hintText: 'Example: 08123456789',
                     prefixIcon: const Icon(Icons.phone),
                     keyboardType: TextInputType.phone,
                     validator: controller.validatePhone,
@@ -135,7 +135,7 @@ class EditProfileView extends GetView<EditProfileController> {
 
                   // Gender
                   Text(
-                    'Jenis Kelamin',
+                    'Gender',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -154,7 +154,7 @@ class EditProfileView extends GetView<EditProfileController> {
                           child: DropdownButton<String>(
                             value: controller.selectedGender.value,
                             hint: Text(
-                              'Pilih Jenis Kelamin',
+                              'Select Gender',
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 color: AppColors.neutral600,
@@ -180,7 +180,7 @@ class EditProfileView extends GetView<EditProfileController> {
 
                   // Birth Date
                   Text(
-                    'Tanggal Lahir',
+                    'Birth Date',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -204,7 +204,7 @@ class EditProfileView extends GetView<EditProfileController> {
                               Text(
                                 controller.selectedDate.value != null
                                     ? '${controller.selectedDate.value!.day}/${controller.selectedDate.value!.month}/${controller.selectedDate.value!.year}'
-                                    : 'Pilih Tanggal Lahir',
+                                    : 'Select Birth Date',
                                 style: GoogleFonts.poppins(
                                   fontSize: 14,
                                   color: controller.selectedDate.value != null
@@ -220,7 +220,7 @@ class EditProfileView extends GetView<EditProfileController> {
 
                   // Location Section
                   Text(
-                    'Lokasi',
+                    'Location',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -251,7 +251,7 @@ class EditProfileView extends GetView<EditProfileController> {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    'Alamat Terpilih:',
+                                    'Selected Address:',
                                     style: GoogleFonts.poppins(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -272,7 +272,7 @@ class EditProfileView extends GetView<EditProfileController> {
                             if (controller.city.value.isNotEmpty) ...[
                               const SizedBox(height: 4),
                               Text(
-                                'Kota: ${controller.city.value}',
+                                'City: ${controller.city.value}',
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   color: AppColors.neutral600,
@@ -284,7 +284,7 @@ class EditProfileView extends GetView<EditProfileController> {
                                 controller.longitude.value != null) ...[
                               const SizedBox(height: 4),
                               Text(
-                                'Koordinat: ${controller.latitude.value!.toStringAsFixed(6)}, ${controller.longitude.value!.toStringAsFixed(6)}',
+                                'Coordinates: ${controller.latitude.value!.toStringAsFixed(6)}, ${controller.longitude.value!.toStringAsFixed(6)}',
                                 style: GoogleFonts.poppins(
                                   fontSize: 11,
                                   color: AppColors.neutral500,
@@ -330,8 +330,8 @@ class EditProfileView extends GetView<EditProfileController> {
                       icon: const Icon(Icons.map),
                       label: Text(
                         controller.address.value.isEmpty 
-                            ? 'Pilih Lokasi di Peta'
-                            : 'Ubah Lokasi',
+                            ? 'Select Location on Map'
+                            : 'Change Location',
                         style: GoogleFonts.poppins(fontSize: 14),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -353,7 +353,7 @@ class EditProfileView extends GetView<EditProfileController> {
                           ),
                         )
                       : Button1(
-                          text: 'SIMPAN PERUBAHAN',
+                          text: 'SAVE CHANGES',
                           onPressed: controller.updateProfile,
                         )),
                   const SizedBox(height: 16),

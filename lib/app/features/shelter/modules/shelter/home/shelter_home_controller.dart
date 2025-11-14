@@ -79,17 +79,17 @@ class ShelterHomeController extends GetxController {
   // Navigation methods
   void goToManagePets() {
     // TODO: Implement manage pets page
-    Get.snackbar("Info", "Fitur kelola hewan sedang dalam pengembangan");
+    Get.snackbar("Info", "Pet management feature is under development");
   }
 
   void goToManageEvents() {
     // TODO: Implement manage events page
-    Get.snackbar("Info", "Fitur kelola event sedang dalam pengembangan");
+    Get.snackbar("Info", "Event management feature is under development");
   }
 
   void goToAdoptionRequests() {
     // TODO: Implement adoption requests page
-    Get.snackbar("Info", "Fitur pengajuan adopsi sedang dalam pengembangan");
+    Get.snackbar("Info", "Adoption request feature is under development");
   }
 
   void goToAddPet() {

@@ -61,7 +61,7 @@ class LoginView extends GetView<LoginController> {
                 Text(
                   "Login",
                   textAlign: TextAlign.center,
-                  // Menggunakan headlineSmall (H3) dari TextTheme
+                  // Using headlineSmall (H3) from TextTheme
                   style: textTheme.headlineSmall?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
@@ -69,7 +69,7 @@ class LoginView extends GetView<LoginController> {
                 ),
                 const SizedBox(height: 40),
 
-                // 2. Input Email - MENGGUNAKAN CustomTextField
+                // 2. Email Input - USING CustomTextField
                 CustomTextField(
                   controller: controller.emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -81,7 +81,7 @@ class LoginView extends GetView<LoginController> {
                 ),
                 const SizedBox(height: 16),
 
-                // 3. Input Password - MENGGUNAKAN CustomTextField
+                // 3. Password Input - USING CustomTextField
                 Obx(
                   () => CustomTextField(
                     controller: controller.passwordController,
@@ -118,7 +118,7 @@ class LoginView extends GetView<LoginController> {
                           ? null 
                           : controller.forgotPassword,
                       child: Text(
-                        'Lupa Password?',
+                        'Forgot Password?',
                         style: TextStyle(
                           color: controller.isLoading.value 
                               ? colorScheme.outline 
@@ -141,7 +141,7 @@ class LoginView extends GetView<LoginController> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'Sedang login...',
+                                'Logging in...',
                                 style: textTheme.bodyMedium?.copyWith(
                                   color: colorScheme.onSurfaceVariant,
                                 ),

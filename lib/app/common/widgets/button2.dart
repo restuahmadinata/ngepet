@@ -16,7 +16,7 @@ class Button2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ambil warna teks dasar (Dark Text) dari tema
+    // Get base text color (Dark Text) from theme
     final textStyle = GoogleFonts.poppins(
       fontSize: 16,
       fontWeight: FontWeight.w600,
@@ -27,29 +27,29 @@ class Button2 extends StatelessWidget {
 
       // --- STYLING BUTTON ---
       style: OutlinedButton.styleFrom(
-        // 1. Warna Teks (Foreground) - Warna teks tombol harus mengikuti warna stroke
-        foregroundColor: AppColors.neutral900, // Warna teks aktif (Hitam/N9)
-        disabledForegroundColor: AppColors.neutral500, // Abu-abu saat disabled
-        // 2. Bentuk dan Radius
+        // 1. Text Color (Foreground) - Button text should follow stroke color
+        foregroundColor: AppColors.neutral900, // Active text color (Black/N9)
+        disabledForegroundColor: AppColors.neutral500, // Gray when disabled
+        // 2. Shape and Radius
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
             8.0,
-          ), // Corner radius: 8 (Sama dengan Button1)
+          ), // Corner radius: 8 (Same as Button1)
         ),
 
-        // 3. Stroke (Border) - Ini adalah perbedaan utama dari ElevatedButton
+        // 3. Stroke (Border) - This is the main difference from ElevatedButton
         side: BorderSide(
           color: isEnabled
               ? AppColors
                     .neutral900 // Stroke: #000000 (Neutral/N9)
-              : AppColors.neutral500, // Stroke saat disabled
+              : AppColors.neutral500, // Stroke when disabled
           width: 1.0, // Weight: 1
         ),
 
         // 4. Padding
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
 
-        // 5. Text Style (Sama seperti Button1 untuk konsistensi)
+        // 5. Text Style (Same as Button1 for consistency)
         textStyle: textStyle,
       ),
 

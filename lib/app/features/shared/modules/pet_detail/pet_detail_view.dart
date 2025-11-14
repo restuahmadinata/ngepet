@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
+import '../../../../routes/app_routes.dart';
 
 class PetDetailView extends StatefulWidget {
   final Map<String, dynamic> petData;
@@ -163,8 +165,9 @@ class _PetDetailViewState extends State<PetDetailView> {
                         children: [
                           Expanded(
                             child: Text(
-                              widget.petData['name']?.toString() ??
-                                  'Nama Hewan',
+                              widget.petData['petName']?.toString() ??
+                                  widget.petData['name']?.toString() ??
+                                  'Pet Name',
                               style: GoogleFonts.poppins(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
@@ -179,8 +182,7 @@ class _PetDetailViewState extends State<PetDetailView> {
                             ),
                             decoration: BoxDecoration(
                               color:
-                                  widget.petData['gender']?.toString() ==
-                                      'Jantan'
+                                  (widget.petData['gender']?.toString() == 'Male')
                                   ? Colors.blue[100]
                                   : Colors.pink[100],
                               borderRadius: BorderRadius.circular(20),
@@ -188,27 +190,24 @@ class _PetDetailViewState extends State<PetDetailView> {
                             child: Row(
                               children: [
                                 Icon(
-                                  widget.petData['gender']?.toString() ==
-                                          'Jantan'
+                                  (widget.petData['gender']?.toString() == 'Male')
                                       ? Icons.male
                                       : Icons.female,
                                   size: 16,
                                   color:
-                                      widget.petData['gender']?.toString() ==
-                                          'Jantan'
+                                      (widget.petData['gender']?.toString() == 'Male')
                                       ? Colors.blue[700]
                                       : Colors.pink[700],
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
                                   widget.petData['gender']?.toString() ??
-                                      'Jantan',
+                                      'Male',
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     color:
-                                        widget.petData['gender']?.toString() ==
-                                            'Jantan'
+                                        (widget.petData['gender']?.toString() == 'Male')
                                         ? Colors.blue[700]
                                         : Colors.pink[700],
                                   ),
@@ -225,15 +224,15 @@ class _PetDetailViewState extends State<PetDetailView> {
                         children: [
                           _buildInfoCard(
                             icon: Icons.pets,
-                            label: 'Ras',
+                            label: 'Breed',
                             value: widget.petData['breed']?.toString() ?? '-',
                             color: Colors.orange,
                           ),
                           const SizedBox(width: 12),
                           _buildInfoCard(
                             icon: Icons.cake,
-                            label: 'Umur',
-                            value: widget.petData['age']?.toString() ?? '-',
+                            label: 'Age',
+                            value: '${widget.petData['ageMonths']?.toString() ?? widget.petData['age']?.toString() ?? '-'} months',
                             color: Colors.green,
                           ),
                         ],
@@ -243,7 +242,7 @@ class _PetDetailViewState extends State<PetDetailView> {
 
                       // Description
                       Text(
-                        'Deskripsi',
+                        'Description',
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -253,7 +252,7 @@ class _PetDetailViewState extends State<PetDetailView> {
                       const SizedBox(height: 8),
                       Text(
                         widget.petData['description']?.toString() ??
-                            'Tidak ada deskripsi.',
+                            'No description available.',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: Colors.black54,
@@ -266,29 +265,56 @@ class _PetDetailViewState extends State<PetDetailView> {
                       // Location
                       _buildDetailRow(
                         icon: Icons.location_on,
-                        label: 'Lokasi',
+                        label: 'Location',
                         value: widget.petData['location']?.toString() ?? '-',
                         iconColor: Colors.red,
                       ),
                       const SizedBox(height: 12),
 
                       // Shelter
-                      _buildDetailRow(
-                        icon: Icons.home,
-                        label: 'Shelter',
-                        value:
-                            widget.petData['shelterName']?.toString() ??
-                            widget.petData['shelter']?.toString() ??
-                            '-',
-                        iconColor: Colors.blue,
+                      GestureDetector(
+                        onTap: () {
+                          // Navigate to shelter profile
+                          print('🔍 Pet data keys: ${widget.petData.keys}');
+                          print('🔍 ShelterId: ${widget.petData['shelterId']}');
+                          
+                          if (widget.petData['shelterId'] != null && 
+                              widget.petData['shelterId'].toString().isNotEmpty) {
+                            print('✅ Navigating to shelter profile');
+                            Get.toNamed(
+                              AppRoutes.shelterProfile,
+                              arguments: widget.petData['shelterId'],
+                            );
+                          } else {
+                            print('❌ No shelterId found');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Shelter data not available'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        },
+                        child: _buildDetailRow(
+                          icon: Icons.home,
+                          label: 'Shelter',
+                          value:
+                              widget.petData['shelterName']?.toString() ??
+                              widget.petData['shelter']?.toString() ??
+                              '-',
+                          iconColor: Colors.blue,
+                          isClickable: widget.petData['shelterId'] != null &&
+                              widget.petData['shelterId'].toString().isNotEmpty,
+                        ),
                       ),
                       const SizedBox(height: 12),
 
                       // Type
                       _buildDetailRow(
                         icon: Icons.category,
-                        label: 'Jenis',
-                        value: widget.petData['type']?.toString() ?? '-',
+                        label: 'Category',
+                        value: widget.petData['category']?.toString() ?? 
+                               widget.petData['type']?.toString() ?? '-',
                         iconColor: Colors.purple,
                       ),
 
@@ -325,14 +351,14 @@ class _PetDetailViewState extends State<PetDetailView> {
                     // TODO: Implement chat functionality
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Fitur chat akan segera hadir!'),
+                        content: Text('Chat feature coming soon!'),
                         duration: Duration(seconds: 2),
                       ),
                     );
                   },
                   icon: const Icon(Icons.chat_bubble_outline),
                   label: Text(
-                    'Chat Pemilik',
+                    'Chat Owner',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -357,14 +383,14 @@ class _PetDetailViewState extends State<PetDetailView> {
                     // TODO: Implement adoption functionality
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Fitur adopsi akan segera hadir!'),
+                        content: Text('Adoption feature coming soon!'),
                         duration: Duration(seconds: 2),
                       ),
                     );
                   },
                   icon: const Icon(Icons.favorite),
                   label: Text(
-                    'Adopsi',
+                    'Adopt',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -433,6 +459,7 @@ class _PetDetailViewState extends State<PetDetailView> {
     required String label,
     required String value,
     required Color iconColor,
+    bool isClickable = false,
   }) {
     return Row(
       children: [
@@ -453,13 +480,26 @@ class _PetDetailViewState extends State<PetDetailView> {
                 label,
                 style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
               ),
-              Text(
-                value,
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isClickable ? Colors.blue[700] : Colors.black87,
+                        decoration: isClickable ? TextDecoration.underline : null,
+                      ),
+                    ),
+                  ),
+                  if (isClickable)
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: Colors.blue[700],
+                    ),
+                ],
               ),
             ],
           ),

@@ -19,7 +19,7 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
         backgroundColor: AppColors.primary,
         elevation: 0,
         title: Text(
-          'Edit Profil Shelter',
+          'Edit Shelter Profile',
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -99,7 +99,7 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Ketuk untuk mengubah foto',
+                          'Tap to change photo',
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             color: AppColors.neutral600,
@@ -114,8 +114,8 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                   const SizedBox(height: 8),
                   CustomTextField(
                     controller: controller.shelterNameController,
-                    labelText: 'Nama Shelter',
-                    hintText: 'Masukkan nama shelter',
+                    labelText: 'Shelter Name',
+                    hintText: 'Enter shelter name',
                     prefixIcon: const Icon(Icons.store),
                     validator: controller.validateRequired,
                   ),
@@ -125,8 +125,8 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                   const SizedBox(height: 8),
                   CustomTextField(
                     controller: controller.phoneController,
-                    labelText: 'Nomor Telepon',
-                    hintText: 'Contoh: 08123456789',
+                    labelText: 'Phone Number',
+                    hintText: 'Example: 08123456789',
                     prefixIcon: const Icon(Icons.phone),
                     keyboardType: TextInputType.phone,
                     validator: controller.validatePhone,
@@ -137,8 +137,8 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                   const SizedBox(height: 8),
                   CustomTextField(
                     controller: controller.descriptionController,
-                    labelText: 'Deskripsi',
-                    hintText: 'Ceritakan tentang shelter Anda',
+                    labelText: 'Description',
+                    hintText: 'Tell us about your shelter',
                     prefixIcon: const Icon(Icons.description),
                     keyboardType: TextInputType.multiline,
                   ),
@@ -146,7 +146,7 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
 
                   // Location Section
                   Text(
-                    'Lokasi',
+                    'Location',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -177,7 +177,7 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    'Alamat Terpilih:',
+                                    'Selected Address:',
                                     style: GoogleFonts.poppins(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -198,7 +198,7 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                             if (controller.city.value.isNotEmpty) ...[
                               const SizedBox(height: 4),
                               Text(
-                                'Kota: ${controller.city.value}',
+                                'City: ${controller.city.value}',
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   color: AppColors.neutral600,
@@ -210,7 +210,7 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                                 controller.longitude.value != null) ...[
                               const SizedBox(height: 4),
                               Text(
-                                'Koordinat: ${controller.latitude.value!.toStringAsFixed(6)}, ${controller.longitude.value!.toStringAsFixed(6)}',
+                                'Coordinates: ${controller.latitude.value!.toStringAsFixed(6)}, ${controller.longitude.value!.toStringAsFixed(6)}',
                                 style: GoogleFonts.poppins(
                                   fontSize: 11,
                                   color: AppColors.neutral500,
@@ -256,8 +256,8 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                       icon: const Icon(Icons.map),
                       label: Text(
                         controller.address.value.isEmpty 
-                            ? 'Pilih Lokasi di Peta'
-                            : 'Ubah Lokasi',
+                            ? 'Select Location on Map'
+                            : 'Change Location',
                         style: GoogleFonts.poppins(fontSize: 14),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -279,7 +279,7 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                           ),
                         )
                       : Button1(
-                          text: 'SIMPAN PERUBAHAN',
+                          text: 'SAVE CHANGES',
                           onPressed: controller.updateProfile,
                         )),
                   const SizedBox(height: 16),

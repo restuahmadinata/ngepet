@@ -14,7 +14,7 @@ class AddEventView extends GetView<AddEventController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Tambah Event',
+          'Add Event',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
             color: Colors.black,
@@ -47,7 +47,7 @@ class AddEventView extends GetView<AddEventController> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Buat event komunitas untuk mengajak adopsi atau kegiatan lainnya.',
+                            'Create a community event to encourage adoption or other activities.',
                             style: GoogleFonts.poppins(
                               fontSize: 12,
                               color: Colors.purple[800],
@@ -61,7 +61,7 @@ class AddEventView extends GetView<AddEventController> {
 
                   // Image picker section
                   Text(
-                    'Foto Event',
+                    'Event Photos',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -95,14 +95,14 @@ class AddEventView extends GetView<AddEventController> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Pilih Foto Event',
+                                    'Select Event Photos',
                                     style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       color: AppColors.neutral600,
                                     ),
                                   ),
                                   Text(
-                                    'Bisa pilih banyak foto',
+                                    'You can select multiple photos',
                                     style: GoogleFonts.poppins(
                                       fontSize: 12,
                                       color: AppColors.neutral500,
@@ -205,7 +205,7 @@ class AddEventView extends GetView<AddEventController> {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      '${controller.selectedImages.length} foto dipilih. Foto pertama akan jadi thumbnail.',
+                                      '${controller.selectedImages.length} photos selected. The first photo will be the thumbnail.',
                                       style: GoogleFonts.poppins(
                                         fontSize: 12,
                                         color: AppColors.neutral600,
@@ -219,7 +219,7 @@ class AddEventView extends GetView<AddEventController> {
                                       size: 18,
                                     ),
                                     label: Text(
-                                      'Pilih Lagi',
+                                      'Select More',
                                       style: GoogleFonts.poppins(fontSize: 12),
                                     ),
                                   ),
@@ -233,8 +233,8 @@ class AddEventView extends GetView<AddEventController> {
                   // Event title
                   CustomTextField(
                     controller: controller.titleController,
-                    labelText: 'Judul Event *',
-                    hintText: 'Contoh: Adoption Day Jakarta',
+                    labelText: 'Event Title *',
+                    hintText: 'Example: Adoption Day Jakarta',
                     prefixIcon: const Icon(Icons.title),
                     validator: controller.validateTitle,
                   ),
@@ -243,9 +243,9 @@ class AddEventView extends GetView<AddEventController> {
                   // Event description
                   CustomTextField(
                     controller: controller.descriptionController,
-                    labelText: 'Deskripsi Event *',
+                    labelText: 'Event Description *',
                     hintText:
-                        'Jelaskan detail event, tujuan, dan informasi penting lainnya',
+                        'Explain event details, purpose, and other important information',
                     prefixIcon: const Icon(Icons.description),
                     validator: controller.validateDescription,
                     keyboardType: TextInputType.multiline,
@@ -255,8 +255,8 @@ class AddEventView extends GetView<AddEventController> {
                   // Event location
                   CustomTextField(
                     controller: controller.locationController,
-                    labelText: 'Lokasi Event *',
-                    hintText: 'Alamat lengkap tempat event',
+                    labelText: 'Event Location *',
+                    hintText: 'Complete address of event venue',
                     prefixIcon: const Icon(Icons.location_on),
                     validator: controller.validateRequired,
                   ),
@@ -265,8 +265,8 @@ class AddEventView extends GetView<AddEventController> {
                   // Event date
                   CustomTextField(
                     controller: controller.dateController,
-                    labelText: 'Tanggal Event *',
-                    hintText: 'Pilih tanggal event',
+                    labelText: 'Event Date *',
+                    hintText: 'Select event date',
                     prefixIcon: const Icon(Icons.calendar_today),
                     readOnly: true,
                     onTap: () => controller.selectDate(context),
@@ -277,8 +277,8 @@ class AddEventView extends GetView<AddEventController> {
                   // Event time (optional)
                   CustomTextField(
                     controller: controller.timeController,
-                    labelText: 'Waktu Event (Opsional)',
-                    hintText: 'Pilih waktu event',
+                    labelText: 'Event Time (Optional)',
+                    hintText: 'Select event time',
                     prefixIcon: const Icon(Icons.access_time),
                     readOnly: true,
                     onTap: () => controller.selectTime(context),
@@ -316,7 +316,7 @@ class AddEventView extends GetView<AddEventController> {
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
-                                    'Menyimpan...',
+                                    'Saving...',
                                     style: GoogleFonts.poppins(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
@@ -327,7 +327,7 @@ class AddEventView extends GetView<AddEventController> {
                               ),
                             )
                           : Button1(
-                              text: 'Buat Event',
+                              text: 'Create Event',
                               onPressed: () => controller.submitEvent(),
                             ),
                     ),
@@ -347,7 +347,7 @@ class AddEventView extends GetView<AddEventController> {
                         ),
                       ),
                       child: Text(
-                        'Batal',
+                        'Cancel',
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

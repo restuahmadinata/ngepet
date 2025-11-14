@@ -78,7 +78,7 @@ class CustomTextField extends StatelessWidget {
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
 
-        // Fill/Background (Neutral/N1, diasumsikan sebagai colorScheme.surface)
+        // Fill/Background (Neutral/N1, assumed as colorScheme.surface)
         filled: true,
         fillColor: colorScheme.surface,
 
@@ -88,16 +88,16 @@ class CustomTextField extends StatelessWidget {
         enabledBorder: _getBorderStyle(color: AppColors.neutral900),
         border: _getBorderStyle(color: AppColors.neutral900),
 
-        // Border saat Error
+        // Border when Error
         errorBorder: _getBorderStyle(color: colorScheme.error),
         focusedErrorBorder: _getBorderStyle(
           color: colorScheme.error,
           width: 2.0,
         ),
 
-        // Focused Border - MENGGUNAKAN PRIMARY COLOR DARI THEME (GREEN)
+        // Focused Border - USING PRIMARY COLOR FROM THEME (GREEN)
         focusedBorder: _getBorderStyle(
-          color: colorScheme.primary, // Ini adalah AppColors.green500
+          color: colorScheme.primary, // This is AppColors.green500
           width: 2.0,
         ),
       ),

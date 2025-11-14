@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
+import '../../../../routes/app_routes.dart';
 
 class EventDetailView extends StatefulWidget {
   final Map<String, dynamic> eventData;
@@ -157,7 +159,9 @@ class _EventDetailViewState extends State<EventDetailView> {
                 children: [
                   // Event Title
                   Text(
-                    widget.eventData['title']?.toString() ?? 'Nama Event',
+                    widget.eventData['eventTitle']?.toString() ?? 
+                        widget.eventData['title']?.toString() ?? 
+                        'Event Name',
                     style: GoogleFonts.poppins(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -202,19 +206,19 @@ class _EventDetailViewState extends State<EventDetailView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.eventData['date']?.toString() ?? 'TBA',
+                                widget.eventData['eventDate']?.toString() ?? 
+                                    widget.eventData['date']?.toString() ?? 'TBA',
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black87,
                                 ),
                               ),
-                              if (widget.eventData['time']
-                                      ?.toString()
-                                      .isNotEmpty ??
-                                  false)
+                              if ((widget.eventData['startTime']?.toString().isNotEmpty ?? false) ||
+                                  (widget.eventData['time']?.toString().isNotEmpty ?? false))
                                 Text(
-                                  widget.eventData['time'].toString(),
+                                  widget.eventData['startTime']?.toString() ?? 
+                                      widget.eventData['time']?.toString() ?? '',
                                   style: GoogleFonts.poppins(
                                     fontSize: 14,
                                     color: Colors.black54,
@@ -232,25 +236,50 @@ class _EventDetailViewState extends State<EventDetailView> {
                   // Location
                   _buildDetailRow(
                     icon: Icons.location_on,
-                    label: 'Lokasi',
+                    label: 'Location',
                     value: widget.eventData['location']?.toString() ?? '-',
                     iconColor: Colors.red,
                   ),
                   const SizedBox(height: 16),
 
                   // Organizer
-                  _buildDetailRow(
-                    icon: Icons.business,
-                    label: 'Penyelenggara',
-                    value: widget.eventData['shelter']?.toString() ?? '-',
-                    iconColor: Colors.blue,
-                  ),
-
-                  const SizedBox(height: 24),
+                  GestureDetector(
+                    onTap: () {
+                      // Navigate to shelter profile
+                      print('🔍 Event data keys: ${widget.eventData.keys}');
+                      print('🔍 ShelterId: ${widget.eventData['shelterId']}');
+                      
+                      if (widget.eventData['shelterId'] != null && 
+                          widget.eventData['shelterId'].toString().isNotEmpty) {
+                        print('✅ Navigating to shelter profile');
+                        Get.toNamed(
+                          AppRoutes.shelterProfile,
+                          arguments: widget.eventData['shelterId'],
+                        );
+                      } else {
+                        print('❌ No shelterId found');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Shelter data not available'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
+                        child: _buildDetailRow(
+                      icon: Icons.business,
+                      label: 'Organizer',
+                      value: widget.eventData['shelterName']?.toString() ?? 
+                             widget.eventData['shelter']?.toString() ?? '-',
+                      iconColor: Colors.blue,
+                      isClickable: widget.eventData['shelterId'] != null &&
+                          widget.eventData['shelterId'].toString().isNotEmpty,
+                    ),
+                  ),                  const SizedBox(height: 24),
 
                   // Description
                   Text(
-                    'Deskripsi Event',
+                    'Event Description',
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -259,8 +288,9 @@ class _EventDetailViewState extends State<EventDetailView> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    widget.eventData['description']?.toString() ??
-                        'Tidak ada deskripsi untuk event ini.',
+                    widget.eventData['eventDescription']?.toString() ??
+                        widget.eventData['description']?.toString() ??
+                        'No description available for this event.',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       color: Colors.black54,
@@ -284,6 +314,7 @@ class _EventDetailViewState extends State<EventDetailView> {
     required String label,
     required String value,
     required Color iconColor,
+    bool isClickable = false,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,13 +337,26 @@ class _EventDetailViewState extends State<EventDetailView> {
                 style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
               ),
               const SizedBox(height: 2),
-              Text(
-                value,
-                style: GoogleFonts.poppins(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      value,
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: isClickable ? Colors.blue[700] : Colors.black87,
+                        decoration: isClickable ? TextDecoration.underline : null,
+                      ),
+                    ),
+                  ),
+                  if (isClickable)
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: Colors.blue[700],
+                    ),
+                ],
               ),
             ],
           ),

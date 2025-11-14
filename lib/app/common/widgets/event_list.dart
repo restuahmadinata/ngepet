@@ -56,6 +56,16 @@ class EventListItem extends StatelessWidget {
                     width: 150,
                     height: 150,
                     fit: BoxFit.cover,
+                    httpHeaders: const {
+                      'Connection': 'keep-alive',
+                      'User-Agent': 'Flutter App',
+                    },
+                    maxHeightDiskCache: 600,
+                    maxWidthDiskCache: 600,
+                    memCacheHeight: 600,
+                    memCacheWidth: 600,
+                    fadeInDuration: const Duration(milliseconds: 500),
+                    fadeOutDuration: const Duration(milliseconds: 200),
                     placeholder: (context, url) => Container(
                       width: 150,
                       height: 150,
@@ -79,7 +89,7 @@ class EventListItem extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Gagal memuat foto',
+                              'Failed to load photo',
                               style: GoogleFonts.poppins(
                                 fontSize: 10,
                                 color: Colors.grey,

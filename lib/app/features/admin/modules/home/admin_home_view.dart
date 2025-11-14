@@ -37,7 +37,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
             children: [
               // Welcome Section
               Text(
-                'Selamat Datang, Admin!',
+                'Welcome, Admin!',
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -46,7 +46,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Kelola pengguna dan verifikasi shelter',
+                'Manage users and verify shelters',
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: AppColors.neutral500,
@@ -63,22 +63,22 @@ class AdminHomeView extends GetView<AdminHomeController> {
                   children: [
                     _buildMenuCard(
                       icon: Icons.people,
-                      title: 'Kelola User',
-                      description: 'CRUD & Ubah Role',
+                      title: 'Manage Users',
+                      description: 'CRUD & Change Role',
                       color: AppColors.primary,
                       onTap: () => Get.toNamed('/admin/user-management'),
                     ),
                     _buildMenuCard(
                       icon: Icons.store,
-                      title: 'Verifikasi Shelter',
-                      description: 'Kelola Pengajuan',
+                      title: 'Shelter Verification',
+                      description: 'Manage Submissions',
                       color: AppColors.green700,
                       onTap: () => Get.toNamed('/admin/shelter-verification'),
                     ),
                     _buildMenuCard(
                       icon: Icons.pets,
-                      title: 'Total Hewan',
-                      description: 'Lihat Statistik',
+                      title: 'Total Pets',
+                      description: 'View Statistics',
                       color: AppColors.green500,
                       onTap: () {
                         // TODO: Navigate to statistics
@@ -86,8 +86,8 @@ class AdminHomeView extends GetView<AdminHomeController> {
                     ),
                     _buildMenuCard(
                       icon: Icons.event,
-                      title: 'Total Event',
-                      description: 'Lihat Statistik',
+                      title: 'Total Events',
+                      description: 'View Statistics',
                       color: Colors.orange,
                       onTap: () {
                         // TODO: Navigate to events statistics

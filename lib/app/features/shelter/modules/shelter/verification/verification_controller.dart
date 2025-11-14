@@ -118,7 +118,7 @@ class VerificationController extends GetxController {
     if (latitude.value == null || longitude.value == null) {
       Get.snackbar(
         "Error",
-        "Lokasi shelter wajib dipilih. Silakan pilih lokasi di peta.",
+        "Shelter location must be selected. Please select location on the map.",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -137,7 +137,7 @@ class VerificationController extends GetxController {
         if (passwordController.text.isEmpty || confirmPasswordController.text.isEmpty) {
           Get.snackbar(
             "Error",
-            "Password dan konfirmasi password wajib diisi",
+            "Password and confirm password are required",
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red,
             colorText: Colors.white,
@@ -149,7 +149,7 @@ class VerificationController extends GetxController {
         if (passwordController.text != confirmPasswordController.text) {
           Get.snackbar(
             "Error",
-            "Password dan konfirmasi password tidak sama",
+            "Password and confirm password do not match",
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red,
             colorText: Colors.white,
@@ -167,14 +167,14 @@ class VerificationController extends GetxController {
           
           user = userCredential.user;
         } on FirebaseAuthException catch (e) {
-          String msg = e.message ?? 'Terjadi kesalahan';
+          String msg = e.message ?? 'An error occurred';
           if (e.code == 'email-already-in-use') {
-            msg = 'Email sudah terdaftar. Silakan login terlebih dahulu.';
+            msg = 'Email already registered. Please login first.';
           } else if (e.code == 'weak-password') {
-            msg = 'Password terlalu lemah. Minimal 6 karakter.';
+            msg = 'Password is too weak. Minimum 6 characters.';
           }
           Get.snackbar(
-            "Pendaftaran Gagal",
+            "Registration Failed",
             msg,
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red,
@@ -188,7 +188,7 @@ class VerificationController extends GetxController {
       if (user == null) {
         Get.snackbar(
           "Error",
-          "Gagal membuat akun. Silakan coba lagi.",
+          "Failed to create account. Please try again.",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -221,18 +221,17 @@ class VerificationController extends GetxController {
         'description': descriptionController.text.trim(),
         'profilePhotoUrl': photoUrl,
         'verificationStatus': 'pending',
-        'statusVerifikasi': 'pending',
         'isVerified': false,
         'submittedAt': FieldValue.serverTimestamp(),
-        'tanggalVerifikasi': null,
+        'verificationDate': null,
         'createdAt': FieldValue.serverTimestamp(),
         'timestamp': FieldValue.serverTimestamp(),
-        'rejectionReason': FieldValue.delete(), // Hapus alasan penolakan sebelumnya jika ada
+        'rejectionReason': FieldValue.delete(), // Delete previous rejection reason if any
       }, SetOptions(merge: true));
 
       Get.snackbar(
-        "Berhasil Dikirim",
-        "Pengajuan verifikasi shelter Anda telah dikirim dan akan diproses dalam 1-3 hari kerja",
+        "Successfully Submitted",
+        "Your shelter verification request has been sent and will be processed within 1-3 business days",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -251,7 +250,7 @@ class VerificationController extends GetxController {
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Gagal mengirim pengajuan: ${e.toString()}",
+        "Failed to submit request: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -272,8 +271,8 @@ class VerificationController extends GetxController {
       if (image != null) {
         profileImage.value = File(image.path);
         Get.snackbar(
-          "Berhasil",
-          "Foto profil shelter dipilih",
+          "Success",
+          "Shelter profile photo selected",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -283,7 +282,7 @@ class VerificationController extends GetxController {
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Gagal memilih foto: ${e.toString()}",
+        "Failed to select photo: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -298,7 +297,7 @@ class VerificationController extends GetxController {
     if (!ImgBBConfig.isConfigured) {
       Get.snackbar(
         "Error",
-        "ImgBB API key belum dikonfigurasi",
+        "ImgBB API key not configured",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -329,7 +328,7 @@ class VerificationController extends GetxController {
       print('Error uploading profile image: $e');
       Get.snackbar(
         "Error",
-        "Gagal upload foto: ${e.toString()}",
+        "Failed to upload photo: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -398,8 +397,8 @@ class VerificationController extends GetxController {
           city.value = cityName ?? '';
           
           Get.snackbar(
-            "Berhasil",
-            "Alamat berhasil diisi otomatis",
+            "Success",
+            "Address filled automatically",
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.green,
             colorText: Colors.white,
@@ -411,7 +410,7 @@ class VerificationController extends GetxController {
       print('Error reverse geocoding: $e');
       Get.snackbar(
         "Info",
-        "Tidak dapat mengisi alamat otomatis. Silakan isi manual jika diperlukan.",
+        "Cannot fill address automatically. Please fill manually if needed.",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
@@ -423,17 +422,17 @@ class VerificationController extends GetxController {
   // Validation methods
   String? validateRequired(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Field ini wajib diisi';
+      return 'This field is required';
     }
     return null;
   }
 
   String? validatePhone(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Nomor telepon wajib diisi';
+      return 'Phone number is required';
     }
     if (!RegExp(r'^[0-9+\-\s()]+$').hasMatch(value)) {
-      return 'Format nomor telepon tidak valid';
+      return 'Invalid phone number format';
     }
     return null;
   }

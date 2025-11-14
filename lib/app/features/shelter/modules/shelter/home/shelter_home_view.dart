@@ -12,7 +12,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Dashboard Shelter',
+          'Shelter Dashboard',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
             color: Colors.black,
@@ -40,7 +40,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Selamat datang,',
+                      'Welcome,',
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         color: Colors.grey[600],
@@ -65,7 +65,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
                   children: [
                     Expanded(
                       child: _buildStatCard(
-                        'Hewan Saya',
+                        'My Pets',
                         controller.petCount.value.toString(),
                         Icons.pets,
                         Colors.blue,
@@ -74,7 +74,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _buildStatCard(
-                        'Event Saya',
+                        'My Events',
                         controller.eventCount.value.toString(),
                         Icons.event,
                         Colors.green,
@@ -83,7 +83,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _buildStatCard(
-                        'Pengajuan Adopsi',
+                        'Adoption Requests',
                         controller.adoptionRequestCount.value.toString(),
                         Icons.assignment,
                         Colors.orange,
@@ -96,7 +96,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
 
               // Quick actions section
               Text(
-                'Aksi Cepat',
+                'Quick Actions',
                 style: GoogleFonts.poppins(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -110,7 +110,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
                 children: [
                   Expanded(
                     child: _buildQuickActionButton(
-                      'Tambah Hewan',
+                      'Add Pet',
                       Icons.add_circle,
                       AppColors.primary,
                       controller.goToAddPet,
@@ -119,7 +119,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildQuickActionButton(
-                      'Tambah Event',
+                      'Add Event',
                       Icons.event_note,
                       Colors.purple,
                       controller.goToAddEvent,
@@ -131,7 +131,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
 
               // Profile section
               Text(
-                'Profil Shelter',
+                'Shelter Profile',
                 style: GoogleFonts.poppins(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -141,8 +141,8 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
               const SizedBox(height: 16),
 
               _buildMenuCard(
-                'Edit Profil Shelter',
-                'Perbarui informasi dan data shelter Anda',
+                'Edit Shelter Profile',
+                'Update your shelter information and data',
                 Icons.edit,
                 Colors.blue,
                 controller.goToEditProfile,
@@ -151,7 +151,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
 
               // Main menu section
               Text(
-                'Kelola Data',
+                'Manage Data',
                 style: GoogleFonts.poppins(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -162,24 +162,24 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
 
               // Menu items
               _buildMenuCard(
-                'Kelola Hewan Saya',
-                'Lihat, edit, dan hapus data hewan yang Anda upload',
+                'Manage My Pets',
+                'View, edit, and delete pet data you uploaded',
                 Icons.pets,
                 AppColors.primary,
                 controller.goToManagePets,
               ),
               const SizedBox(height: 12),
               _buildMenuCard(
-                'Kelola Event Saya',
-                'Lihat, edit, dan hapus event yang Anda buat',
+                'Manage My Events',
+                'View, edit, and delete events you created',
                 Icons.event,
                 Colors.purple,
                 controller.goToManageEvents,
               ),
               const SizedBox(height: 12),
               _buildMenuCard(
-                'Tinjau Pengajuan Adopsi',
-                'Kelola pengajuan adopsi untuk hewan Anda',
+                'Review Adoption Requests',
+                'Manage adoption requests for your pets',
                 Icons.assignment_turned_in,
                 Colors.orange,
                 controller.goToAdoptionRequests,
@@ -344,18 +344,18 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          'Keluar',
+          'Logout',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'Apakah Anda yakin ingin keluar dari akun shelter?',
+          'Are you sure you want to logout from your shelter account?',
           style: GoogleFonts.poppins(),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
             child: Text(
-              'Batal',
+              'Cancel',
               style: GoogleFonts.poppins(color: Colors.grey[600]),
             ),
           ),
@@ -365,7 +365,7 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
               controller.logout();
             },
             child: Text(
-              'Keluar',
+              'Logout',
               style: GoogleFonts.poppins(color: Colors.red),
             ),
           ),

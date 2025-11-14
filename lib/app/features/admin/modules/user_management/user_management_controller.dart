@@ -25,7 +25,7 @@ class UserManagementController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Gagal mengambil data user: $e',
+        'Failed to fetch user data: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
@@ -35,12 +35,12 @@ class UserManagementController extends GetxController {
 
   Future<void> updateUserRole(String uid, String newRole) async {
     try {
-      // Tidak perlu update role lagi karena users hanya untuk user biasa
-      // Field 'role' sudah tidak digunakan
+      // No need to update role anymore as users collection is only for regular users
+      // 'role' field is no longer used
       
       Get.snackbar(
         'Info',
-        'User sudah berada di koleksi yang tepat',
+        'User is already in the correct collection',
         snackPosition: SnackPosition.BOTTOM,
       );
 
@@ -48,7 +48,7 @@ class UserManagementController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Gagal mengubah role: $e',
+        'Failed to change role: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -56,15 +56,15 @@ class UserManagementController extends GetxController {
 
   Future<void> deleteUser(String uid) async {
     try {
-      // Hapus dari Firestore
+      // Delete from Firestore
       await _firestore.collection('users').doc(uid).delete();
 
-      // Note: Menghapus user dari Firebase Auth memerlukan Admin SDK
-      // Untuk saat ini kita hanya hapus dari Firestore
+      // Note: Deleting user from Firebase Auth requires Admin SDK
+      // For now we only delete from Firestore
 
       Get.snackbar(
-        'Sukses',
-        'User berhasil dihapus dari database',
+        'Success',
+        'User successfully deleted from database',
         snackPosition: SnackPosition.BOTTOM,
       );
 
@@ -72,7 +72,7 @@ class UserManagementController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Gagal menghapus user: $e',
+        'Failed to delete user: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -85,8 +85,8 @@ class UserManagementController extends GetxController {
       });
 
       Get.snackbar(
-        'Sukses',
-        currentStatus ? 'User dinonaktifkan' : 'User diaktifkan',
+        'Success',
+        currentStatus ? 'User deactivated' : 'User activated',
         snackPosition: SnackPosition.BOTTOM,
       );
 
@@ -94,7 +94,7 @@ class UserManagementController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Gagal mengubah status: $e',
+        'Failed to change status: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
     }

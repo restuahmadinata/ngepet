@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../../../routes/app_routes.dart'; // Wajib diimpor
+import '../../../../routes/app_routes.dart'; // Must be imported
 
 class StarterController extends GetxController {
   void goToLogin() {

@@ -61,7 +61,7 @@ class RegisterView extends GetView<RegisterController> {
                 Text(
                   "Register",
                   textAlign: TextAlign.center,
-                  // Menggunakan headlineSmall (H3) dari TextTheme
+                  // Using headlineSmall (H3) from TextTheme
                   style: textTheme.headlineSmall?.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
@@ -69,11 +69,11 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 40),
 
-                // 2. Input Nama - MENGGUNAKAN CustomTextField
+                // 2. Name Input - USING CustomTextField
                 CustomTextField(
                   controller: controller.nameController,
                   keyboardType: TextInputType.name,
-                  labelText: 'Nama',
+                  labelText: 'Name',
                   prefixIcon: Icon(
                     Icons.person_outline,
                     color: colorScheme.onSurfaceVariant,
@@ -81,7 +81,7 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 16),
 
-                // 3. Input Email - MENGGUNAKAN CustomTextField
+                // 3. Email Input - USING CustomTextField
                 CustomTextField(
                   controller: controller.emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -93,7 +93,7 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 16),
 
-                // 4. Input Password - MENGGUNAKAN CustomTextField
+                // 4. Password Input - USING CustomTextField
                 Obx(
                   () => CustomTextField(
                     controller: controller.passwordController,
@@ -121,19 +121,19 @@ class RegisterView extends GetView<RegisterController> {
                 ),
                 const SizedBox(height: 16),
 
-                // 5. Konfirmasi Password - MENGGUNAKAN CustomTextField
+                // 5. Confirm Password - USING CustomTextField
                 Obx(
                   () => CustomTextField(
                     controller: controller.confirmPasswordController,
                     obscureText: controller.isConfirmPasswordHidden.value,
-                    labelText: 'Konfirmasi Password',
+                    labelText: 'Confirm Password',
                     keyboardType: TextInputType.visiblePassword,
                     prefixIcon: Icon(
                       Icons.lock_outline,
                       color: colorScheme.onSurfaceVariant,
                     ),
 
-                    // Logika Icon Mata dimasukkan ke suffixIcon
+                    // Eye Icon logic added to suffixIcon
                     suffixIcon: IconButton(
                       icon: Icon(
                         controller.isConfirmPasswordHidden.value
@@ -160,7 +160,7 @@ class RegisterView extends GetView<RegisterController> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'Sedang mendaftar...',
+                                'Registering...',
                                 style: textTheme.bodyMedium?.copyWith(
                                   color: colorScheme.onSurfaceVariant,
                                 ),

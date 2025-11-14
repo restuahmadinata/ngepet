@@ -1,76 +1,80 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model untuk Event
+/// Model for Event
 /// Collection: events/{eventId}
 class Event {
   final String eventId;
   final String shelterId;
-  final String judulEvent;
-  final String deskripsiEvent;
-  final String lokasi;
-  final DateTime tanggalEvent;
-  final String? waktuMulai; // Format: HH:mm
-  final String? waktuSelesai; // Format: HH:mm
-  final String? fotoBanner;
-  final String statusEvent; // 'upcoming', 'ongoing', 'completed', 'cancelled'
+  final String eventTitle;
+  final String eventDescription;
+  final String location;
+  final DateTime eventDate;
+  final String? startTime; // Format: HH:mm
+  final String? endTime; // Format: HH:mm
+  final List<String> imageUrls; // Array of event image URLs
+  final String eventStatus; // 'upcoming', 'ongoing', 'completed', 'cancelled'
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
   Event({
     required this.eventId,
     required this.shelterId,
-    required this.judulEvent,
-    required this.deskripsiEvent,
-    required this.lokasi,
-    required this.tanggalEvent,
-    this.waktuMulai,
-    this.waktuSelesai,
-    this.fotoBanner,
-    this.statusEvent = 'upcoming',
+    required this.eventTitle,
+    required this.eventDescription,
+    required this.location,
+    required this.eventDate,
+    this.startTime,
+    this.endTime,
+    this.imageUrls = const [],
+    this.eventStatus = 'upcoming',
     this.createdAt,
     this.updatedAt,
   });
 
-  /// Factory constructor untuk membuat Event dari Firestore document
+  /// Factory constructor to create Event from Firestore document
   factory Event.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     
     return Event(
       eventId: doc.id,
       shelterId: data['shelterId'] ?? '',
-      judulEvent: data['judulEvent'] ?? data['title'] ?? '',
-      deskripsiEvent: data['deskripsiEvent'] ?? data['description'] ?? '',
-      lokasi: data['lokasi'] ?? data['location'] ?? '',
-      tanggalEvent: _parseTanggalEvent(data['tanggalEvent'] ?? data['dateTime']),
-      waktuMulai: data['waktuMulai'] ?? data['startTime'],
-      waktuSelesai: data['waktuSelesai'] ?? data['endTime'],
-      fotoBanner: data['fotoBanner'] ?? data['banner'] ?? data['imageUrl'],
-      statusEvent: data['statusEvent'] ?? data['status'] ?? 'upcoming',
+      eventTitle: data['eventTitle'] ?? '',
+      eventDescription: data['eventDescription'] ?? '',
+      location: data['location'] ?? '',
+      eventDate: _parseEventDate(data['eventDate']),
+      startTime: data['startTime'],
+      endTime: data['endTime'],
+      imageUrls: data['imageUrls'] != null 
+          ? List<String>.from(data['imageUrls'])
+          : [],
+      eventStatus: data['eventStatus'] ?? 'upcoming',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
-  /// Factory constructor untuk membuat Event dari Map
+  /// Factory constructor to create Event from Map
   factory Event.fromMap(Map<String, dynamic> data, String id) {
     return Event(
       eventId: id,
       shelterId: data['shelterId'] ?? '',
-      judulEvent: data['judulEvent'] ?? data['title'] ?? '',
-      deskripsiEvent: data['deskripsiEvent'] ?? data['description'] ?? '',
-      lokasi: data['lokasi'] ?? data['location'] ?? '',
-      tanggalEvent: _parseTanggalEvent(data['tanggalEvent'] ?? data['dateTime']),
-      waktuMulai: data['waktuMulai'] ?? data['startTime'],
-      waktuSelesai: data['waktuSelesai'] ?? data['endTime'],
-      fotoBanner: data['fotoBanner'] ?? data['banner'] ?? data['imageUrl'],
-      statusEvent: data['statusEvent'] ?? data['status'] ?? 'upcoming',
+      eventTitle: data['eventTitle'] ?? '',
+      eventDescription: data['eventDescription'] ?? '',
+      location: data['location'] ?? '',
+      eventDate: _parseEventDate(data['eventDate']),
+      startTime: data['startTime'],
+      endTime: data['endTime'],
+      imageUrls: data['imageUrls'] != null 
+          ? List<String>.from(data['imageUrls'])
+          : [],
+      eventStatus: data['eventStatus'] ?? 'upcoming',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
-  /// Helper untuk parsing tanggal event dari berbagai format
-  static DateTime _parseTanggalEvent(dynamic date) {
+  /// Helper to parse event date from various formats
+  static DateTime _parseEventDate(dynamic date) {
     if (date == null) return DateTime.now();
     if (date is Timestamp) return date.toDate();
     if (date is DateTime) return date;
@@ -92,19 +96,19 @@ class Event {
     return DateTime.now();
   }
 
-  /// Konversi Event ke Map untuk disimpan di Firestore
+  /// Convert Event to Map for saving to Firestore
   Map<String, dynamic> toMap() {
     return {
       'eventId': eventId,
       'shelterId': shelterId,
-      'judulEvent': judulEvent,
-      'deskripsiEvent': deskripsiEvent,
-      'lokasi': lokasi,
-      'tanggalEvent': Timestamp.fromDate(tanggalEvent),
-      'waktuMulai': waktuMulai,
-      'waktuSelesai': waktuSelesai,
-      'fotoBanner': fotoBanner,
-      'statusEvent': statusEvent,
+      'eventTitle': eventTitle,
+      'eventDescription': eventDescription,
+      'location': location,
+      'eventDate': Timestamp.fromDate(eventDate),
+      'startTime': startTime,
+      'endTime': endTime,
+      'imageUrls': imageUrls,
+      'eventStatus': eventStatus,
       'createdAt': createdAt != null 
           ? Timestamp.fromDate(createdAt!) 
           : FieldValue.serverTimestamp(),
@@ -112,32 +116,32 @@ class Event {
     };
   }
 
-  /// Copy dengan perubahan tertentu
+  /// Copy with specific changes
   Event copyWith({
     String? eventId,
     String? shelterId,
-    String? judulEvent,
-    String? deskripsiEvent,
-    String? lokasi,
-    DateTime? tanggalEvent,
-    String? waktuMulai,
-    String? waktuSelesai,
-    String? fotoBanner,
-    String? statusEvent,
+    String? eventTitle,
+    String? eventDescription,
+    String? location,
+    DateTime? eventDate,
+    String? startTime,
+    String? endTime,
+    List<String>? imageUrls,
+    String? eventStatus,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Event(
       eventId: eventId ?? this.eventId,
       shelterId: shelterId ?? this.shelterId,
-      judulEvent: judulEvent ?? this.judulEvent,
-      deskripsiEvent: deskripsiEvent ?? this.deskripsiEvent,
-      lokasi: lokasi ?? this.lokasi,
-      tanggalEvent: tanggalEvent ?? this.tanggalEvent,
-      waktuMulai: waktuMulai ?? this.waktuMulai,
-      waktuSelesai: waktuSelesai ?? this.waktuSelesai,
-      fotoBanner: fotoBanner ?? this.fotoBanner,
-      statusEvent: statusEvent ?? this.statusEvent,
+      eventTitle: eventTitle ?? this.eventTitle,
+      eventDescription: eventDescription ?? this.eventDescription,
+      location: location ?? this.location,
+      eventDate: eventDate ?? this.eventDate,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      imageUrls: imageUrls ?? this.imageUrls,
+      eventStatus: eventStatus ?? this.eventStatus,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -145,6 +149,6 @@ class Event {
 
   @override
   String toString() {
-    return 'Event(eventId: $eventId, judulEvent: $judulEvent, tanggalEvent: $tanggalEvent)';
+    return 'Event(eventId: $eventId, eventTitle: $eventTitle, eventDate: $eventDate)';
   }
 }

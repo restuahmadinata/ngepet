@@ -16,7 +16,7 @@ import 'package:google_fonts/google_fonts.dart';
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
 
-  // 1. Daftar halaman dipindahkan ke luar 'build' agar state-nya terjaga
+  // 1. Page list moved outside 'build' to maintain state
   final List<Widget> _pages = const [
     AdoptView(),
     EventView(),
@@ -25,7 +25,7 @@ class HomeView extends GetView<HomeController> {
     ProfileView(),
   ];
 
-  // 2. Definisikan index untuk "Home" agar mudah dibaca
+  // 2. Define index for "Home" for readability
   static const int _homeIndex = 2;
 
   @override
@@ -33,9 +33,9 @@ class HomeView extends GetView<HomeController> {
     return Obx(() {
       final currentIndex = controller.currentIndex.value;
       return Scaffold(
-        // 3. Tambahan untuk memperbaiki masalah radius navbar
+        // 3. Added to fix navbar radius issue
         extendBody: true,
-        // 4. Gunakan constant '_homeIndex'
+        // 4. Use constant '_homeIndex'
         appBar: currentIndex == _homeIndex
             ? AppBar(
                 title: Padding(
@@ -122,7 +122,7 @@ class HomePage extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Acara Komunitas',
+                    'Community Events',
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -135,7 +135,7 @@ class HomePage extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Rekomendasi Hewan',
+                    'Recommended Pets',
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -180,7 +180,7 @@ class HomePage extends StatelessWidget {
                   Icon(Icons.pets, size: 48, color: Colors.grey[400]),
                   const SizedBox(height: 8),
                   Text(
-                    'Belum ada hewan tersedia',
+                    'No pets available yet',
                     style: GoogleFonts.poppins(
                       color: Colors.grey[600],
                       fontSize: 14,
@@ -204,7 +204,7 @@ class HomePage extends StatelessWidget {
             if (!petsSnapshot.hasData || petsSnapshot.data!.isEmpty) {
               return Center(
                 child: Text(
-                  'Tidak ada data hewan',
+                  'No pet data available',
                   style: GoogleFonts.poppins(color: Colors.grey),
                 ),
               );
@@ -250,16 +250,20 @@ class HomePage extends StatelessWidget {
 
       petsData.add({
         'petId': doc.id,
+        'shelterId': data['shelterId']?.toString() ?? '',
         'imageUrl': imageUrl,
-        'name': (data['name'] ?? 'Nama Hewan').toString(),
-        'breed': (data['breed'] ?? 'Ras').toString(),
-        'age': (data['age'] ?? 'Umur').toString(),
+        'petName': (data['petName'] ?? 'Pet Name').toString(),
+        'name': (data['petName'] ?? data['name'] ?? 'Pet Name').toString(),
+        'breed': (data['breed'] ?? 'Breed').toString(),
+        'ageMonths': data['ageMonths'] ?? 0,
+        'age': data['ageMonths']?.toString() ?? data['age']?.toString() ?? 'Age',
         'shelter': (data['shelterName'] ?? 'Shelter').toString(),
         'shelterName': (data['shelterName'] ?? 'Shelter').toString(),
-        'location': (data['location'] ?? 'Lokasi').toString(),
-        'gender': (data['gender'] ?? 'Jantan').toString(),
+        'location': (data['location'] ?? 'Location').toString(),
+        'gender': (data['gender'] ?? 'Male').toString(),
         'description': (data['description'] ?? '').toString(),
-        'type': (data['type'] ?? '').toString(),
+        'category': (data['category'] ?? '').toString(),
+        'type': (data['category'] ?? data['type'] ?? '').toString(),
         'imageUrls': imageUrls.isNotEmpty ? imageUrls : [imageUrl],
       });
     }

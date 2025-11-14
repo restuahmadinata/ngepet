@@ -22,7 +22,7 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/shelters/$(request.auth.uid));
     }
     
-    // Admins collection (NEW - separate collection for administrators)
+    // Admins collection
     match /admins/{adminId} {
       // Read: admin can read their own data
       allow read: if request.auth != null && request.auth.uid == adminId;
@@ -46,7 +46,7 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
-    // Shelters collection (NEW - separate collection for shelters)
+    // Shelters collection
     match /shelters/{shelterId} {
       // Read: shelter can read their own data OR admin can read all shelters OR any authenticated user (for public shelter info)
       allow read: if request.auth != null;
@@ -59,6 +59,25 @@ service cloud.firestore {
       
       // Delete: only admin can delete shelters
       allow delete: if isAdmin();
+    }
+    
+    // Followers collection
+    match /followers/{followerId} {
+      // Read: user can read their own follows OR shelter can see their followers OR admin
+      allow read: if request.auth != null && 
+        (request.auth.uid == resource.data.userId || 
+         request.auth.uid == resource.data.shelterId || 
+         isAdmin());
+      
+      // Create: authenticated user can follow
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      
+      // Delete: user can unfollow OR admin can delete
+      allow delete: if request.auth != null && 
+        (request.auth.uid == resource.data.userId || isAdmin());
+      
+      // Update: not allowed
+      allow update: if false;
     }
     
     // Pets collection - only verified shelters can create/update/delete
@@ -87,25 +106,71 @@ service cloud.firestore {
         (isVerifiedShelter() && request.auth.uid == resource.data.shelterId);
     }
     
-    // Adoption requests
-    match /adoption_requests/{requestId} {
-      // Read: user can read their own requests OR shelter can read requests for their pets OR admin can read all
+    // Adoption applications collection
+    match /adoption_applications/{applicationId} {
+      // Read: user can read their own applications OR shelter can read applications for their pets OR admin can read all
       allow read: if request.auth != null && 
         (request.auth.uid == resource.data.userId || 
          request.auth.uid == resource.data.shelterId || 
          isAdmin());
       
-      // Create: any authenticated user can create adoption request
-      allow create: if request.auth != null;
+      // Create: any authenticated user can create adoption application
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
       
-      // Update: only the requester or shelter owner or admin can update
+      // Update: only the applicant or shelter owner or admin can update
       allow update: if request.auth != null && 
         (request.auth.uid == resource.data.userId || 
          request.auth.uid == resource.data.shelterId || 
          isAdmin());
       
-      // Delete: only admin or the requester can delete
+      // Delete: only admin or the applicant can delete
       allow delete: if request.auth.uid == resource.data.userId || isAdmin();
+    }
+    
+    // Messages collection
+    match /messages/{messageId} {
+      // Read: users involved in the conversation or admin
+      allow read: if request.auth != null && 
+        (request.auth.uid == resource.data.senderId || 
+         request.auth.uid == resource.data.receiverId || 
+         isAdmin());
+      
+      // Create: authenticated user can send message
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.senderId;
+      
+      // Update: sender can update (for editing) or receiver (for read status)
+      allow update: if request.auth != null && 
+        (request.auth.uid == resource.data.senderId || 
+         request.auth.uid == resource.data.receiverId);
+      
+      // Delete: only sender or admin can delete
+      allow delete: if request.auth != null && 
+        (request.auth.uid == resource.data.senderId || isAdmin());
+    }
+    
+    // Reports collection
+    match /reports/{reportId} {
+      // Read: reporter can read their own reports OR admin can read all
+      allow read: if request.auth != null && 
+        (request.auth.uid == resource.data.reporterId || isAdmin());
+      
+      // Create: any authenticated user can create report
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.reporterId;
+      
+      // Update: only admin can update (for processing)
+      allow update: if isAdmin();
+      
+      // Delete: only admin can delete
+      allow delete: if isAdmin();
+    }
+    
+    // Platform analytics collection
+    match /platform_analytics/{analyticsId} {
+      // Read: only admin can read
+      allow read: if isAdmin();
+      
+      // Write: only admin or system can write
+      allow write: if isAdmin();
     }
   }
 }

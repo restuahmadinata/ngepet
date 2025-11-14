@@ -50,7 +50,7 @@ class AdoptView extends StatelessWidget {
               child: Column(
                 children: [
                   RectangleSearchBar(
-                    hintText: 'cari hewan',
+                    hintText: 'search pets',
                     onChanged: (value) {
                       // Handle search
                     },
@@ -155,7 +155,7 @@ class AdoptView extends StatelessWidget {
                   Icon(Icons.error, size: 64, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
-                    'Terjadi kesalahan',
+                    'An error occurred',
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -176,7 +176,7 @@ class AdoptView extends StatelessWidget {
                   Icon(Icons.pets, size: 64, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
-                    'Belum ada hewan yang tersedia untuk adopsi',
+                    'No pets available for adoption yet',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 16,
@@ -200,7 +200,7 @@ class AdoptView extends StatelessWidget {
             if (!petsSnapshot.hasData || petsSnapshot.data!.isEmpty) {
               return Center(
                 child: Text(
-                  'Tidak ada data hewan',
+                  'No pet data available',
                   style: GoogleFonts.poppins(color: Colors.grey),
                 ),
               );
@@ -248,16 +248,20 @@ class AdoptView extends StatelessWidget {
 
       petsData.add({
         'petId': doc.id,
+        'shelterId': data['shelterId']?.toString() ?? '',
         'imageUrl': imageUrl,
-        'name': (data['name'] ?? 'Nama Hewan').toString(),
-        'breed': (data['breed'] ?? 'Ras').toString(),
-        'age': (data['age'] ?? 'Umur').toString(),
+        'petName': (data['petName'] ?? 'Pet Name').toString(),
+        'name': (data['petName'] ?? data['name'] ?? 'Pet Name').toString(),
+        'breed': (data['breed'] ?? 'Breed').toString(),
+        'ageMonths': data['ageMonths'] ?? 0,
+        'age': data['ageMonths']?.toString() ?? data['age']?.toString() ?? 'Age',
         'shelter': (data['shelterName'] ?? 'Shelter').toString(),
         'shelterName': (data['shelterName'] ?? 'Shelter').toString(),
-        'location': (data['location'] ?? 'Lokasi').toString(),
-        'gender': (data['gender'] ?? 'Jantan').toString(),
+        'location': (data['location'] ?? 'Location').toString(),
+        'gender': (data['gender'] ?? 'Male').toString(),
         'description': (data['description'] ?? '').toString(),
-        'type': (data['type'] ?? '').toString(),
+        'category': (data['category'] ?? '').toString(),
+        'type': (data['category'] ?? data['type'] ?? '').toString(),
         'imageUrls': imageUrls.isNotEmpty ? imageUrls : [imageUrl],
       });
     }
@@ -276,7 +280,7 @@ class AdoptView extends StatelessWidget {
             Icon(Icons.favorite_border, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Fitur Following sedang dalam pengembangan',
+              'Following feature under development',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[600]),
             ),

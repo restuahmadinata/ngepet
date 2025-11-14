@@ -60,14 +60,14 @@ class EditProfileController extends GetxController {
       if (doc.exists) {
         final userData = app_user.User.fromFirestore(doc);
         
-        fullNameController.text = userData.namaLengkap;
-        phoneNumberController.text = userData.noTelepon ?? '';
-        address.value = userData.alamat ?? '';
-        city.value = userData.kota ?? '';
+        fullNameController.text = userData.fullName;
+        phoneNumberController.text = userData.phoneNumber ?? '';
+        address.value = userData.address ?? '';
+        city.value = userData.city ?? '';
         
-        selectedGender.value = userData.jenisKelamin;
-        selectedDate.value = userData.tanggalLahir;
-        profileImageUrl.value = userData.fotoProfil;
+        selectedGender.value = userData.gender;
+        selectedDate.value = userData.dateOfBirth;
+        profileImageUrl.value = userData.profilePhoto;
         
         // Load latitude and longitude if available
         final data = doc.data();
@@ -83,7 +83,7 @@ class EditProfileController extends GetxController {
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Gagal memuat data: ${e.toString()}",
+        "Failed to load data: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -104,8 +104,8 @@ class EditProfileController extends GetxController {
       if (image != null) {
         profileImage.value = File(image.path);
         Get.snackbar(
-          "Berhasil",
-          "Foto profil dipilih",
+          "Success",
+          "Profile photo selected",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -115,7 +115,7 @@ class EditProfileController extends GetxController {
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Gagal memilih foto: ${e.toString()}",
+        "Failed to select photo: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -154,7 +154,7 @@ class EditProfileController extends GetxController {
     if (!ImgBBConfig.isConfigured) {
       Get.snackbar(
         "Error",
-        "ImgBB API key belum dikonfigurasi",
+        "ImgBB API key not configured",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -185,7 +185,7 @@ class EditProfileController extends GetxController {
       print('Error uploading profile image: $e');
       Get.snackbar(
         "Error",
-        "Gagal upload foto: ${e.toString()}",
+        "Failed to upload photo: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -254,8 +254,8 @@ class EditProfileController extends GetxController {
           city.value = cityName ?? '';
           
           Get.snackbar(
-            "Berhasil",
-            "Alamat berhasil diisi otomatis",
+            "Success",
+            "Address automatically filled",
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: Colors.green,
             colorText: Colors.white,
@@ -267,7 +267,7 @@ class EditProfileController extends GetxController {
       print('Error reverse geocoding: $e');
       Get.snackbar(
         "Info",
-        "Tidak dapat mengisi alamat otomatis. Silakan isi manual jika diperlukan.",
+        "Cannot fill address automatically. Please fill manually if needed.",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
@@ -281,7 +281,7 @@ class EditProfileController extends GetxController {
     if (!formKey.currentState!.validate()) {
       Get.snackbar(
         "Error",
-        "Mohon lengkapi form dengan benar",
+        "Please complete the form correctly",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -293,7 +293,7 @@ class EditProfileController extends GetxController {
     if (user == null) {
       Get.snackbar(
         "Error",
-        "Anda harus login terlebih dahulu",
+        "You must login first",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -309,19 +309,19 @@ class EditProfileController extends GetxController {
 
       // Update user data in Firestore
       await _firestore.collection('users').doc(user.uid).update({
-        'namaLengkap': fullNameController.text.trim(),
-        'noTelepon': phoneNumberController.text.trim().isEmpty 
+        'fullName': fullNameController.text.trim(),
+        'phoneNumber': phoneNumberController.text.trim().isEmpty 
             ? null 
             : phoneNumberController.text.trim(),
-        'alamat': address.value.isEmpty ? null : address.value,
-        'kota': city.value.isEmpty ? null : city.value,
+        'address': address.value.isEmpty ? null : address.value,
+        'city': city.value.isEmpty ? null : city.value,
         'latitude': latitude.value,
         'longitude': longitude.value,
-        'jenisKelamin': selectedGender.value,
-        'tanggalLahir': selectedDate.value != null 
+        'gender': selectedGender.value,
+        'dateOfBirth': selectedDate.value != null 
             ? Timestamp.fromDate(selectedDate.value!) 
             : null,
-        'fotoProfil': imageUrl,
+        'profilePhoto': imageUrl,
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
@@ -333,8 +333,8 @@ class EditProfileController extends GetxController {
       // Then show success notification
       await Future.delayed(const Duration(milliseconds: 300));
       Get.snackbar(
-        "Berhasil",
-        "Profil berhasil diperbarui",
+        "Success",
+        "Profile successfully updated",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -346,7 +346,7 @@ class EditProfileController extends GetxController {
       
       Get.snackbar(
         "Error",
-        "Gagal memperbarui profil: ${e.toString()}",
+        "Failed to update profile: ${e.toString()}",
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -358,7 +358,7 @@ class EditProfileController extends GetxController {
   // Validators
   String? validateRequired(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Field ini wajib diisi';
+      return 'This field is required';
     }
     return null;
   }
@@ -368,7 +368,7 @@ class EditProfileController extends GetxController {
       return null; // Optional field
     }
     if (!RegExp(r'^[\d\s\+\-\(\)]+$').hasMatch(value)) {
-      return 'Format nomor telepon tidak valid';
+      return 'Invalid phone number format';
     }
     return null;
   }
@@ -377,11 +377,11 @@ class EditProfileController extends GetxController {
   String getGenderDisplay(String gender) {
     switch (gender) {
       case 'male':
-        return 'Laki-laki';
+        return 'Male';
       case 'female':
-        return 'Perempuan';
+        return 'Female';
       case 'other':
-        return 'Lainnya';
+        return 'Other';
       default:
         return gender;
     }

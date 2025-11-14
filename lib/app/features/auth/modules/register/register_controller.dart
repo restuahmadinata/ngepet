@@ -24,7 +24,7 @@ class RegisterController extends GetxController {
         confirmPasswordController.text.isEmpty) {
       Get.snackbar(
         "Error",
-        "Semua field wajib diisi",
+        "All fields are required",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -34,7 +34,7 @@ class RegisterController extends GetxController {
     if (passwordController.text != confirmPasswordController.text) {
       Get.snackbar(
         "Error",
-        "Password dan konfirmasi password tidak sama",
+        "Password and confirm password do not match",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -71,19 +71,19 @@ class RegisterController extends GetxController {
         arguments: {'name': nameController.text.trim()},
       );
       Get.snackbar(
-        "Berhasil",
-        "Registrasi berhasil! Selamat datang!",
+        "Success",
+        "Registration successful! Welcome!",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
     } on FirebaseAuthException catch (e) {
-      String msg = e.message ?? 'Terjadi kesalahan';
+      String msg = e.message ?? 'An error occurred';
       if (e.code == 'email-already-in-use') {
-        msg = 'Email sudah terdaftar';
+        msg = 'Email already registered';
       }
       Get.snackbar(
-        "Register Gagal",
+        "Registration Failed",
         msg,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
@@ -91,7 +91,7 @@ class RegisterController extends GetxController {
       );
     } catch (e) {
       Get.snackbar(
-        "Register Gagal",
+        "Registration Failed",
         e.toString(),
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,

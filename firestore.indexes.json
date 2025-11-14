@@ -5,7 +5,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "status",
+          "fieldPath": "shelterId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "adoptionStatus",
           "order": "ASCENDING"
         },
         {
@@ -19,7 +23,25 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "shelterId",
+          "fieldPath": "adoptionStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "pets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "species",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "adoptionStatus",
           "order": "ASCENDING"
         },
         {
@@ -33,11 +55,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "status",
+          "fieldPath": "shelterId",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "dateTime",
+          "fieldPath": "eventDate",
           "order": "ASCENDING"
         }
       ]
@@ -47,11 +69,43 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "eventStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "eventDate",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "adoption_applications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "applicationDate",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "adoption_applications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
           "fieldPath": "shelterId",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "dateTime",
+          "fieldPath": "applicationStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "applicationDate",
           "order": "DESCENDING"
         }
       ]
@@ -65,27 +119,13 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "submittedAt",
+          "fieldPath": "createdAt",
           "order": "DESCENDING"
         }
       ]
     },
     {
-      "collectionGroup": "adoption_requests",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "shelterId",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "status",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "adoption_requests",
+      "collectionGroup": "followers",
       "queryScope": "COLLECTION",
       "fields": [
         {
@@ -93,7 +133,35 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "createdAt",
+          "fieldPath": "followedAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "followers",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "shelterId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "followedAt",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "reports",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "reportStatus",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "reportedAt",
           "order": "DESCENDING"
         }
       ]

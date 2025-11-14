@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Helper class untuk operasi terkait pet photos
-/// Photos sekarang disimpan sebagai array dalam pet document
+/// Helper class for pet photos operations
+/// Photos are now stored as an array in the pet document
 class PetPhotoHelper {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// Ambil semua foto untuk pet tertentu
+  /// Get all photos for a specific pet
   Future<List<String>> getPetPhotos(String petId) async {
     try {
       final doc = await _firestore
@@ -16,14 +16,8 @@ class PetPhotoHelper {
       if (!doc.exists) return [];
 
       final data = doc.data() as Map<String, dynamic>;
-      final fotoUrls = data['fotoUrls'] as List<dynamic>?;
-      
-      if (fotoUrls != null) {
-        return fotoUrls.map((url) => url.toString()).toList();
-      }
-
-      // Fallback untuk data lama
       final imageUrls = data['imageUrls'] as List<dynamic>?;
+      
       if (imageUrls != null) {
         return imageUrls.map((url) => url.toString()).toList();
       }
@@ -35,8 +29,8 @@ class PetPhotoHelper {
     }
   }
 
-  /// Ambil foto primary/thumbnail untuk pet
-  /// Returns the first photo from fotoUrls array (index 0)
+  /// Get primary/thumbnail photo for pet
+  /// Returns the first photo from imageUrls array (index 0)
   Future<String?> getPrimaryPhotoUrl(String petId) async {
     try {
       final doc = await _firestore
@@ -49,12 +43,6 @@ class PetPhotoHelper {
       final data = doc.data() as Map<String, dynamic>;
       
       // Get first photo from array (index 0 = primary/thumbnail)
-      final fotoUrls = data['fotoUrls'] as List<dynamic>?;
-      if (fotoUrls != null && fotoUrls.isNotEmpty) {
-        return fotoUrls.first.toString();
-      }
-
-      // Fallback untuk data lama
       final imageUrls = data['imageUrls'] as List<dynamic>?;
       if (imageUrls != null && imageUrls.isNotEmpty) {
         return imageUrls.first.toString();
@@ -67,12 +55,12 @@ class PetPhotoHelper {
     }
   }
 
-  /// Ambil semua URL foto untuk pet (untuk kompatibilitas dengan kode lama)
+  /// Get all photo URLs for pet (for compatibility with old code)
   Future<List<String>> getPetPhotoUrls(String petId) async {
     return await getPetPhotos(petId);
   }
 
-  /// Stream untuk mendapatkan foto pet secara real-time
+  /// Stream to get pet photos in real-time
   Stream<List<String>> streamPetPhotos(String petId) {
     return _firestore
         .collection('pets')
@@ -82,14 +70,8 @@ class PetPhotoHelper {
           if (!doc.exists) return <String>[];
           
           final data = doc.data() as Map<String, dynamic>;
-          final fotoUrls = data['fotoUrls'] as List<dynamic>?;
-          
-          if (fotoUrls != null) {
-            return fotoUrls.map((url) => url.toString()).toList();
-          }
-
-          // Fallback untuk data lama
           final imageUrls = data['imageUrls'] as List<dynamic>?;
+          
           if (imageUrls != null) {
             return imageUrls.map((url) => url.toString()).toList();
           }
@@ -98,11 +80,11 @@ class PetPhotoHelper {
         });
   }
 
-  /// Tambah foto ke pet
+  /// Add photo to pet
   Future<void> addPhoto(String petId, String photoUrl) async {
     try {
       await _firestore.collection('pets').doc(petId).update({
-        'fotoUrls': FieldValue.arrayUnion([photoUrl]),
+        'imageUrls': FieldValue.arrayUnion([photoUrl]),
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -111,11 +93,11 @@ class PetPhotoHelper {
     }
   }
 
-  /// Hapus foto tertentu
+  /// Delete specific photo
   Future<void> deletePhoto(String petId, String photoUrl) async {
     try {
       await _firestore.collection('pets').doc(petId).update({
-        'fotoUrls': FieldValue.arrayRemove([photoUrl]),
+        'imageUrls': FieldValue.arrayRemove([photoUrl]),
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -124,8 +106,8 @@ class PetPhotoHelper {
     }
   }
 
-  /// Set foto sebagai primary dengan memindahkannya ke index 0
-  /// Rearranges the fotoUrls array so the specified photo is first
+  /// Set photo as primary by moving it to index 0
+  /// Rearranges the imageUrls array so the specified photo is first
   Future<void> setPrimaryPhoto(String petId, String photoUrl) async {
     try {
       final photos = await getPetPhotos(petId);
@@ -145,11 +127,11 @@ class PetPhotoHelper {
     }
   }
 
-  /// Update semua foto (replace array)
-  Future<void> updatePhotos(String petId, List<String> photoUrls) async {
+  /// Update all photos (replace array)
+  Future<void> updatePhotos(String petId, List<String> imageUrls) async {
     try {
       await _firestore.collection('pets').doc(petId).update({
-        'fotoUrls': photoUrls,
+        'imageUrls': imageUrls,
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {

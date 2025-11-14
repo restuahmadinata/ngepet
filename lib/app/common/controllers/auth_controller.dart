@@ -7,25 +7,25 @@ class AuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Rx<User?> agar UI bisa bereaksi terhadap perubahan status login
+  // Rx<User?> so UI can react to login status changes
   final Rx<User?> _firebaseUser = Rx<User?>(null);
   User? get user => _firebaseUser.value;
 
   @override
   void onInit() {
     super.onInit();
-    // Listener untuk perubahan status auth (login, logout)
+    // Listener for auth status changes (login, logout)
     _firebaseUser.bindStream(_auth.authStateChanges());
   }
 
-  // Fungsi untuk Login
+  // Function for Login
   Future<void> signIn(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      // Ambil data dari Firestore
+      // Get data from Firestore
       final uid = userCredential.user?.uid;
       if (uid != null) {
         // Check in admins collection first
@@ -81,25 +81,25 @@ class AuthController extends GetxController {
         print('⚠️ User not found in any collection, redirecting to User Home');
         Get.offAllNamed(AppRoutes.userHome);
       } else {
-        // Jika UID tidak ditemukan, default ke user home
+        // If UID not found, default to user home
         Get.offAllNamed(AppRoutes.userHome);
       }
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
-        "Login Gagal",
-        e.message ?? "Terjadi kesalahan",
+        "Login Failed",
+        e.message ?? "An error occurred",
         snackPosition: SnackPosition.TOP,
       );
     }
   }
 
-  // Fungsi untuk Registrasi (Contoh)
+  // Function for Registration (Example)
   Future<void> signUp(String email, String password, String role) async {
     try {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
 
-      // Simpan informasi role ke Firestore
+      // Save role information to Firestore
       if (userCredential.user != null) {
         await _firestore.collection('users').doc(userCredential.user!.uid).set({
           'email': email,
@@ -109,40 +109,40 @@ class AuthController extends GetxController {
       }
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
-        "Registrasi Gagal",
-        e.message ?? "Terjadi kesalahan",
+        "Registration Failed",
+        e.message ?? "An error occurred",
         snackPosition: SnackPosition.TOP,
       );
     }
   }
 
-  // Fungsi untuk Logout
+  // Function for Logout
   Future<void> signOut() async {
     await _auth.signOut();
     Get.offAllNamed(
       AppRoutes.starter,
-    ); // Kembali ke halaman starter setelah logout
+    ); // Return to starter page after logout
   }
 
-  // Fungsi untuk Reset Password
+  // Function for Reset Password
   Future<void> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
       Get.snackbar(
         "Reset Password",
-        "Email reset password telah dikirim ke $email",
+        "Password reset email has been sent to $email",
         snackPosition: SnackPosition.TOP,
       );
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
         "Error",
-        e.message ?? "Terjadi kesalahan",
+        e.message ?? "An error occurred",
         snackPosition: SnackPosition.TOP,
       );
     }
   }
 
-  // Mengambil Role dari Firestore
+  // Get Role from Firestore
   Future<String?> getUserRole(String uid) async {
     try {
       DocumentSnapshot doc = await _firestore

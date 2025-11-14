@@ -11,7 +11,7 @@ class LoginController extends GetxController {
   var isPasswordHidden = true.obs;
   var isLoading = false.obs;
 
-  // Dapatkan instance AuthController yang sudah di-manage oleh GetX
+  // Get AuthController instance already managed by GetX
   final AuthController authController = Get.find<AuthController>();
 
   // Method yang akan dipanggil saat tombol login ditekan
@@ -22,7 +22,7 @@ class LoginController extends GetxController {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
       Get.snackbar(
         "Error",
-        "Email dan Password tidak boleh kosong",
+        "Email and Password cannot be empty",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -49,7 +49,7 @@ class LoginController extends GetxController {
     if (emailController.text.isEmpty) {
       Get.snackbar(
         "Error",
-        "Masukkan email terlebih dahulu",
+        "Please enter your email first",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,

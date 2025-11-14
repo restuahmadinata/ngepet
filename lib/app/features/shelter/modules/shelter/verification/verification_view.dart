@@ -16,7 +16,7 @@ class VerificationView extends GetView<VerificationController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Verifikasi Shelter',
+          'Shelter Verification',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
             color: Colors.black,
@@ -66,7 +66,7 @@ class VerificationView extends GetView<VerificationController> {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Selamat!',
+                      'Congratulations!',
                       style: GoogleFonts.poppins(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -84,7 +84,7 @@ class VerificationView extends GetView<VerificationController> {
                       child: Column(
                         children: [
                           Text(
-                            'Pengajuan Diterima',
+                            'Application Accepted',
                             style: GoogleFonts.poppins(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -93,7 +93,7 @@ class VerificationView extends GetView<VerificationController> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Verifikasi shelter Anda telah disetujui oleh admin. Anda sekarang dapat mengakses dashboard shelter.',
+                            'Your shelter verification has been approved by admin. You can now access the shelter dashboard.',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: Colors.green[800],
@@ -124,7 +124,7 @@ class VerificationView extends GetView<VerificationController> {
                     const Icon(Icons.dashboard, color: Colors.white),
                     const SizedBox(width: 8),
                     Text(
-                      'Menuju Dashboard Shelter',
+                      'Go to Shelter Dashboard',
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -148,7 +148,7 @@ class VerificationView extends GetView<VerificationController> {
                   ),
                 ),
                 child: Text(
-                  'Kembali',
+                  'Back',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -181,7 +181,7 @@ class VerificationView extends GetView<VerificationController> {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Pengajuan Ditolak',
+                      'Application Rejected',
                       style: GoogleFonts.poppins(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -200,7 +200,7 @@ class VerificationView extends GetView<VerificationController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Alasan Penolakan:',
+                            'Rejection Reason:',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -209,7 +209,7 @@ class VerificationView extends GetView<VerificationController> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            controller.rejectionReason.value ?? 'Tidak ada alasan yang diberikan',
+                            controller.rejectionReason.value ?? 'No reason provided',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: Colors.red[800],
@@ -220,7 +220,7 @@ class VerificationView extends GetView<VerificationController> {
                     ),
                     const SizedBox(height: 24),
                     Text(
-                      'Anda dapat mengajukan verifikasi kembali setelah memperbaiki data',
+                      'You can reapply for verification after correcting the data',
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         color: Colors.grey[600],
@@ -246,7 +246,7 @@ class VerificationView extends GetView<VerificationController> {
                   ),
                 ),
                 child: Text(
-                  'Ajukan Ulang',
+                  'Reapply',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -268,7 +268,7 @@ class VerificationView extends GetView<VerificationController> {
                   ),
                 ),
                 child: Text(
-                  'Kembali',
+                  'Back',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -298,7 +298,7 @@ class VerificationView extends GetView<VerificationController> {
               ),
               const SizedBox(height: 24),
               Text(
-                'Pengajuan Sedang Diproses',
+                'Application Being Processed',
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -315,7 +315,7 @@ class VerificationView extends GetView<VerificationController> {
                   border: Border.all(color: Colors.orange[200]!),
                 ),
                 child: Text(
-                  'Pengajuan verifikasi Anda sedang dalam proses peninjauan. Kami akan menghubungi Anda dalam 1-3 hari kerja.',
+                  'Your verification application is currently being reviewed. We will contact you within 1-3 business days.',
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     color: Colors.orange[800],
@@ -336,7 +336,7 @@ class VerificationView extends GetView<VerificationController> {
                     ),
                   ),
                   child: Text(
-                    'Kembali',
+                    'Back',
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -364,7 +364,7 @@ class VerificationView extends GetView<VerificationController> {
                 children: [
                   // Header section
                   Text(
-                    'Daftar Menjadi Shelter',
+                    'Register as Shelter',
                     style: GoogleFonts.poppins(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -373,7 +373,7 @@ class VerificationView extends GetView<VerificationController> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Lengkapi data berikut untuk mendaftar sebagai shelter. Data Anda akan diverifikasi dalam 1-3 hari kerja.',
+                    'Complete the following data to register as a shelter. Your data will be verified within 1-3 business days.',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       color: Colors.grey[600],
@@ -388,7 +388,7 @@ class VerificationView extends GetView<VerificationController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Informasi Akun',
+                            'Account Information',
                             style: GoogleFonts.poppins(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -399,7 +399,7 @@ class VerificationView extends GetView<VerificationController> {
                           CustomTextField(
                             controller: controller.emailController,
                             labelText: 'Email *',
-                            hintText: 'Masukkan email Anda',
+                            hintText: 'Enter your email',
                             prefixIcon: const Icon(Icons.email),
                             validator: controller.validateRequired,
                             keyboardType: TextInputType.emailAddress,
@@ -409,7 +409,7 @@ class VerificationView extends GetView<VerificationController> {
                             () => CustomTextField(
                               controller: controller.passwordController,
                               labelText: 'Password *',
-                              hintText: 'Minimal 6 karakter',
+                              hintText: 'Minimum 6 characters',
                               prefixIcon: const Icon(Icons.lock),
                               obscureText: controller.isPasswordHidden.value,
                               suffixIcon: IconButton(
@@ -430,8 +430,8 @@ class VerificationView extends GetView<VerificationController> {
                           Obx(
                             () => CustomTextField(
                               controller: controller.confirmPasswordController,
-                              labelText: 'Konfirmasi Password *',
-                              hintText: 'Ulangi password Anda',
+                              labelText: 'Confirm Password *',
+                              hintText: 'Re-enter your password',
                               prefixIcon: const Icon(Icons.lock_outline),
                               obscureText: controller.isConfirmPasswordHidden.value,
                               suffixIcon: IconButton(
@@ -450,7 +450,7 @@ class VerificationView extends GetView<VerificationController> {
                           ),
                           const SizedBox(height: 24),
                           Text(
-                            'Informasi Shelter',
+                            'Shelter Information',
                             style: GoogleFonts.poppins(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -467,8 +467,8 @@ class VerificationView extends GetView<VerificationController> {
                   // Form fields
                   CustomTextField(
                     controller: controller.shelterNameController,
-                    labelText: 'Nama Shelter *',
-                    hintText: 'Masukkan nama shelter Anda',
+                    labelText: 'Shelter Name *',
+                    hintText: 'Enter your shelter name',
                     prefixIcon: const Icon(Icons.store),
                     validator: controller.validateRequired,
                   ),
@@ -476,8 +476,8 @@ class VerificationView extends GetView<VerificationController> {
 
                   CustomTextField(
                     controller: controller.phoneController,
-                    labelText: 'Nomor Telepon *',
-                    hintText: 'Masukkan nomor telepon yang bisa dihubungi',
+                    labelText: 'Phone Number *',
+                    hintText: 'Enter a contactable phone number',
                     prefixIcon: const Icon(Icons.phone),
                     validator: controller.validatePhone,
                     keyboardType: TextInputType.phone,
@@ -486,8 +486,8 @@ class VerificationView extends GetView<VerificationController> {
 
                   CustomTextField(
                     controller: controller.legalNumberController,
-                    labelText: 'Nomor Izin/Legalitas *',
-                    hintText: 'NIB, SIUP, atau dokumen legalitas lainnya',
+                    labelText: 'Legal/License Number *',
+                    hintText: 'NIB, SIUP, or other legal document',
                     prefixIcon: const Icon(Icons.assignment),
                     validator: controller.validateRequired,
                   ),
@@ -495,8 +495,8 @@ class VerificationView extends GetView<VerificationController> {
 
                   CustomTextField(
                     controller: controller.descriptionController,
-                    labelText: 'Deskripsi Shelter (Opsional)',
-                    hintText: 'Ceritakan sedikit tentang shelter Anda',
+                    labelText: 'Shelter Description (Optional)',
+                    hintText: 'Tell us a bit about your shelter',
                     prefixIcon: const Icon(Icons.description),
                     keyboardType: TextInputType.multiline,
                   ),
@@ -504,7 +504,7 @@ class VerificationView extends GetView<VerificationController> {
 
                   // Location Section
                   Text(
-                    'Lokasi Shelter *',
+                    'Shelter Location *',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -513,7 +513,7 @@ class VerificationView extends GetView<VerificationController> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Pilih lokasi shelter di peta untuk mengisi alamat secara otomatis',
+                    'Select shelter location on the map to auto-fill address',
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       color: AppColors.neutral600,
@@ -546,7 +546,7 @@ class VerificationView extends GetView<VerificationController> {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    'Alamat Terpilih:',
+                                    'Selected Address:',
                                     style: GoogleFonts.poppins(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -568,7 +568,7 @@ class VerificationView extends GetView<VerificationController> {
                             if (controller.city.value.isNotEmpty) ...[
                               const SizedBox(height: 4),
                               Text(
-                                'Kota: ${controller.city.value}',
+                                'City: ${controller.city.value}',
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   color: AppColors.neutral600,
@@ -578,7 +578,7 @@ class VerificationView extends GetView<VerificationController> {
                             ],
                             const SizedBox(height: 4),
                             Text(
-                              'Koordinat: ${controller.latitude.value!.toStringAsFixed(6)}, ${controller.longitude.value!.toStringAsFixed(6)}',
+                              'Coordinates: ${controller.latitude.value!.toStringAsFixed(6)}, ${controller.longitude.value!.toStringAsFixed(6)}',
                               style: GoogleFonts.poppins(
                                 fontSize: 11,
                                 color: AppColors.neutral500,
@@ -603,7 +603,7 @@ class VerificationView extends GetView<VerificationController> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Belum ada lokasi terpilih. Klik tombol di bawah untuk memilih.',
+                              'No location selected yet. Click button below to select.',
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 color: Colors.orange.shade900,
@@ -647,8 +647,8 @@ class VerificationView extends GetView<VerificationController> {
                       icon: const Icon(Icons.map),
                       label: Text(
                         controller.latitude.value == null 
-                            ? 'Pilih Lokasi di Peta'
-                            : 'Ubah Lokasi',
+                            ? 'Select Location on Map'
+                            : 'Change Location',
                         style: GoogleFonts.poppins(fontSize: 14),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -665,7 +665,7 @@ class VerificationView extends GetView<VerificationController> {
 
                   // Profile Photo Section
                   Text(
-                    'Foto Profil Shelter',
+                    'Shelter Profile Photo',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -729,7 +729,7 @@ class VerificationView extends GetView<VerificationController> {
                   const SizedBox(height: 8),
                   Center(
                     child: Text(
-                      'Ketuk untuk memilih foto (opsional)',
+                      'Tap to select photo (optional)',
                       style: GoogleFonts.poppins(
                         fontSize: 12,
                         color: AppColors.neutral600,
@@ -752,7 +752,7 @@ class VerificationView extends GetView<VerificationController> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Setelah pengajuan dikirim, tim kami akan melakukan verifikasi. Anda akan mendapat notifikasi melalui email.',
+                            'After the submission is sent, our team will verify it. You will receive a notification via email.',
                             style: GoogleFonts.poppins(
                               fontSize: 12,
                               color: Colors.blue[800],
@@ -795,7 +795,7 @@ class VerificationView extends GetView<VerificationController> {
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
-                                    'Mengirim...',
+                                    'Sending...',
                                     style: GoogleFonts.poppins(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
@@ -806,7 +806,7 @@ class VerificationView extends GetView<VerificationController> {
                               ),
                             )
                           : Button1(
-                              text: 'Kirim Pengajuan',
+                              text: 'Submit Application',
                               onPressed: () => controller.submitVerification(),
                             ),
                     ),
@@ -826,7 +826,7 @@ class VerificationView extends GetView<VerificationController> {
                         ),
                       ),
                       child: Text(
-                        'Batal',
+                        'Cancel',
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

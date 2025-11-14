@@ -58,6 +58,16 @@ class PetListItem extends StatelessWidget {
                     width: 150,
                     height: 150,
                     fit: BoxFit.cover,
+                    httpHeaders: const {
+                      'Connection': 'keep-alive',
+                      'User-Agent': 'Flutter App',
+                    },
+                    maxHeightDiskCache: 600,
+                    maxWidthDiskCache: 600,
+                    memCacheHeight: 600,
+                    memCacheWidth: 600,
+                    fadeInDuration: const Duration(milliseconds: 500),
+                    fadeOutDuration: const Duration(milliseconds: 200),
                     placeholder: (context, url) => Container(
                       width: 150,
                       height: 150,
@@ -81,7 +91,7 @@ class PetListItem extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Gagal memuat foto',
+                              'Failed to load photo',
                               style: GoogleFonts.poppins(
                                 fontSize: 10,
                                 color: Colors.grey,
@@ -119,7 +129,7 @@ class PetListItem extends StatelessWidget {
                       Row(
                         children: [
                           Icon(
-                            gender == 'Jantan' ? Icons.male : Icons.female,
+                            gender == 'Male' ? Icons.male : Icons.female,
                             size: 16,
                             color: Colors.grey,
                           ),

@@ -18,7 +18,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
           backgroundColor: AppColors.primary,
           elevation: 0,
           title: Text(
-            'Verifikasi Shelter',
+            'Shelter Verification',
             style: GoogleFonts.poppins(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -33,7 +33,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
             labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
             tabs: const [
               Tab(text: 'Pending'),
-              Tab(text: 'Semua Shelter'),
+              Tab(text: 'All Shelters'),
             ],
             onTap: (index) {
               if (index == 0) {
@@ -69,7 +69,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Tidak ada pengajuan pending',
+                'No pending requests',
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   color: AppColors.neutral500,
@@ -108,7 +108,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
               Icon(Icons.store_outlined, size: 64, color: AppColors.neutral400),
               const SizedBox(height: 16),
               Text(
-                'Belum ada shelter terdaftar',
+                'No registered shelters yet',
                 style: GoogleFonts.poppins(
                   fontSize: 16,
                   color: AppColors.neutral500,
@@ -211,15 +211,15 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
               ],
             ),
             const SizedBox(height: 16),
-            _buildInfoRow(Icons.phone, 'Telepon', phone),
+            _buildInfoRow(Icons.phone, 'Phone', phone),
             const SizedBox(height: 8),
-            _buildInfoRow(Icons.location_on, 'Alamat', address),
+            _buildInfoRow(Icons.location_on, 'Address', address),
             const SizedBox(height: 8),
-            _buildInfoRow(Icons.assignment, 'Nomor Legalitas', legalNumber),
+            _buildInfoRow(Icons.assignment, 'Legal Number', legalNumber),
             const SizedBox(height: 8),
-            _buildInfoRow(Icons.description, 'Deskripsi', description),
+            _buildInfoRow(Icons.description, 'Description', description),
             const SizedBox(height: 8),
-            _buildInfoRow(Icons.calendar_today, 'Tanggal Pengajuan', submittedDate),
+            _buildInfoRow(Icons.calendar_today, 'Submission Date', submittedDate),
             if (showActions) ...[
               const SizedBox(height: 16),
               Row(
@@ -229,7 +229,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
                       onPressed: () =>
                           controller.approveVerification(uid, shelterName),
                       icon: const Icon(Icons.check, size: 18),
-                      label: const Text('Setujui'),
+                      label: const Text('Approve'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.green700,
                         foregroundColor: Colors.white,
@@ -245,7 +245,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
                     child: OutlinedButton.icon(
                       onPressed: () => _showRejectDialog(uid, shelterName),
                       icon: const Icon(Icons.close, size: 18),
-                      label: const Text('Tolak'),
+                      label: const Text('Reject'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.red,
                         side: const BorderSide(color: Colors.red),
@@ -272,11 +272,11 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
     switch (status) {
       case 'approved':
         color = AppColors.green700;
-        label = 'Disetujui';
+        label = 'Approved';
         break;
       case 'rejected':
         color = Colors.red;
-        label = 'Ditolak';
+        label = 'Rejected';
         break;
       case 'pending':
       default:
@@ -338,7 +338,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
     Get.dialog(
       AlertDialog(
         title: Text(
-          'Tolak Verifikasi',
+          'Reject Verification',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         content: Column(
@@ -346,7 +346,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Masukkan alasan penolakan untuk "$shelterName":',
+              'Enter rejection reason for "$shelterName":',
               style: GoogleFonts.poppins(fontSize: 14),
             ),
             const SizedBox(height: 16),
@@ -354,7 +354,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
               controller: reasonController,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: 'Alasan penolakan...',
+                hintText: 'Rejection reason...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -368,14 +368,14 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
               reasonController.dispose();
               Get.back();
             },
-            child: const Text('Batal'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
               if (reasonController.text.trim().isEmpty) {
                 Get.snackbar(
                   'Error',
-                  'Alasan penolakan tidak boleh kosong',
+                  'Rejection reason cannot be empty',
                   snackPosition: SnackPosition.BOTTOM,
                 );
                 return;
@@ -389,7 +389,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
               Get.back();
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Tolak'),
+            child: const Text('Reject'),
           ),
         ],
       ),

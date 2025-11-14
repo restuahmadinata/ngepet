@@ -49,7 +49,7 @@ class EventView extends StatelessWidget {
               child: Column(
                 children: [
                   RectangleSearchBar(
-                    hintText: 'cari event',
+                    hintText: 'search events',
                     onChanged: (value) {
                       // Handle search
                     },
@@ -154,7 +154,7 @@ class EventView extends StatelessWidget {
                   Icon(Icons.error, size: 64, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
-                    'Terjadi kesalahan',
+                    'An error occurred',
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       color: Colors.grey[600],
@@ -175,7 +175,7 @@ class EventView extends StatelessWidget {
                   Icon(Icons.event, size: 64, color: Colors.grey[400]),
                   const SizedBox(height: 16),
                   Text(
-                    'Belum ada event yang tersedia',
+                    'No events available yet',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 16,
@@ -208,14 +208,20 @@ class EventView extends StatelessWidget {
           }
 
           return {
+            'eventId': doc.id,
+            'shelterId': data['shelterId']?.toString() ?? '',
             'imageUrl': imageUrl,
-            'title': (data['title'] ?? 'Event Title').toString(),
-            'date': (data['date'] ?? 'TBA').toString(),
-            'time': (data['time'] ?? '').toString(),
-            'shelter': (data['shelter'] ?? 'Shelter').toString(),
-            'location': (data['location'] ?? 'Lokasi').toString(),
-            'description': (data['description'] ?? 'Deskripsi event')
-                .toString(),
+            'eventTitle': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
+            'title': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
+            'eventDate': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
+            'date': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
+            'startTime': (data['startTime'] ?? data['time'] ?? '').toString(),
+            'time': (data['startTime'] ?? data['time'] ?? '').toString(),
+            'shelterName': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
+            'shelter': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
+            'location': (data['location'] ?? 'Location').toString(),
+            'eventDescription': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
+            'description': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
             'imageUrls': data['imageUrls'] ?? [imageUrl],
           };
         }).toList();
@@ -236,7 +242,7 @@ class EventView extends StatelessWidget {
             Icon(Icons.favorite_border, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
-              'Fitur Following Event sedang dalam pengembangan',
+              'Following Event feature is under development',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[600]),
             ),

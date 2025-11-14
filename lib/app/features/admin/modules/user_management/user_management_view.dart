@@ -15,7 +15,7 @@ class UserManagementView extends GetView<UserManagementController> {
         backgroundColor: AppColors.primary,
         elevation: 0,
         title: Text(
-          'Kelola User',
+          'Manage Users',
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -41,7 +41,7 @@ class UserManagementView extends GetView<UserManagementController> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Tidak ada user',
+                  'No users',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     color: AppColors.neutral500,
@@ -198,7 +198,7 @@ class UserManagementView extends GetView<UserManagementController> {
                         children: [
                           const Icon(Icons.delete, color: Colors.red),
                           const SizedBox(width: 8),
-                          Text('Hapus', style: TextStyle(color: Colors.red)),
+                          Text('Delete', style: TextStyle(color: Colors.red)),
                         ],
                       ),
                     ),
@@ -216,22 +216,22 @@ class UserManagementView extends GetView<UserManagementController> {
     Get.dialog(
       AlertDialog(
         title: Text(
-          'Konfirmasi Hapus',
+          'Delete Confirmation',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'Apakah Anda yakin ingin menghapus user "$name"?\nTindakan ini tidak dapat dibatalkan.',
+          'Are you sure you want to delete user "$name"?\nThis action cannot be undone.',
           style: GoogleFonts.poppins(),
         ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Batal')),
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () {
               controller.deleteUser(uid);
               Get.back();
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Hapus'),
+            child: const Text('Delete'),
           ),
         ],
       ),

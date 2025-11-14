@@ -109,7 +109,7 @@ class _LocationPickerViewState extends State<LocationPickerView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pilih Lokasi'),
+        title: const Text('Choose Location'),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
@@ -172,7 +172,7 @@ class _LocationPickerViewState extends State<LocationPickerView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Lokasi Terpilih:',
+                      'Selected Location:',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
@@ -186,7 +186,7 @@ class _LocationPickerViewState extends State<LocationPickerView> {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Tap pada peta untuk memilih lokasi',
+                      'Tap on the map to choose location',
                       style: TextStyle(fontSize: 11, color: Colors.grey),
                     ),
                     const SizedBox(height: 8),
@@ -196,7 +196,7 @@ class _LocationPickerViewState extends State<LocationPickerView> {
                           child: ElevatedButton.icon(
                             onPressed: _getCurrentLocation,
                             icon: const Icon(Icons.my_location, size: 18),
-                            label: const Text('Lokasi Saya'),
+                            label: const Text('My Location'),
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 8),
                             ),
@@ -207,7 +207,7 @@ class _LocationPickerViewState extends State<LocationPickerView> {
                           child: ElevatedButton.icon(
                             onPressed: _confirmLocation,
                             icon: const Icon(Icons.check, size: 18),
-                            label: const Text('Konfirmasi'),
+                            label: const Text('Confirm'),
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 8),
                             ),

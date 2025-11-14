@@ -1,98 +1,98 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model untuk Pet/Hewan
-/// Collection: pets/{hewanId}
-/// Semua data pet termasuk kategori dan foto disimpan dalam satu collection
+/// Model for Pet/Animal
+/// Collection: pets/{petId}
+/// All pet data including category and photos stored in one collection
 class Pet {
-  final String hewanId;
+  final String petId;
   final String shelterId;
-  final String kategori; // Jenis hewan: 'Anjing', 'Kucing', 'Kelinci', 'Burung', dll
-  final String namaHewan;
-  final String jenisKelamin; // 'Jantan', 'Betina'
-  final int usiaBulan;
-  final String ras;
-  final String deskripsi;
-  final String kondisiKesehatan;
-  final String statusAdopsi; // 'available', 'pending', 'adopted'
+  final String category; // Pet type: 'Dog', 'Cat', 'Rabbit', 'Bird', etc
+  final String petName;
+  final String gender; // 'Male', 'Female'
+  final int ageMonths;
+  final String breed;
+  final String description;
+  final String healthCondition;
+  final String adoptionStatus; // 'available', 'pending', 'adopted'
   final String location;
   final String shelterName;
-  final List<String> fotoUrls; // Array of photo URLs, index 0 = foto utama/thumbnail
+  final List<String> imageUrls; // Array of image URLs, index 0 = primary photo/thumbnail
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
   Pet({
-    required this.hewanId,
+    required this.petId,
     required this.shelterId,
-    required this.kategori,
-    required this.namaHewan,
-    required this.jenisKelamin,
-    required this.usiaBulan,
-    required this.ras,
-    required this.deskripsi,
-    required this.kondisiKesehatan,
-    this.statusAdopsi = 'available',
+    required this.category,
+    required this.petName,
+    required this.gender,
+    required this.ageMonths,
+    required this.breed,
+    required this.description,
+    required this.healthCondition,
+    this.adoptionStatus = 'available',
     required this.location,
     required this.shelterName,
-    this.fotoUrls = const [],
+    this.imageUrls = const [],
     this.createdAt,
     this.updatedAt,
   });
 
-  /// Factory constructor untuk membuat Pet dari Firestore document
+  /// Factory constructor to create Pet from Firestore document
   factory Pet.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     
     return Pet(
-      hewanId: doc.id,
+      petId: doc.id,
       shelterId: data['shelterId'] ?? '',
-      kategori: data['kategori'] ?? data['kategoriId'] ?? data['type'] ?? '',
-      namaHewan: data['namaHewan'] ?? data['name'] ?? '',
-      jenisKelamin: data['jenisKelamin'] ?? data['gender'] ?? 'Jantan',
-      usiaBulan: _parseUsiaBulan(data['usiaBulan'] ?? data['age']),
-      ras: data['ras'] ?? data['breed'] ?? '',
-      deskripsi: data['deskripsi'] ?? data['description'] ?? '',
-      kondisiKesehatan: data['kondisiKesehatan'] ?? data['healthCondition'] ?? 'Sehat',
-      statusAdopsi: data['statusAdopsi'] ?? data['status'] ?? 'available',
+      category: data['category'] ?? '',
+      petName: data['petName'] ?? '',
+      gender: data['gender'] ?? 'Male',
+      ageMonths: _parseAgeMonths(data['ageMonths']),
+      breed: data['breed'] ?? '',
+      description: data['description'] ?? '',
+      healthCondition: data['healthCondition'] ?? 'Healthy',
+      adoptionStatus: data['adoptionStatus'] ?? 'available',
       location: data['location'] ?? '',
       shelterName: data['shelterName'] ?? '',
-      fotoUrls: data['fotoUrls'] != null 
-          ? List<String>.from(data['fotoUrls']) 
-          : (data['imageUrls'] != null ? List<String>.from(data['imageUrls']) : []),
+      imageUrls: data['imageUrls'] != null 
+          ? List<String>.from(data['imageUrls'])
+          : [],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
-  /// Factory constructor untuk membuat Pet dari Map
+  /// Factory constructor to create Pet from Map
   factory Pet.fromMap(Map<String, dynamic> data, String id) {
     return Pet(
-      hewanId: id,
+      petId: id,
       shelterId: data['shelterId'] ?? '',
-      kategori: data['kategori'] ?? data['kategoriId'] ?? data['type'] ?? '',
-      namaHewan: data['namaHewan'] ?? data['name'] ?? '',
-      jenisKelamin: data['jenisKelamin'] ?? data['gender'] ?? 'Jantan',
-      usiaBulan: _parseUsiaBulan(data['usiaBulan'] ?? data['age']),
-      ras: data['ras'] ?? data['breed'] ?? '',
-      deskripsi: data['deskripsi'] ?? data['description'] ?? '',
-      kondisiKesehatan: data['kondisiKesehatan'] ?? data['healthCondition'] ?? 'Sehat',
-      statusAdopsi: data['statusAdopsi'] ?? data['status'] ?? 'available',
+      category: data['category'] ?? '',
+      petName: data['petName'] ?? '',
+      gender: data['gender'] ?? 'Male',
+      ageMonths: _parseAgeMonths(data['ageMonths']),
+      breed: data['breed'] ?? '',
+      description: data['description'] ?? '',
+      healthCondition: data['healthCondition'] ?? 'Healthy',
+      adoptionStatus: data['adoptionStatus'] ?? 'available',
       location: data['location'] ?? '',
       shelterName: data['shelterName'] ?? '',
-      fotoUrls: data['fotoUrls'] != null 
-          ? List<String>.from(data['fotoUrls']) 
-          : (data['imageUrls'] != null ? List<String>.from(data['imageUrls']) : []),
+      imageUrls: data['imageUrls'] != null 
+          ? List<String>.from(data['imageUrls'])
+          : [],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
-  /// Helper untuk parsing usia bulan dari berbagai format
-  static int _parseUsiaBulan(dynamic age) {
+  /// Helper for parsing age in months from various formats
+  static int _parseAgeMonths(dynamic age) {
     if (age == null) return 0;
     if (age is int) return age;
     if (age is double) return age.toInt();
     if (age is String) {
-      // Coba parse jika format string seperti "3 bulan"
+      // Try to parse if string format like "3 months"
       final match = RegExp(r'(\d+)').firstMatch(age);
       if (match != null) {
         return int.tryParse(match.group(1) ?? '0') ?? 0;
@@ -101,22 +101,22 @@ class Pet {
     return 0;
   }
 
-  /// Konversi Pet ke Map untuk disimpan di Firestore
+  /// Convert Pet to Map for Firestore storage
   Map<String, dynamic> toMap() {
     return {
-      'hewanId': hewanId,
+      'petId': petId,
       'shelterId': shelterId,
-      'kategori': kategori,
-      'namaHewan': namaHewan,
-      'jenisKelamin': jenisKelamin,
-      'usiaBulan': usiaBulan,
-      'ras': ras,
-      'deskripsi': deskripsi,
-      'kondisiKesehatan': kondisiKesehatan,
-      'statusAdopsi': statusAdopsi,
+      'category': category,
+      'petName': petName,
+      'gender': gender,
+      'ageMonths': ageMonths,
+      'breed': breed,
+      'description': description,
+      'healthCondition': healthCondition,
+      'adoptionStatus': adoptionStatus,
       'location': location,
       'shelterName': shelterName,
-      'fotoUrls': fotoUrls,
+      'imageUrls': imageUrls,
       'createdAt': createdAt != null 
           ? Timestamp.fromDate(createdAt!) 
           : FieldValue.serverTimestamp(),
@@ -124,38 +124,38 @@ class Pet {
     };
   }
 
-  /// Copy dengan perubahan tertentu
+  /// Copy with specific changes
   Pet copyWith({
-    String? hewanId,
+    String? petId,
     String? shelterId,
-    String? kategori,
-    String? namaHewan,
-    String? jenisKelamin,
-    int? usiaBulan,
-    String? ras,
-    String? deskripsi,
-    String? kondisiKesehatan,
-    String? statusAdopsi,
+    String? category,
+    String? petName,
+    String? gender,
+    int? ageMonths,
+    String? breed,
+    String? description,
+    String? healthCondition,
+    String? adoptionStatus,
     String? location,
     String? shelterName,
-    List<String>? fotoUrls,
+    List<String>? imageUrls,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
     return Pet(
-      hewanId: hewanId ?? this.hewanId,
+      petId: petId ?? this.petId,
       shelterId: shelterId ?? this.shelterId,
-      kategori: kategori ?? this.kategori,
-      namaHewan: namaHewan ?? this.namaHewan,
-      jenisKelamin: jenisKelamin ?? this.jenisKelamin,
-      usiaBulan: usiaBulan ?? this.usiaBulan,
-      ras: ras ?? this.ras,
-      deskripsi: deskripsi ?? this.deskripsi,
-      kondisiKesehatan: kondisiKesehatan ?? this.kondisiKesehatan,
-      statusAdopsi: statusAdopsi ?? this.statusAdopsi,
+      category: category ?? this.category,
+      petName: petName ?? this.petName,
+      gender: gender ?? this.gender,
+      ageMonths: ageMonths ?? this.ageMonths,
+      breed: breed ?? this.breed,
+      description: description ?? this.description,
+      healthCondition: healthCondition ?? this.healthCondition,
+      adoptionStatus: adoptionStatus ?? this.adoptionStatus,
       location: location ?? this.location,
       shelterName: shelterName ?? this.shelterName,
-      fotoUrls: fotoUrls ?? this.fotoUrls,
+      imageUrls: imageUrls ?? this.imageUrls,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -163,6 +163,6 @@ class Pet {
 
   @override
   String toString() {
-    return 'Pet(hewanId: $hewanId, namaHewan: $namaHewan, statusAdopsi: $statusAdopsi)';
+    return 'Pet(petId: $petId, petName: $petName, category: $category, adoptionStatus: $adoptionStatus)';
   }
 }

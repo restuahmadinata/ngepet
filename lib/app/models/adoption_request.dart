@@ -1,150 +1,158 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model untuk Pengajuan Adopsi
-/// Collection: pengajuan_adopsi/{pengajuanId}
+/// Model for Adoption Request
+/// Collection: adoption_applications/{applicationId}
 class AdoptionRequest {
-  final String pengajuanId;
-  final String hewanId;
+  final String applicationId;
+  final String petId;
   final String userId;
   final String shelterId;
-  final String alasanAdopsi;
-  final String pengalamanHewan;
-  final String statusTempatTinggal; // 'rumah_sendiri', 'kontrak', 'kos'
-  final bool memilikiHalaman;
-  final int jumlahAnggotaKeluarga;
-  final String deskripsiLingkungan;
-  final String statusPengajuan; // 'pending', 'approved', 'rejected', 'completed'
-  final String? catatanShelter;
-  final DateTime? tanggalPengajuan;
-  final DateTime? tanggalDiproses;
+  final String adoptionReason;
+  final String petExperience;
+  final String residenceStatus; // 'own_house', 'rent', 'boarding'
+  final bool hasYard;
+  final int familyMembers;
+  final String environmentDescription;
+  final String applicationStatus; // 'pending', 'approved', 'rejected', 'completed'
+  final String? shelterNotes;
+  final DateTime? applicationDate;
+  final DateTime? processedDate;
   final DateTime? updatedAt;
 
   AdoptionRequest({
-    required this.pengajuanId,
-    required this.hewanId,
+    required this.applicationId,
+    required this.petId,
     required this.userId,
     required this.shelterId,
-    required this.alasanAdopsi,
-    required this.pengalamanHewan,
-    required this.statusTempatTinggal,
-    required this.memilikiHalaman,
-    required this.jumlahAnggotaKeluarga,
-    required this.deskripsiLingkungan,
-    this.statusPengajuan = 'pending',
-    this.catatanShelter,
-    this.tanggalPengajuan,
-    this.tanggalDiproses,
+    required this.adoptionReason,
+    required this.petExperience,
+    required this.residenceStatus,
+    required this.hasYard,
+    required this.familyMembers,
+    required this.environmentDescription,
+    this.applicationStatus = 'pending',
+    this.shelterNotes,
+    this.applicationDate,
+    this.processedDate,
     this.updatedAt,
   });
 
-  /// Factory constructor untuk membuat AdoptionRequest dari Firestore document
+  /// Factory constructor to create AdoptionRequest from Firestore document
   factory AdoptionRequest.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     
     return AdoptionRequest(
-      pengajuanId: doc.id,
-      hewanId: data['hewanId'] ?? data['petId'] ?? '',
+      applicationId: doc.id,
+      petId: data['petId'] ?? '',
       userId: data['userId'] ?? '',
       shelterId: data['shelterId'] ?? '',
-      alasanAdopsi: data['alasanAdopsi'] ?? data['reason'] ?? '',
-      pengalamanHewan: data['pengalamanHewan'] ?? data['experience'] ?? '',
-      statusTempatTinggal: data['statusTempatTinggal'] ?? data['housingStatus'] ?? '',
-      memilikiHalaman: data['memilikiHalaman'] ?? data['hasYard'] ?? false,
-      jumlahAnggotaKeluarga: data['jumlahAnggotaKeluarga'] ?? data['familyMembers'] ?? 0,
-      deskripsiLingkungan: data['deskripsiLingkungan'] ?? data['environmentDescription'] ?? '',
-      statusPengajuan: data['statusPengajuan'] ?? data['status'] ?? 'pending',
-      catatanShelter: data['catatanShelter'] ?? data['shelterNotes'],
-      tanggalPengajuan: (data['tanggalPengajuan'] as Timestamp?)?.toDate(),
-      tanggalDiproses: (data['tanggalDiproses'] as Timestamp?)?.toDate(),
-      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
+      adoptionReason: data['adoptionReason'] ?? '',
+      petExperience: data['petExperience'] ?? '',
+      residenceStatus: data['residenceStatus'] ?? '',
+      hasYard: data['hasYard'] ?? false,
+      familyMembers: data['familyMembers'] ?? 0,
+      environmentDescription: data['environmentDescription'] ?? '',
+      applicationStatus: data['applicationStatus'] ?? 'pending',
+      shelterNotes: data['shelterNotes'],
+      applicationDate: data['applicationDate'] != null 
+          ? (data['applicationDate'] as Timestamp).toDate() 
+          : null,
+      processedDate: data['processedDate'] != null 
+          ? (data['processedDate'] as Timestamp).toDate() 
+          : null,
+      updatedAt: data['updatedAt'] != null ? (data['updatedAt'] as Timestamp).toDate() : null,
     );
   }
 
-  /// Factory constructor untuk membuat AdoptionRequest dari Map
+  /// Factory constructor to create AdoptionRequest from Map
   factory AdoptionRequest.fromMap(Map<String, dynamic> data, String id) {
     return AdoptionRequest(
-      pengajuanId: id,
-      hewanId: data['hewanId'] ?? data['petId'] ?? '',
+      applicationId: id,
+      petId: data['petId'] ?? '',
       userId: data['userId'] ?? '',
       shelterId: data['shelterId'] ?? '',
-      alasanAdopsi: data['alasanAdopsi'] ?? data['reason'] ?? '',
-      pengalamanHewan: data['pengalamanHewan'] ?? data['experience'] ?? '',
-      statusTempatTinggal: data['statusTempatTinggal'] ?? data['housingStatus'] ?? '',
-      memilikiHalaman: data['memilikiHalaman'] ?? data['hasYard'] ?? false,
-      jumlahAnggotaKeluarga: data['jumlahAnggotaKeluarga'] ?? data['familyMembers'] ?? 0,
-      deskripsiLingkungan: data['deskripsiLingkungan'] ?? data['environmentDescription'] ?? '',
-      statusPengajuan: data['statusPengajuan'] ?? data['status'] ?? 'pending',
-      catatanShelter: data['catatanShelter'] ?? data['shelterNotes'],
-      tanggalPengajuan: (data['tanggalPengajuan'] as Timestamp?)?.toDate(),
-      tanggalDiproses: (data['tanggalDiproses'] as Timestamp?)?.toDate(),
-      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
+      adoptionReason: data['adoptionReason'] ?? '',
+      petExperience: data['petExperience'] ?? '',
+      residenceStatus: data['residenceStatus'] ?? '',
+      hasYard: data['hasYard'] ?? false,
+      familyMembers: data['familyMembers'] ?? 0,
+      environmentDescription: data['environmentDescription'] ?? '',
+      applicationStatus: data['applicationStatus'] ?? 'pending',
+      shelterNotes: data['shelterNotes'],
+      applicationDate: data['applicationDate'] != null 
+          ? (data['applicationDate'] as Timestamp).toDate() 
+          : null,
+      processedDate: data['processedDate'] != null 
+          ? (data['processedDate'] as Timestamp).toDate() 
+          : null,
+      updatedAt: data['updatedAt'] != null ? (data['updatedAt'] as Timestamp).toDate() : null,
     );
   }
 
-  /// Konversi AdoptionRequest ke Map untuk disimpan di Firestore
+  /// Convert AdoptionRequest to Map for saving to Firestore
   Map<String, dynamic> toMap() {
     return {
-      'pengajuanId': pengajuanId,
-      'hewanId': hewanId,
+      'applicationId': applicationId,
+      'petId': petId,
       'userId': userId,
       'shelterId': shelterId,
-      'alasanAdopsi': alasanAdopsi,
-      'pengalamanHewan': pengalamanHewan,
-      'statusTempatTinggal': statusTempatTinggal,
-      'memilikiHalaman': memilikiHalaman,
-      'jumlahAnggotaKeluarga': jumlahAnggotaKeluarga,
-      'deskripsiLingkungan': deskripsiLingkungan,
-      'statusPengajuan': statusPengajuan,
-      'catatanShelter': catatanShelter,
-      'tanggalPengajuan': tanggalPengajuan != null 
-          ? Timestamp.fromDate(tanggalPengajuan!) 
+      'adoptionReason': adoptionReason,
+      'petExperience': petExperience,
+      'residenceStatus': residenceStatus,
+      'hasYard': hasYard,
+      'familyMembers': familyMembers,
+      'environmentDescription': environmentDescription,
+      'applicationStatus': applicationStatus,
+      'shelterNotes': shelterNotes,
+      'applicationDate': applicationDate != null 
+          ? Timestamp.fromDate(applicationDate!) 
           : FieldValue.serverTimestamp(),
-      'tanggalDiproses': tanggalDiproses != null 
-          ? Timestamp.fromDate(tanggalDiproses!) 
+      'processedDate': processedDate != null 
+          ? Timestamp.fromDate(processedDate!) 
           : null,
       'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 
-  /// Copy dengan perubahan tertentu
+  /// Copy with specific changes
   AdoptionRequest copyWith({
-    String? pengajuanId,
-    String? hewanId,
+    String? applicationId,
+    String? petId,
     String? userId,
     String? shelterId,
-    String? alasanAdopsi,
-    String? pengalamanHewan,
-    String? statusTempatTinggal,
-    bool? memilikiHalaman,
-    int? jumlahAnggotaKeluarga,
-    String? deskripsiLingkungan,
-    String? statusPengajuan,
-    String? catatanShelter,
-    DateTime? tanggalPengajuan,
-    DateTime? tanggalDiproses,
+    String? adoptionReason,
+    String? petExperience,
+    String? residenceStatus,
+    bool? hasYard,
+    int? familyMembers,
+    String? environmentDescription,
+    String? applicationStatus,
+    String? shelterNotes,
+    DateTime? applicationDate,
+    DateTime? processedDate,
     DateTime? updatedAt,
   }) {
     return AdoptionRequest(
-      pengajuanId: pengajuanId ?? this.pengajuanId,
-      hewanId: hewanId ?? this.hewanId,
+      applicationId: applicationId ?? this.applicationId,
+      petId: petId ?? this.petId,
       userId: userId ?? this.userId,
       shelterId: shelterId ?? this.shelterId,
-      alasanAdopsi: alasanAdopsi ?? this.alasanAdopsi,
-      pengalamanHewan: pengalamanHewan ?? this.pengalamanHewan,
-      statusTempatTinggal: statusTempatTinggal ?? this.statusTempatTinggal,
-      memilikiHalaman: memilikiHalaman ?? this.memilikiHalaman,
-      jumlahAnggotaKeluarga: jumlahAnggotaKeluarga ?? this.jumlahAnggotaKeluarga,
-      deskripsiLingkungan: deskripsiLingkungan ?? this.deskripsiLingkungan,
-      statusPengajuan: statusPengajuan ?? this.statusPengajuan,
-      catatanShelter: catatanShelter ?? this.catatanShelter,
-      tanggalPengajuan: tanggalPengajuan ?? this.tanggalPengajuan,
-      tanggalDiproses: tanggalDiproses ?? this.tanggalDiproses,
+      adoptionReason: adoptionReason ?? this.adoptionReason,
+      petExperience: petExperience ?? this.petExperience,
+      residenceStatus: residenceStatus ?? this.residenceStatus,
+      hasYard: hasYard ?? this.hasYard,
+      familyMembers: familyMembers ?? this.familyMembers,
+      environmentDescription: environmentDescription ?? this.environmentDescription,
+      applicationStatus: applicationStatus ?? this.applicationStatus,
+      shelterNotes: shelterNotes ?? this.shelterNotes,
+      applicationDate: applicationDate ?? this.applicationDate,
+      processedDate: processedDate ?? this.processedDate,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
   @override
   String toString() {
-    return 'AdoptionRequest(pengajuanId: $pengajuanId, hewanId: $hewanId, statusPengajuan: $statusPengajuan)';
+    return 'AdoptionRequest(applicationId: $applicationId, petId: $petId, applicationStatus: $applicationStatus)';
   }
 }

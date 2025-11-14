@@ -49,7 +49,7 @@ class Follower {
     };
   }
 
-  /// Copy dengan perubahan tertentu
+  /// Copy with specific changes
   Follower copyWith({
     String? followerId,
     String? userId,

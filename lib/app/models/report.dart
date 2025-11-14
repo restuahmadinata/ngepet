@@ -1,136 +1,144 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model untuk Laporan
-/// Collection: laporan/{laporanId}
+/// Model for Report
+/// Collection: reports/{reportId}
 class Report {
-  final String laporanId;
-  final String pelaporId;
-  final String terlaporId;
-  final String jenisEntitas; // 'user', 'shelter', 'pet'
-  final String kategoriPelanggaran; // 'penipuan', 'kekerasan_hewan', 'spam', 'konten_tidak_pantas'
-  final String deskripsiLaporan;
-  final String? lokasiKejadian;
-  final String? buktiLampiran;
-  final String statusLaporan; // 'pending', 'reviewing', 'resolved', 'rejected'
+  final String reportId;
+  final String reporterId;
+  final String reportedId;
+  final String entityType; // 'user', 'shelter', 'pet'
+  final String violationCategory; // 'fraud', 'animal_abuse', 'spam', 'inappropriate_content'
+  final String reportDescription;
+  final String? incidentLocation;
+  final String? evidenceAttachment;
+  final String reportStatus; // 'pending', 'reviewing', 'resolved', 'rejected'
   final String? adminId;
-  final String? catatanAdmin;
-  final DateTime? tanggalLaporan;
-  final DateTime? tanggalDitinjau;
+  final String? adminNotes;
+  final DateTime? reportedAt;
+  final DateTime? reviewedAt;
 
   Report({
-    required this.laporanId,
-    required this.pelaporId,
-    required this.terlaporId,
-    required this.jenisEntitas,
-    required this.kategoriPelanggaran,
-    required this.deskripsiLaporan,
-    this.lokasiKejadian,
-    this.buktiLampiran,
-    this.statusLaporan = 'pending',
+    required this.reportId,
+    required this.reporterId,
+    required this.reportedId,
+    required this.entityType,
+    required this.violationCategory,
+    required this.reportDescription,
+    this.incidentLocation,
+    this.evidenceAttachment,
+    this.reportStatus = 'pending',
     this.adminId,
-    this.catatanAdmin,
-    this.tanggalLaporan,
-    this.tanggalDitinjau,
+    this.adminNotes,
+    this.reportedAt,
+    this.reviewedAt,
   });
 
-  /// Factory constructor untuk membuat Report dari Firestore document
+  /// Factory constructor to create Report from Firestore document
   factory Report.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     
     return Report(
-      laporanId: doc.id,
-      pelaporId: data['pelaporId'] ?? data['reporterId'] ?? '',
-      terlaporId: data['terlaporId'] ?? data['reportedId'] ?? '',
-      jenisEntitas: data['jenisEntitas'] ?? data['entityType'] ?? '',
-      kategoriPelanggaran: data['kategoriPelanggaran'] ?? data['violationCategory'] ?? '',
-      deskripsiLaporan: data['deskripsiLaporan'] ?? data['description'] ?? '',
-      lokasiKejadian: data['lokasiKejadian'] ?? data['location'],
-      buktiLampiran: data['buktiLampiran'] ?? data['evidence'],
-      statusLaporan: data['statusLaporan'] ?? data['status'] ?? 'pending',
+      reportId: doc.id,
+      reporterId: data['reporterId'] ?? '',
+      reportedId: data['reportedId'] ?? '',
+      entityType: data['entityType'] ?? '',
+      violationCategory: data['violationCategory'] ?? '',
+      reportDescription: data['reportDescription'] ?? '',
+      incidentLocation: data['incidentLocation'],
+      evidenceAttachment: data['evidenceAttachment'],
+      reportStatus: data['reportStatus'] ?? 'pending',
       adminId: data['adminId'],
-      catatanAdmin: data['catatanAdmin'] ?? data['adminNotes'],
-      tanggalLaporan: (data['tanggalLaporan'] as Timestamp?)?.toDate(),
-      tanggalDitinjau: (data['tanggalDitinjau'] as Timestamp?)?.toDate(),
+      adminNotes: data['adminNotes'],
+      reportedAt: data['reportedAt'] != null
+          ? (data['reportedAt'] as Timestamp).toDate()
+          : null,
+      reviewedAt: data['reviewedAt'] != null
+          ? (data['reviewedAt'] as Timestamp).toDate()
+          : null,
     );
   }
 
-  /// Factory constructor untuk membuat Report dari Map
+  /// Factory constructor to create Report from Map
   factory Report.fromMap(Map<String, dynamic> data, String id) {
     return Report(
-      laporanId: id,
-      pelaporId: data['pelaporId'] ?? data['reporterId'] ?? '',
-      terlaporId: data['terlaporId'] ?? data['reportedId'] ?? '',
-      jenisEntitas: data['jenisEntitas'] ?? data['entityType'] ?? '',
-      kategoriPelanggaran: data['kategoriPelanggaran'] ?? data['violationCategory'] ?? '',
-      deskripsiLaporan: data['deskripsiLaporan'] ?? data['description'] ?? '',
-      lokasiKejadian: data['lokasiKejadian'] ?? data['location'],
-      buktiLampiran: data['buktiLampiran'] ?? data['evidence'],
-      statusLaporan: data['statusLaporan'] ?? data['status'] ?? 'pending',
+      reportId: id,
+      reporterId: data['reporterId'] ?? '',
+      reportedId: data['reportedId'] ?? '',
+      entityType: data['entityType'] ?? '',
+      violationCategory: data['violationCategory'] ?? '',
+      reportDescription: data['reportDescription'] ?? '',
+      incidentLocation: data['incidentLocation'],
+      evidenceAttachment: data['evidenceAttachment'],
+      reportStatus: data['reportStatus'] ?? 'pending',
       adminId: data['adminId'],
-      catatanAdmin: data['catatanAdmin'] ?? data['adminNotes'],
-      tanggalLaporan: (data['tanggalLaporan'] as Timestamp?)?.toDate(),
-      tanggalDitinjau: (data['tanggalDitinjau'] as Timestamp?)?.toDate(),
+      adminNotes: data['adminNotes'],
+      reportedAt: data['reportedAt'] != null
+          ? (data['reportedAt'] as Timestamp).toDate()
+          : null,
+      reviewedAt: data['reviewedAt'] != null
+          ? (data['reviewedAt'] as Timestamp).toDate()
+          : null,
     );
   }
 
-  /// Konversi Report ke Map untuk disimpan di Firestore
+  /// Convert Report to Map for saving to Firestore
   Map<String, dynamic> toMap() {
     return {
-      'laporanId': laporanId,
-      'pelaporId': pelaporId,
-      'terlaporId': terlaporId,
-      'jenisEntitas': jenisEntitas,
-      'kategoriPelanggaran': kategoriPelanggaran,
-      'deskripsiLaporan': deskripsiLaporan,
-      'lokasiKejadian': lokasiKejadian,
-      'buktiLampiran': buktiLampiran,
-      'statusLaporan': statusLaporan,
+      'reportId': reportId,
+      'reporterId': reporterId,
+      'reportedId': reportedId,
+      'entityType': entityType,
+      'violationCategory': violationCategory,
+      'reportDescription': reportDescription,
+      'incidentLocation': incidentLocation,
+      'evidenceAttachment': evidenceAttachment,
+      'reportStatus': reportStatus,
       'adminId': adminId,
-      'catatanAdmin': catatanAdmin,
-      'tanggalLaporan': tanggalLaporan != null 
-          ? Timestamp.fromDate(tanggalLaporan!) 
+      'adminNotes': adminNotes,
+      'reportedAt': reportedAt != null 
+          ? Timestamp.fromDate(reportedAt!) 
           : FieldValue.serverTimestamp(),
-      'tanggalDitinjau': tanggalDitinjau != null 
-          ? Timestamp.fromDate(tanggalDitinjau!) 
+      'reviewedAt': reviewedAt != null 
+          ? Timestamp.fromDate(reviewedAt!) 
           : null,
     };
   }
 
-  /// Copy dengan perubahan tertentu
+  /// Copy with specific changes
   Report copyWith({
-    String? laporanId,
-    String? pelaporId,
-    String? terlaporId,
-    String? jenisEntitas,
-    String? kategoriPelanggaran,
-    String? deskripsiLaporan,
-    String? lokasiKejadian,
-    String? buktiLampiran,
-    String? statusLaporan,
+    String? reportId,
+    String? reporterId,
+    String? reportedId,
+    String? entityType,
+    String? violationCategory,
+    String? reportDescription,
+    String? incidentLocation,
+    String? evidenceAttachment,
+    String? reportStatus,
     String? adminId,
-    String? catatanAdmin,
-    DateTime? tanggalLaporan,
-    DateTime? tanggalDitinjau,
+    String? adminNotes,
+    DateTime? reportedAt,
+    DateTime? reviewedAt,
   }) {
     return Report(
-      laporanId: laporanId ?? this.laporanId,
-      pelaporId: pelaporId ?? this.pelaporId,
-      terlaporId: terlaporId ?? this.terlaporId,
-      jenisEntitas: jenisEntitas ?? this.jenisEntitas,
-      kategoriPelanggaran: kategoriPelanggaran ?? this.kategoriPelanggaran,
-      deskripsiLaporan: deskripsiLaporan ?? this.deskripsiLaporan,
-      lokasiKejadian: lokasiKejadian ?? this.lokasiKejadian,
-      buktiLampiran: buktiLampiran ?? this.buktiLampiran,
-      statusLaporan: statusLaporan ?? this.statusLaporan,
+      reportId: reportId ?? this.reportId,
+      reporterId: reporterId ?? this.reporterId,
+      reportedId: reportedId ?? this.reportedId,
+      entityType: entityType ?? this.entityType,
+      violationCategory: violationCategory ?? this.violationCategory,
+      reportDescription: reportDescription ?? this.reportDescription,
+      incidentLocation: incidentLocation ?? this.incidentLocation,
+      evidenceAttachment: evidenceAttachment ?? this.evidenceAttachment,
+      reportStatus: reportStatus ?? this.reportStatus,
       adminId: adminId ?? this.adminId,
-      catatanAdmin: catatanAdmin ?? this.catatanAdmin,
-      tanggalLaporan: tanggalLaporan ?? this.tanggalLaporan,
-      tanggalDitinjau: tanggalDitinjau ?? this.tanggalDitinjau,
+      adminNotes: adminNotes ?? this.adminNotes,
+      reportedAt: reportedAt ?? this.reportedAt,
+      reviewedAt: reviewedAt ?? this.reviewedAt,
     );
   }
 
   @override
   String toString() {
-    return 'Report(laporanId: $laporanId, kategoriPelanggaran: $kategoriPelanggaran, statusLaporan: $statusLaporan)';
+    return 'Report(reportId: $reportId, violationCategory: $violationCategory, reportStatus: $reportStatus)';
   }
 }

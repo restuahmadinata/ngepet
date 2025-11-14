@@ -21,6 +21,8 @@ import '../features/user/modules/profile/edit_profile/edit_profile_binding.dart'
 
 // Shared Feature
 import '../features/shared/modules/event/event_view.dart';
+import '../features/shared/modules/shelter_profile/shelter_profile_view.dart';
+import '../features/shared/modules/shelter_profile/shelter_profile_binding.dart';
 
 // Shelter Feature
 import '../features/shelter/modules/shelter/verification/verification_view.dart';
@@ -132,6 +134,13 @@ class AppPages {
       name: AppRoutes.editShelterProfile,
       page: () => const EditShelterProfileView(),
       binding: EditShelterProfileBinding(),
+    ),
+
+    // --- SHELTER PROFILE PAGE ---
+    GetPage(
+      name: AppRoutes.shelterProfile,
+      page: () => const ShelterProfileView(),
+      binding: ShelterProfileBinding(),
     ),
 
     // --- ADMIN HOME PAGE ---

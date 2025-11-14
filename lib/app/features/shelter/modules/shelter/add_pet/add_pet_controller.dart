@@ -26,14 +26,14 @@ class AddPetController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
   // Observable variables
-  final selectedGender = 'Jantan'.obs;
-  final selectedType = 'Anjing'.obs;
+  final selectedGender = 'Male'.obs;
+  final selectedType = 'Dog'.obs;
   final isLoading = false.obs;
   final selectedImages = <File>[].obs;
 
   // Gender options
-  final genderOptions = ['Jantan', 'Betina'];
-  final typeOptions = ['Anjing', 'Kucing', 'Kelinci', 'Lainnya'];
+  final genderOptions = ['Male', 'Female'];
+  final typeOptions = ['Dog', 'Cat', 'Rabbit', 'Other'];
 
   @override
   void onInit() {
@@ -87,8 +87,8 @@ class AddPetController extends GetxController {
       if (images.isNotEmpty) {
         selectedImages.value = images.map((image) => File(image.path)).toList();
         Get.snackbar(
-          "Berhasil",
-          "${images.length} foto dipilih",
+          "Success",
+          "${images.length} photos selected",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -98,7 +98,7 @@ class AddPetController extends GetxController {
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Gagal memilih foto: ${e.toString()}",
+        "Failed to select photos: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -119,7 +119,7 @@ class AddPetController extends GetxController {
     if (!ImgBBConfig.isConfigured) {
       Get.snackbar(
         "Error",
-        "ImgBB API key belum dikonfigurasi. Silakan cek file imgbb_config.dart",
+        "ImgBB API key not configured. Please check imgbb_config.dart file",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -193,7 +193,7 @@ class AddPetController extends GetxController {
     if (user == null) {
       Get.snackbar(
         "Error",
-        "Anda harus login sebagai shelter terlebih dahulu",
+        "You must login as a shelter first",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -213,7 +213,7 @@ class AddPetController extends GetxController {
       if (!shelterDoc.exists) {
         Get.snackbar(
           "Error",
-          "Data shelter tidak ditemukan. Silakan daftar sebagai shelter terlebih dahulu.",
+          "Shelter data not found. Please register as a shelter first.",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -231,7 +231,7 @@ class AddPetController extends GetxController {
       if (verificationStatus != 'approved') {
         Get.snackbar(
           "Error",
-          "Shelter Anda belum diverifikasi. Status: $verificationStatus",
+          "Your shelter is not verified yet. Status: $verificationStatus",
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -244,14 +244,14 @@ class AddPetController extends GetxController {
       // Add pet to Firestore (with imageUrls array - will be updated after upload)
       print('Debug - Adding pet to Firestore...');
       final docRef = await _firestore.collection('pets').add({
-        'name': nameController.text.trim(),
+        'petName': nameController.text.trim(),
         'breed': breedController.text.trim(),
-        'age': ageController.text.trim(),
+        'ageMonths': ageController.text.trim(),
         'location': locationController.text.trim(),
         'description': descriptionController.text.trim(),
         'gender': selectedGender.value,
-        'type': selectedType.value,
-        'status': 'available',
+        'category': selectedType.value,
+        'adoptionStatus': 'available',
         'shelterId': user.uid,
         'shelterName': shelterName,
         'imageUrls': [], // Initialize empty array, will be updated after upload
@@ -297,8 +297,8 @@ class AddPetController extends GetxController {
       }
 
       Get.snackbar(
-        "Berhasil",
-        "Hewan '${nameController.text.trim()}' berhasil ditambahkan ke daftar adopsi",
+        "Success",
+        "Pet '${nameController.text.trim()}' has been added to adoption list",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
@@ -323,7 +323,7 @@ class AddPetController extends GetxController {
     } catch (e) {
       Get.snackbar(
         "Error",
-        "Gagal menambahkan hewan: ${e.toString()}",
+        "Failed to add pet: ${e.toString()}",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -339,29 +339,29 @@ class AddPetController extends GetxController {
     ageController.clear();
     locationController.clear();
     descriptionController.clear();
-    selectedGender.value = 'Jantan';
-    selectedType.value = 'Anjing';
+    selectedGender.value = 'Male';
+    selectedType.value = 'Dog';
     selectedImages.clear();
   }
 
   // Validation methods
   String? validateRequired(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Field ini wajib diisi';
+      return 'This field is required';
     }
     return null;
   }
 
   String? validateAge(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'Umur wajib diisi';
+      return 'Age is required';
     }
-    // Allow formats like "2 tahun", "6 bulan", etc.
+    // Allow formats like "2 years", "6 months", etc.
     if (!RegExp(
-      r'^.+(tahun|bulan|minggu).*$',
+      r'^.+(year|month|week)s?.*$',
       caseSensitive: false,
     ).hasMatch(value)) {
-      return 'Format umur tidak valid (contoh: 2 tahun, 6 bulan)';
+      return 'Invalid age format (example: 2 years, 6 months)';
     }
     return null;
   }

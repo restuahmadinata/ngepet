@@ -17,7 +17,7 @@ class ShelterVerificationController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Ambil semua shelter dengan status verifikasi 'pending' dari koleksi shelters
+      // Get all shelters with 'pending' verification status from shelters collection
       final snapshot = await _firestore
           .collection('shelters')
           .where('verificationStatus', isEqualTo: 'pending')
@@ -29,7 +29,7 @@ class ShelterVerificationController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Gagal mengambil data verifikasi: $e',
+        'Failed to fetch verification data: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
@@ -45,7 +45,7 @@ class ShelterVerificationController extends GetxController {
       if (!shelterDoc.exists) {
         Get.snackbar(
           'Error',
-          'Data shelter tidak ditemukan',
+          'Shelter data not found',
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
@@ -60,8 +60,8 @@ class ShelterVerificationController extends GetxController {
       });
 
       Get.snackbar(
-        'Sukses',
-        'Shelter "$shelterName" telah disetujui',
+        'Success',
+        'Shelter "$shelterName" has been approved',
         snackPosition: SnackPosition.BOTTOM,
       );
 
@@ -69,7 +69,7 @@ class ShelterVerificationController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Gagal menyetujui verifikasi: $e',
+        'Failed to approve verification: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -90,8 +90,8 @@ class ShelterVerificationController extends GetxController {
       });
 
       Get.snackbar(
-        'Sukses',
-        'Verifikasi shelter "$shelterName" ditolak',
+        'Success',
+        'Verification for shelter "$shelterName" rejected',
         snackPosition: SnackPosition.BOTTOM,
       );
 
@@ -99,7 +99,7 @@ class ShelterVerificationController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Gagal menolak verifikasi: $e',
+        'Failed to reject verification: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -109,7 +109,7 @@ class ShelterVerificationController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Ambil semua shelter dari koleksi shelters
+      // Get all shelters from shelters collection
       final snapshot = await _firestore
           .collection('shelters')
           .get();
@@ -120,7 +120,7 @@ class ShelterVerificationController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Gagal mengambil data shelter: $e',
+        'Failed to fetch shelter data: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {

@@ -1,18 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Model untuk Shelter
+/// Model for Shelter
 /// Collection: shelters/{shelterId}
 class Shelter {
   final String shelterId;
-  final String namaShelter;
-  final String deskripsi;
-  final String kota;
-  final GeoPoint? geoPoint; // Lokasi shelter
-  final String noTeleponShelter;
-  final String emailShelter;
-  final String? fotoShelter;
-  final String statusVerifikasi; // 'pending', 'approved', 'rejected'
-  final DateTime? tanggalVerifikasi;
+  final String shelterName;
+  final String description;
+  final String city;
+  final GeoPoint? geoPoint; // Shelter location
+  final String shelterPhone;
+  final String shelterEmail;
+  final String? shelterPhoto;
+  final String verificationStatus; // 'pending', 'approved', 'rejected'
+  final DateTime? verificationDate;
   final String? legalNumber;
   final String? rejectionReason;
   final DateTime? createdAt;
@@ -20,36 +20,36 @@ class Shelter {
 
   Shelter({
     required this.shelterId,
-    required this.namaShelter,
-    required this.deskripsi,
-    required this.kota,
+    required this.shelterName,
+    required this.description,
+    required this.city,
     this.geoPoint,
-    required this.noTeleponShelter,
-    required this.emailShelter,
-    this.fotoShelter,
-    this.statusVerifikasi = 'pending',
-    this.tanggalVerifikasi,
+    required this.shelterPhone,
+    required this.shelterEmail,
+    this.shelterPhoto,
+    this.verificationStatus = 'pending',
+    this.verificationDate,
     this.legalNumber,
     this.rejectionReason,
     this.createdAt,
     this.updatedAt,
   });
 
-  /// Factory constructor untuk membuat Shelter dari Firestore document
+  /// Factory constructor to create Shelter from Firestore document
   factory Shelter.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     
     return Shelter(
       shelterId: doc.id,
-      namaShelter: data['namaShelter'] ?? data['shelterName'] ?? '',
-      deskripsi: data['deskripsi'] ?? data['description'] ?? '',
-      kota: data['kota'] ?? data['city'] ?? '',
+      shelterName: data['shelterName'] ?? '',
+      description: data['description'] ?? '',
+      city: data['city'] ?? '',
       geoPoint: data['geoPoint'] as GeoPoint?,
-      noTeleponShelter: data['noTeleponShelter'] ?? data['phone'] ?? '',
-      emailShelter: data['emailShelter'] ?? data['email'] ?? '',
-      fotoShelter: data['fotoShelter'] ?? data['profilePhotoUrl'] ?? data['photo'],
-      statusVerifikasi: data['statusVerifikasi'] ?? data['verificationStatus'] ?? 'pending',
-      tanggalVerifikasi: (data['tanggalVerifikasi'] as Timestamp?)?.toDate(),
+      shelterPhone: data['phone'] ?? '',
+      shelterEmail: data['email'] ?? '',
+      shelterPhoto: data['profilePhotoUrl'],
+      verificationStatus: data['verificationStatus'] ?? 'pending',
+      verificationDate: (data['verificationDate'] as Timestamp?)?.toDate(),
       legalNumber: data['legalNumber'],
       rejectionReason: data['rejectionReason'],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
@@ -57,19 +57,19 @@ class Shelter {
     );
   }
 
-  /// Factory constructor untuk membuat Shelter dari Map
+  /// Factory constructor to create Shelter from Map
   factory Shelter.fromMap(Map<String, dynamic> data, String id) {
     return Shelter(
       shelterId: id,
-      namaShelter: data['namaShelter'] ?? data['shelterName'] ?? '',
-      deskripsi: data['deskripsi'] ?? data['description'] ?? '',
-      kota: data['kota'] ?? data['city'] ?? '',
+      shelterName: data['shelterName'] ?? '',
+      description: data['description'] ?? '',
+      city: data['city'] ?? '',
       geoPoint: data['geoPoint'] as GeoPoint?,
-      noTeleponShelter: data['noTeleponShelter'] ?? data['phone'] ?? '',
-      emailShelter: data['emailShelter'] ?? data['email'] ?? '',
-      fotoShelter: data['fotoShelter'] ?? data['profilePhotoUrl'] ?? data['photo'],
-      statusVerifikasi: data['statusVerifikasi'] ?? data['verificationStatus'] ?? 'pending',
-      tanggalVerifikasi: (data['tanggalVerifikasi'] as Timestamp?)?.toDate(),
+      shelterPhone: data['phone'] ?? '',
+      shelterEmail: data['email'] ?? '',
+      shelterPhoto: data['profilePhotoUrl'],
+      verificationStatus: data['verificationStatus'] ?? 'pending',
+      verificationDate: (data['verificationDate'] as Timestamp?)?.toDate(),
       legalNumber: data['legalNumber'],
       rejectionReason: data['rejectionReason'],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
@@ -77,20 +77,20 @@ class Shelter {
     );
   }
 
-  /// Konversi Shelter ke Map untuk disimpan di Firestore
+  /// Convert Shelter to Map for Firestore storage
   Map<String, dynamic> toMap() {
     return {
       'shelterId': shelterId,
-      'namaShelter': namaShelter,
-      'deskripsi': deskripsi,
-      'kota': kota,
+      'shelterName': shelterName,
+      'description': description,
+      'city': city,
       'geoPoint': geoPoint,
-      'noTeleponShelter': noTeleponShelter,
-      'emailShelter': emailShelter,
-      'fotoShelter': fotoShelter,
-      'statusVerifikasi': statusVerifikasi,
-      'tanggalVerifikasi': tanggalVerifikasi != null 
-          ? Timestamp.fromDate(tanggalVerifikasi!) 
+      'phone': shelterPhone,
+      'email': shelterEmail,
+      'profilePhotoUrl': shelterPhoto,
+      'verificationStatus': verificationStatus,
+      'verificationDate': verificationDate != null 
+          ? Timestamp.fromDate(verificationDate!) 
           : null,
       'legalNumber': legalNumber,
       'rejectionReason': rejectionReason,
@@ -101,18 +101,18 @@ class Shelter {
     };
   }
 
-  /// Copy dengan perubahan tertentu
+  /// Copy with specific changes
   Shelter copyWith({
     String? shelterId,
-    String? namaShelter,
-    String? deskripsi,
-    String? kota,
+    String? shelterName,
+    String? description,
+    String? city,
     GeoPoint? geoPoint,
-    String? noTeleponShelter,
-    String? emailShelter,
-    String? fotoShelter,
-    String? statusVerifikasi,
-    DateTime? tanggalVerifikasi,
+    String? shelterPhone,
+    String? shelterEmail,
+    String? shelterPhoto,
+    String? verificationStatus,
+    DateTime? verificationDate,
     String? legalNumber,
     String? rejectionReason,
     DateTime? createdAt,
@@ -120,15 +120,15 @@ class Shelter {
   }) {
     return Shelter(
       shelterId: shelterId ?? this.shelterId,
-      namaShelter: namaShelter ?? this.namaShelter,
-      deskripsi: deskripsi ?? this.deskripsi,
-      kota: kota ?? this.kota,
+      shelterName: shelterName ?? this.shelterName,
+      description: description ?? this.description,
+      city: city ?? this.city,
       geoPoint: geoPoint ?? this.geoPoint,
-      noTeleponShelter: noTeleponShelter ?? this.noTeleponShelter,
-      emailShelter: emailShelter ?? this.emailShelter,
-      fotoShelter: fotoShelter ?? this.fotoShelter,
-      statusVerifikasi: statusVerifikasi ?? this.statusVerifikasi,
-      tanggalVerifikasi: tanggalVerifikasi ?? this.tanggalVerifikasi,
+      shelterPhone: shelterPhone ?? this.shelterPhone,
+      shelterEmail: shelterEmail ?? this.shelterEmail,
+      shelterPhoto: shelterPhoto ?? this.shelterPhoto,
+      verificationStatus: verificationStatus ?? this.verificationStatus,
+      verificationDate: verificationDate ?? this.verificationDate,
       legalNumber: legalNumber ?? this.legalNumber,
       rejectionReason: rejectionReason ?? this.rejectionReason,
       createdAt: createdAt ?? this.createdAt,
@@ -138,6 +138,6 @@ class Shelter {
 
   @override
   String toString() {
-    return 'Shelter(shelterId: $shelterId, namaShelter: $namaShelter, statusVerifikasi: $statusVerifikasi)';
+    return 'Shelter(shelterId: $shelterId, shelterName: $shelterName, verificationStatus: $verificationStatus)';
   }
 }
