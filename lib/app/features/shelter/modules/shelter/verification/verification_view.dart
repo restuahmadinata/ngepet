@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../common/widgets/text_field.dart';
 import '../../../../../common/widgets/button1.dart';
+import '../../../../../common/widgets/button2.dart';
 import '../../../../../common/widgets/location_picker.dart';
 import '../../../../../theme/app_colors.dart';
 import 'verification_controller.dart';
@@ -526,7 +527,7 @@ class VerificationView extends GetView<VerificationController> {
                   Obx(() {
                     if (controller.latitude.value != null && 
                         controller.longitude.value != null &&
-                        controller.addressController.text.isNotEmpty) {
+                        controller.address.value.isNotEmpty) {
                       return Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
@@ -558,7 +559,7 @@ class VerificationView extends GetView<VerificationController> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              controller.addressController.text,
+                              controller.address.value,
                               style: GoogleFonts.poppins(
                                 fontSize: 13,
                                 color: AppColors.neutral700,
@@ -616,10 +617,11 @@ class VerificationView extends GetView<VerificationController> {
                   }),
 
                   // Map picker button
-                  SizedBox(
+                  Obx(() => SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () async {
+                        print('🗺️ DEBUG VerificationView: Opening map picker...');
                         GeoPoint? initialLocation;
                         if (controller.latitude.value != null && 
                             controller.longitude.value != null) {
@@ -627,21 +629,82 @@ class VerificationView extends GetView<VerificationController> {
                             controller.latitude.value!,
                             controller.longitude.value!,
                           );
+                          print('🗺️ DEBUG VerificationView: Initial location: ${initialLocation.latitude}, ${initialLocation.longitude}');
                         }
                         
                         final result = await Get.to(() => LocationPickerView(
                           initialLocation: initialLocation,
                         ));
                         
+                        print('🗺️ DEBUG VerificationView: Returned from map picker');
+                        print('🗺️ DEBUG VerificationView: Result: $result');
+                        print('🗺️ DEBUG VerificationView: Result type: ${result.runtimeType}');
+                        
                         if (result != null && result is GeoPoint) {
+                          print('🗺️ DEBUG VerificationView: Valid GeoPoint received');
                           controller.latitude.value = result.latitude;
                           controller.longitude.value = result.longitude;
+                          print('🗺️ DEBUG VerificationView: Coordinates set - Lat: ${result.latitude}, Lng: ${result.longitude}');
+                          
+                          // Show loading indicator while reverse geocoding
+                          Get.dialog(
+                            const Center(
+                              child: Card(
+                                child: Padding(
+                                  padding: EdgeInsets.all(20.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CircularProgressIndicator(),
+                                      SizedBox(height: 16),
+                                      Text('Getting address...'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            barrierDismissible: false,
+                          );
                           
                           // Reverse geocode to get address
-                          await controller.reverseGeocode(
-                            result.latitude,
-                            result.longitude,
-                          );
+                          print('🗺️ DEBUG VerificationView: Starting reverse geocode...');
+                          try {
+                            await controller.reverseGeocode(
+                              result.latitude,
+                              result.longitude,
+                            );
+                            print('🗺️ DEBUG VerificationView: Reverse geocode complete');
+                            
+                            // Close loading dialog
+                            Get.back();
+                            
+                            // Show success message
+                            Get.snackbar(
+                              'Success',
+                              'Location updated successfully',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                              duration: const Duration(seconds: 2),
+                            );
+                          } catch (e) {
+                            print('❌ DEBUG VerificationView: Reverse geocode failed: $e');
+                            
+                            // Close loading dialog
+                            Get.back();
+                            
+                            // Show error but keep the coordinates
+                            Get.snackbar(
+                              'Warning',
+                              'Location saved but address lookup failed. You can enter the address manually.',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.orange,
+                              colorText: Colors.white,
+                              duration: const Duration(seconds: 3),
+                            );
+                          }
+                        } else {
+                          print('🗺️ DEBUG VerificationView: No valid result received or user cancelled');
                         }
                       },
                       icon: const Icon(Icons.map),
@@ -660,7 +723,7 @@ class VerificationView extends GetView<VerificationController> {
                         foregroundColor: Colors.white,
                       ),
                     ),
-                  ),
+                  )),
                   const SizedBox(height: 24),
 
                   // Profile Photo Section
@@ -765,75 +828,17 @@ class VerificationView extends GetView<VerificationController> {
                   const SizedBox(height: 32),
 
                   // Submit button
-                  Obx(
-                    () => SizedBox(
-                      width: double.infinity,
-                      child: controller.isLoading.value
-                          ? ElevatedButton(
-                              onPressed: null,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                backgroundColor: Colors.grey,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    'Sending...',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Button1(
-                              text: 'Submit Application',
-                              onPressed: () => controller.submitVerification(),
-                            ),
-                    ),
-                  ),
+                  Obx(() => Button1(
+                    text: 'Submit Application',
+                    onPressed: () => controller.submitVerification(),
+                    isLoading: controller.isLoading.value,
+                  )),
                   const SizedBox(height: 16),
 
                   // Cancel button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () => controller.backToStarter(),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: AppColors.neutral400),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.neutral600,
-                        ),
-                      ),
-                    ),
+                  Button2(
+                    text: 'Cancel',
+                    onPressed: () => controller.backToStarter(),
                   ),
                   const SizedBox(height: 32),
                 ],

@@ -110,16 +110,19 @@ class HomePage extends StatelessWidget {
       bottom: false,
       child: RefreshIndicator(
         onRefresh: _refreshData,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                RectangleSearchBar(),
-                const SizedBox(height: 24),
-                Align(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
+                child: RectangleSearchBar(),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'Community Events',
@@ -129,10 +132,17 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                EventCarousel(),
-                const SizedBox(height: 24),
-                Align(
+              ),
+              const SizedBox(height: 12),
+              // EventCarousel with consistent padding
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: EventCarousel(),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'Recommended Pets',
@@ -142,10 +152,13 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                _buildRecommendedPets(),
-              ],
-            ),
+              ),
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: _buildRecommendedPets(),
+              ),
+            ],
           ),
         ),
       ),
@@ -153,13 +166,21 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildRecommendedPets() {
+    print('🔍 DEBUG: Building recommended pets stream...');
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('pets')
-          .where('status', isEqualTo: 'available')
+          .where('adoptionStatus', isEqualTo: 'available')
           .limit(5)
           .snapshots(),
       builder: (context, snapshot) {
+        print('📊 DEBUG: Stream state: ${snapshot.connectionState}');
+        if (snapshot.hasData) {
+          print('✅ DEBUG: Found ${snapshot.data!.docs.length} pets');
+        }
+        if (snapshot.hasError) {
+          print('❌ DEBUG: Error loading pets: ${snapshot.error}');
+        }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: Padding(

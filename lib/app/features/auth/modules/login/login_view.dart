@@ -131,26 +131,11 @@ class LoginView extends GetView<LoginController> {
                 const SizedBox(height: 32),
 
                 // 4. Login Button dengan Loading Indicator
-                Obx(
-                  () => controller.isLoading.value
-                      ? Center(
-                          child: Column(
-                            children: [
-                              CircularProgressIndicator(
-                                color: colorScheme.primary,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Logging in...',
-                                style: textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Button1(text: 'LOGIN', onPressed: controller.login),
-                ),
+                Obx(() => Button1(
+                  text: 'LOGIN',
+                  onPressed: controller.login,
+                  isLoading: controller.isLoading.value,
+                )),
               ],
             ),
           ),

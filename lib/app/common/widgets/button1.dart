@@ -6,21 +6,27 @@ class Button1 extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final bool isEnabled;
+  final bool isLoading;
+  final bool fullWidth;
 
   const Button1({
     super.key,
     required this.text,
     required this.onPressed,
     this.isEnabled = true,
+    this.isLoading = false,
+    this.fullWidth = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: isEnabled ? onPressed : null,
+    return SizedBox(
+      width: fullWidth ? double.infinity : null,
+      child: ElevatedButton(
+        onPressed: (isEnabled && !isLoading) ? onPressed : null,
 
-      // --- STYLING BUTTON ---
-      style: ElevatedButton.styleFrom(
+        // --- STYLING BUTTON ---
+        style: ElevatedButton.styleFrom(
         // 1. Color (Fill)
         backgroundColor: AppColors.primary, // Using Green/green-500
         foregroundColor:
@@ -45,9 +51,27 @@ class Button1 extends StatelessWidget {
 
         elevation:
             0, // Material 3 buttons usually don't have shadow/elevation
-      ),
+        ),
 
-      child: Text(text),
+        child: isLoading
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(text),
+                ],
+              )
+            : Text(text),
+      ),
     );
   }
 }

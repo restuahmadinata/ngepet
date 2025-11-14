@@ -59,11 +59,11 @@ class EditShelterProfileController extends GetxController {
         
         shelterNameController.text = data['shelterName'] ?? '';
         descriptionController.text = data['description'] ?? '';
-        phoneController.text = data['phone'] ?? '';
+        phoneController.text = data['shelterPhone'] ?? '';
         address.value = data['address'] ?? '';
         city.value = data['city'] ?? '';
         
-        profileImageUrl.value = data['profilePhotoUrl'];
+        profileImageUrl.value = data['shelterPhoto'];
         
         if (data['geoPoint'] != null) {
           final geoPoint = data['geoPoint'] as GeoPoint;
@@ -171,7 +171,7 @@ class EditShelterProfileController extends GetxController {
       final response = await http.get(
         url,
         headers: {'User-Agent': 'ngepet-app/1.0'},
-      );
+      ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -219,27 +219,19 @@ class EditShelterProfileController extends GetxController {
           
           address.value = addressParts.join(', ');
           city.value = cityName ?? '';
-          
-          Get.snackbar(
-            "Success",
-            "Address filled automatically",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
-            duration: const Duration(seconds: 2),
-          );
+        } else {
+          throw Exception('No address data in response');
         }
+      } else {
+        throw Exception('HTTP ${response.statusCode}');
       }
     } catch (e) {
       print('Error reverse geocoding: $e');
-      Get.snackbar(
-        "Info",
-        "Cannot fill address automatically. Please fill manually if needed.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      // Set fallback values
+      address.value = 'Location selected';
+      city.value = '';
+      // Rethrow to let caller handle the error
+      rethrow;
     }
   }
 
@@ -286,11 +278,11 @@ class EditShelterProfileController extends GetxController {
         'description': descriptionController.text.trim().isEmpty 
             ? null 
             : descriptionController.text.trim(),
-        'phone': phoneController.text.trim(),
-        'emailShelter': user.email,
+        'shelterPhone': phoneController.text.trim(),
+        'shelterEmail': user.email,
         'address': address.value.isEmpty ? null : address.value,
         'city': city.value.isEmpty ? null : city.value,
-        'profilePhotoUrl': imageUrl,
+        'shelterPhoto': imageUrl,
         'geoPoint': geoPoint,
         'updatedAt': FieldValue.serverTimestamp(),
       });

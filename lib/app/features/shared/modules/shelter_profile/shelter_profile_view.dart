@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'shelter_profile_controller.dart';
+import '../../../../common/widgets/pet_list.dart';
+import '../../../../common/widgets/event_list.dart';
 
 class ShelterProfileView extends GetView<ShelterProfileController> {
   const ShelterProfileView({super.key});
@@ -401,7 +403,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
 
       if (controller.pets.isEmpty) {
         return Padding(
-          padding: const EdgeInsets.all(40),
+          padding: EdgeInsets.all(40),
           child: Center(
             child: Column(
               children: [
@@ -424,25 +426,32 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
         );
       }
 
+      // Transform data to match PetListWidget format
+      final transformedPets = controller.pets.map((pet) {
+        String imageUrl = '';
+        if (pet['imageUrls'] != null && 
+            pet['imageUrls'] is List && 
+            (pet['imageUrls'] as List).isNotEmpty) {
+          imageUrl = (pet['imageUrls'] as List).first.toString();
+        }
+
+        return {
+          'imageUrl': imageUrl,
+          'name': pet['petName']?.toString() ?? 'Unknown',
+          'breed': pet['breed']?.toString() ?? '-',
+          'age': '${pet['ageMonths']?.toString() ?? '-'} months',
+          'shelter': controller.shelter.value?.shelterName ?? '-',
+          'location': controller.shelter.value?.city ?? '-',
+          'gender': pet['gender']?.toString() ?? 'Male',
+          ...pet, // Include all original data for fullData
+        };
+      }).toList();
+
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: controller.pets.length,
-              itemBuilder: (context, index) {
-                final pet = controller.pets[index];
-                return _buildPetCard(pet);
-              },
-            ),
+            PetListWidget(pets: transformedPets),
             const SizedBox(height: 20),
           ],
         ),
@@ -488,293 +497,37 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
         );
       }
 
+      // Transform data to match EventList format
+      final transformedEvents = controller.events.map((event) {
+        String imageUrl = '';
+        if (event['imageUrls'] != null && 
+            event['imageUrls'] is List && 
+            (event['imageUrls'] as List).isNotEmpty) {
+          imageUrl = (event['imageUrls'] as List).first.toString();
+        } else if (event['imageUrls']?.toString().isNotEmpty == true) {
+          imageUrl = event['imageUrls'].toString();
+        }
+
+        return {
+          'imageUrl': imageUrl,
+          'title': event['eventTitle']?.toString() ?? 'Event',
+          'date': event['eventDate']?.toString() ?? '-',
+          'shelter': controller.shelter.value?.shelterName ?? '-',
+          'location': event['location']?.toString() ?? '-',
+          'description': event['description']?.toString() ?? '',
+          ...event, // Include all original data for fullData
+        };
+      }).toList();
+
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: controller.events.length,
-              itemBuilder: (context, index) {
-                final event = controller.events[index];
-                return _buildEventCard(event);
-              },
-            ),
+            EventList(events: transformedEvents),
             const SizedBox(height: 20),
           ],
         ),
       );
     });
-  }
-
-  Widget _buildPetCard(Map<String, dynamic> pet) {
-    String imageUrl = '';
-    
-    // Get image URL - Firebase structure uses imageUrls array
-    if (pet['imageUrls'] != null && 
-        pet['imageUrls'] is List && 
-        (pet['imageUrls'] as List).isNotEmpty) {
-      imageUrl = (pet['imageUrls'] as List).first.toString();
-    }
-
-    // Get proper field values from Firebase structure
-    final petName = pet['petName']?.toString() ?? 'Pet Name';
-    final petGender = pet['gender']?.toString() ?? 'Male';
-    final petBreed = pet['breed']?.toString() ?? '-';
-    final petAge = pet['ageMonths']?.toString() ?? '-';
-
-    return GestureDetector(
-      onTap: () => controller.navigateToPetDetail(pet),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Pet Image
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
-              child: imageUrl.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      height: 120,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        height: 120,
-                        color: Colors.grey[200],
-                        child: const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        height: 120,
-                        color: Colors.grey[200],
-                        child: const Icon(
-                          Icons.pets,
-                          size: 40,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    )
-                  : Container(
-                      height: 120,
-                      color: Colors.grey[200],
-                      child: const Icon(
-                        Icons.pets,
-                        size: 40,
-                        color: Colors.grey,
-                      ),
-                    ),
-            ),
-
-            // Pet Info
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    petName,
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(
-                        petGender == 'Male'
-                            ? Icons.male
-                            : Icons.female,
-                        size: 14,
-                        color: petGender == 'Male'
-                            ? Colors.blue
-                            : Colors.pink,
-                      ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          '$petBreed • ${petAge} months',
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            color: Colors.grey[600],
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEventCard(Map<String, dynamic> event) {
-    String imageUrl = '';
-    
-    // Get image URL - Firebase structure uses imageUrls (note: structure says string but should be array)
-    if (event['imageUrls'] != null && 
-        event['imageUrls'] is List && 
-        (event['imageUrls'] as List).isNotEmpty) {
-      imageUrl = (event['imageUrls'] as List).first.toString();
-    } else if (event['imageUrls']?.toString().isNotEmpty == true) {
-      imageUrl = event['imageUrls'].toString();
-    }
-
-    // Get proper field values from Firebase structure
-    final eventTitle = event['eventTitle']?.toString() ?? 'Event Name';
-    final eventDate = event['eventDate']?.toString() ?? '-';
-    final eventLocation = event['location']?.toString() ?? '-';
-
-    return GestureDetector(
-      onTap: () => controller.navigateToEventDetail(event),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // Gambar event
-            ClipRRect(
-              borderRadius: const BorderRadius.horizontal(
-                left: Radius.circular(12),
-              ),
-              child: imageUrl.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        height: 100,
-                        width: 100,
-                        color: Colors.grey[200],
-                        child: const Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        height: 100,
-                        width: 100,
-                        color: Colors.grey[200],
-                        child: const Icon(
-                          Icons.event,
-                          size: 40,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    )
-                  : Container(
-                      height: 100,
-                      width: 100,
-                      color: Colors.grey[200],
-                      child: const Icon(
-                        Icons.event,
-                        size: 40,
-                        color: Colors.grey,
-                      ),
-                    ),
-            ),
-
-            // Info event
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      eventTitle,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.calendar_today,
-                          size: 12,
-                          color: Colors.grey[600],
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            eventDate,
-                            style: GoogleFonts.poppins(
-                              fontSize: 11,
-                              color: Colors.grey[600],
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          size: 12,
-                          color: Colors.grey[600],
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            eventLocation,
-                            style: GoogleFonts.poppins(
-                              fontSize: 11,
-                              color: Colors.grey[600],
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

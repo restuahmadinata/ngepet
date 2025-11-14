@@ -6,12 +6,16 @@ class Button2 extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final bool isEnabled;
+  final bool isLoading;
+  final bool fullWidth;
 
   const Button2({
     super.key,
     required this.text,
     required this.onPressed,
     this.isEnabled = true,
+    this.isLoading = false,
+    this.fullWidth = true,
   });
 
   @override
@@ -22,11 +26,13 @@ class Button2 extends StatelessWidget {
       fontWeight: FontWeight.w600,
     );
 
-    return OutlinedButton(
-      onPressed: isEnabled ? onPressed : null,
+    return SizedBox(
+      width: fullWidth ? double.infinity : null,
+      child: OutlinedButton(
+        onPressed: (isEnabled && !isLoading) ? onPressed : null,
 
-      // --- STYLING BUTTON ---
-      style: OutlinedButton.styleFrom(
+        // --- STYLING BUTTON ---
+        style: OutlinedButton.styleFrom(
         // 1. Text Color (Foreground) - Button text should follow stroke color
         foregroundColor: AppColors.neutral900, // Active text color (Black/N9)
         disabledForegroundColor: AppColors.neutral500, // Gray when disabled
@@ -53,7 +59,27 @@ class Button2 extends StatelessWidget {
         textStyle: textStyle,
       ),
 
-      child: Text(text),
+      child: isLoading
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.neutral900,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(text),
+              ],
+            )
+          : Text(text),
+      ),
     );
   }
 }

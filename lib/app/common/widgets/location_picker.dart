@@ -4,6 +4,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LocationPickerView extends StatefulWidget {
   final GeoPoint? initialLocation;
@@ -18,6 +20,7 @@ class _LocationPickerViewState extends State<LocationPickerView> {
   late MapController _mapController;
   LatLng _selectedLocation = const LatLng(-6.2088, 106.8456); // Default: Jakarta
   bool _isLoading = false;
+  bool _isConfirming = false;
 
   @override
   void initState() {
@@ -97,12 +100,57 @@ class _LocationPickerViewState extends State<LocationPickerView> {
     });
   }
 
-  void _confirmLocation() {
-    final geoPoint = GeoPoint(
-      _selectedLocation.latitude,
-      _selectedLocation.longitude,
-    );
-    Get.back(result: geoPoint);
+  Future<void> _confirmLocation() async {
+    print('📍 DEBUG LocationPicker: Confirm button pressed');
+    print('📍 DEBUG LocationPicker: Selected location: ${_selectedLocation.latitude}, ${_selectedLocation.longitude}');
+    
+    setState(() => _isConfirming = true);
+    
+    try {
+      // Perform reverse geocoding to validate the location
+      print('🗺️ DEBUG: Starting reverse geocode for validation');
+      final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=${_selectedLocation.latitude}&lon=${_selectedLocation.longitude}&addressdetails=1'
+      );
+      
+      final response = await http.get(
+        url,
+        headers: {'User-Agent': 'ngepet-app/1.0'},
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print('✅ DEBUG: Address validation successful: ${data['display_name']}');
+        
+        final geoPoint = GeoPoint(
+          _selectedLocation.latitude,
+          _selectedLocation.longitude,
+        );
+        
+        print('📍 DEBUG LocationPicker: GeoPoint created, calling Get.back()');
+        Get.back(result: geoPoint);
+      } else {
+        print('⚠️ DEBUG: Reverse geocoding failed with status ${response.statusCode}');
+        // Still return the location even if reverse geocoding fails
+        final geoPoint = GeoPoint(
+          _selectedLocation.latitude,
+          _selectedLocation.longitude,
+        );
+        Get.back(result: geoPoint);
+      }
+    } catch (e) {
+      print('❌ DEBUG: Error confirming location: $e');
+      setState(() => _isConfirming = false);
+      
+      Get.snackbar(
+        'Error',
+        'Failed to confirm location. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+    }
   }
 
   @override
@@ -111,11 +159,24 @@ class _LocationPickerViewState extends State<LocationPickerView> {
       appBar: AppBar(
         title: const Text('Choose Location'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: _confirmLocation,
-            tooltip: 'Confirm Location',
-          ),
+          if (_isConfirming)
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: _confirmLocation,
+              tooltip: 'Confirm Location',
+            ),
         ],
       ),
       body: Stack(
@@ -194,7 +255,7 @@ class _LocationPickerViewState extends State<LocationPickerView> {
                       children: [
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: _getCurrentLocation,
+                            onPressed: _isConfirming ? null : _getCurrentLocation,
                             icon: const Icon(Icons.my_location, size: 18),
                             label: const Text('My Location'),
                             style: ElevatedButton.styleFrom(
@@ -205,9 +266,18 @@ class _LocationPickerViewState extends State<LocationPickerView> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: ElevatedButton.icon(
-                            onPressed: _confirmLocation,
-                            icon: const Icon(Icons.check, size: 18),
-                            label: const Text('Confirm'),
+                            onPressed: _isConfirming ? null : _confirmLocation,
+                            icon: _isConfirming
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : const Icon(Icons.check, size: 18),
+                            label: Text(_isConfirming ? 'Confirming...' : 'Confirm'),
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 8),
                             ),

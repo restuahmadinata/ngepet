@@ -142,7 +142,7 @@ class PetWithPhotos {
       'petId': petId,
       'imageUrl': primaryPhotoUrl,
       'imageUrls': photoUrls,
-      'name': petData['name'] ?? 'Pet Name',
+      'name': petData['petName'] ?? petData['name'] ?? 'Pet Name',
       'breed': petData['breed'] ?? 'Breed',
       'age': petData['age'] ?? 'Age',
       'shelter': petData['shelterName'] ?? 'Shelter',
@@ -151,7 +151,7 @@ class PetWithPhotos {
       'gender': petData['gender'] ?? 'Male',
       'description': petData['description'] ?? '',
       'type': petData['type'] ?? '',
-      'status': petData['status'] ?? 'available',
+      'status': petData['adoptionStatus'] ?? petData['status'] ?? 'available',
       'shelterId': petData['shelterId'] ?? '',
     };
   }

@@ -33,7 +33,7 @@ class AuthController extends GetxController {
         
         if (adminDoc.exists) {
           final data = adminDoc.data();
-          final name = data?['name'] ?? 'Admin';
+          final name = data?['adminName'] ?? 'Admin';
           
           print('🔍 Login - Admin Name: $name');
           print('✅ Redirecting to Admin Home');
@@ -46,7 +46,7 @@ class AuthController extends GetxController {
         
         if (userDoc.exists) {
           final data = userDoc.data();
-          final name = data?['name'] ?? 'User';
+          final name = data?['fullName'] ?? 'User';
 
           print('🔍 Login - User Name: $name');
           print('✅ Redirecting to User Home');

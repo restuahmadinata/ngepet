@@ -12,26 +12,53 @@ class EventCarousel extends StatefulWidget {
   State<EventCarousel> createState() => _EventCarouselState();
 }
 
-class _EventCarouselState extends State<EventCarousel> {
+class _EventCarouselState extends State<EventCarousel> with AutomaticKeepAliveClientMixin {
   int currentIndex = 0;
+  late PageController _pageController;
+  List<Map<String, dynamic>>? _cachedEvents;
+
+  @override
+  bool get wantKeepAlive => true; // Keep state alive
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+      initialPage: 0,
+      viewportFraction: 1.0,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   void _onPageChanged(int index) {
-    setState(() {
-      currentIndex = index;
-    });
+    if (mounted) {
+      setState(() {
+        currentIndex = index;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    
+    print('🔍 DEBUG: Building event carousel stream...');
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('events')
-          .where('status', isEqualTo: 'upcoming')
-          .orderBy('dateTime', descending: false)
+          .where('eventStatus', isEqualTo: 'upcoming')
+          .orderBy('eventDate', descending: false)
           .limit(5)
           .snapshots(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        print('📊 DEBUG: Event stream state: ${snapshot.connectionState}');
+        
+        if (snapshot.connectionState == ConnectionState.waiting && _cachedEvents == null) {
           return Container(
             height: 180,
             decoration: BoxDecoration(
@@ -45,65 +72,69 @@ class _EventCarouselState extends State<EventCarousel> {
         if (snapshot.hasError ||
             !snapshot.hasData ||
             snapshot.data!.docs.isEmpty) {
-          return Container(
-            height: 180,
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.event, size: 48, color: Colors.grey[400]),
-                  const SizedBox(height: 8),
-                  Text(
-                    'No events yet',
-                    style: GoogleFonts.poppins(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+          if (_cachedEvents == null) {
+            return Container(
+              height: 180,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(16),
               ),
-            ),
-          );
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.event, size: 48, color: Colors.grey[400]),
+                    const SizedBox(height: 8),
+                    Text(
+                      'No events yet',
+                      style: GoogleFonts.poppins(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
         }
 
-        final events = snapshot.data!.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
+        if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+          print('✅ DEBUG: Found ${snapshot.data!.docs.length} events');
+          
+          _cachedEvents = snapshot.data!.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
 
-          // Get image URL - prioritize imageUrls array, fallback to imageUrl field
-          String imageUrl = 'https://via.placeholder.com/400x200?text=Event';
-          if (data['imageUrls'] != null &&
-              (data['imageUrls'] as List).isNotEmpty) {
-            imageUrl = (data['imageUrls'] as List)[0].toString();
-          } else if (data['imageUrl'] != null) {
-            imageUrl = data['imageUrl'].toString();
-          }
+            String imageUrl = 'https://via.placeholder.com/400x200?text=Event';
+            if (data['imageUrls'] != null &&
+                (data['imageUrls'] as List).isNotEmpty) {
+              imageUrl = (data['imageUrls'] as List)[0].toString();
+            } else if (data['imageUrl'] != null) {
+              imageUrl = data['imageUrl'].toString();
+            }
 
-          // Return complete event data for detail view
-          return {
-            'eventId': doc.id,
-            'shelterId': data['shelterId']?.toString() ?? '',
-            'image': imageUrl,
-            'imageUrl': imageUrl,
-            'imageUrls': data['imageUrls'] ?? [imageUrl],
-            'eventTitle': data['eventTitle']?.toString() ?? data['title']?.toString() ?? 'Event Title',
-            'title': data['eventTitle']?.toString() ?? data['title']?.toString() ?? 'Event Title',
-            'eventDate': data['eventDate']?.toString() ?? data['date']?.toString() ?? 'TBA',
-            'date': data['eventDate']?.toString() ?? data['date']?.toString() ?? 'TBA',
-            'startTime': data['startTime']?.toString() ?? data['time']?.toString() ?? '',
-            'time': data['startTime']?.toString() ?? data['time']?.toString() ?? '',
-            'shelterName': data['shelterName']?.toString() ?? data['shelter']?.toString() ?? 'Shelter',
-            'shelter': data['shelterName']?.toString() ?? data['shelter']?.toString() ?? 'Shelter',
-            'location': data['location']?.toString() ?? 'Location',
-            'eventDescription': data['eventDescription']?.toString() ?? data['description']?.toString() ?? 'Event description',
-            'description': data['eventDescription']?.toString() ?? data['description']?.toString() ?? 'Event description',
-          };
-        }).toList();
+            return {
+              'eventId': doc.id,
+              'shelterId': data['shelterId']?.toString() ?? '',
+              'image': imageUrl,
+              'imageUrl': imageUrl,
+              'imageUrls': data['imageUrls'] ?? [imageUrl],
+              'eventTitle': data['eventTitle']?.toString() ?? data['title']?.toString() ?? 'Event Title',
+              'title': data['eventTitle']?.toString() ?? data['title']?.toString() ?? 'Event Title',
+              'eventDate': data['eventDate']?.toString() ?? data['date']?.toString() ?? 'TBA',
+              'date': data['eventDate']?.toString() ?? data['date']?.toString() ?? 'TBA',
+              'startTime': data['startTime']?.toString() ?? data['time']?.toString() ?? '',
+              'time': data['startTime']?.toString() ?? data['time']?.toString() ?? '',
+              'shelterName': data['shelterName']?.toString() ?? data['shelter']?.toString() ?? 'Shelter',
+              'shelter': data['shelterName']?.toString() ?? data['shelter']?.toString() ?? 'Shelter',
+              'location': data['location']?.toString() ?? 'Location',
+              'eventDescription': data['eventDescription']?.toString() ?? data['description']?.toString() ?? 'Event description',
+              'description': data['eventDescription']?.toString() ?? data['description']?.toString() ?? 'Event description',
+            };
+          }).toList();
+        }
 
-        return _buildCarousel(events);
+        return _buildCarousel(_cachedEvents!);
       },
     );
   }
@@ -114,6 +145,7 @@ class _EventCarouselState extends State<EventCarousel> {
         SizedBox(
           height: 180,
           child: PageView.builder(
+            controller: _pageController,
             itemCount: events.length,
             onPageChanged: _onPageChanged,
             itemBuilder: (context, index) {
@@ -126,12 +158,12 @@ class _EventCarouselState extends State<EventCarousel> {
                     transition: Transition.cupertino,
                   );
                 },
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: CachedNetworkImage(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CachedNetworkImage(
                         imageUrl: event['image']!,
                         placeholder: (context, url) =>
                             Container(color: Colors.grey.shade200),
@@ -139,47 +171,46 @@ class _EventCarouselState extends State<EventCarousel> {
                             const Icon(Icons.error),
                         fit: BoxFit.cover,
                       ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.black.withOpacity(0.5),
-                            Colors.transparent,
-                          ],
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.black.withOpacity(0.5),
+                              Colors.transparent,
+                            ],
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                          ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      left: 16,
-                      right: 16,
-                      bottom: 24,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            event['title']!,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+                      Positioned(
+                        left: 16,
+                        right: 16,
+                        bottom: 24,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              event['title']!,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '${event['date']} | ${event['shelter']}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
+                            const SizedBox(height: 8),
+                            Text(
+                              '${event['date']} | ${event['shelter']}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },

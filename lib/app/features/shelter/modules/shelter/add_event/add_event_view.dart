@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../common/widgets/text_field.dart';
 import '../../../../../common/widgets/button1.dart';
+import '../../../../../common/widgets/button2.dart';
 import '../../../../../theme/app_colors.dart';
 import 'add_event_controller.dart';
 
@@ -286,75 +287,17 @@ class AddEventView extends GetView<AddEventController> {
                   const SizedBox(height: 32),
 
                   // Submit button
-                  Obx(
-                    () => SizedBox(
-                      width: double.infinity,
-                      child: controller.isLoading.value
-                          ? ElevatedButton(
-                              onPressed: null,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                backgroundColor: Colors.grey,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    'Saving...',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Button1(
-                              text: 'Create Event',
-                              onPressed: () => controller.submitEvent(),
-                            ),
-                    ),
-                  ),
+                  Obx(() => Button1(
+                    text: 'Create Event',
+                    onPressed: () => controller.submitEvent(),
+                    isLoading: controller.isLoading.value,
+                  )),
                   const SizedBox(height: 16),
 
                   // Cancel button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () => Get.back(),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: AppColors.neutral400),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.neutral600,
-                        ),
-                      ),
-                    ),
+                  Button2(
+                    text: 'Cancel',
+                    onPressed: () => Get.back(),
                   ),
                   const SizedBox(height: 32),
                 ],

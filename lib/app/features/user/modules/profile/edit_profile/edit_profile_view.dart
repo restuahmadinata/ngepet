@@ -320,11 +320,59 @@ class EditProfileView extends GetView<EditProfileController> {
                           controller.latitude.value = result.latitude;
                           controller.longitude.value = result.longitude;
                           
-                          // Reverse geocode to get address
-                          await controller.reverseGeocode(
-                            result.latitude,
-                            result.longitude,
+                          // Show loading indicator while reverse geocoding
+                          Get.dialog(
+                            const Center(
+                              child: Card(
+                                child: Padding(
+                                  padding: EdgeInsets.all(20.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CircularProgressIndicator(),
+                                      SizedBox(height: 16),
+                                      Text('Getting address...'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            barrierDismissible: false,
                           );
+                          
+                          // Reverse geocode to get address
+                          try {
+                            await controller.reverseGeocode(
+                              result.latitude,
+                              result.longitude,
+                            );
+                            
+                            // Close loading dialog
+                            Get.back();
+                            
+                            // Show success message
+                            Get.snackbar(
+                              'Success',
+                              'Location updated successfully',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                              duration: const Duration(seconds: 2),
+                            );
+                          } catch (e) {
+                            // Close loading dialog
+                            Get.back();
+                            
+                            // Show error but keep the coordinates
+                            Get.snackbar(
+                              'Warning',
+                              'Location saved but address lookup failed. You can enter the address manually.',
+                              snackPosition: SnackPosition.BOTTOM,
+                              backgroundColor: Colors.orange,
+                              colorText: Colors.white,
+                              duration: const Duration(seconds: 3),
+                            );
+                          }
                         }
                       },
                       icon: const Icon(Icons.map),
@@ -345,17 +393,11 @@ class EditProfileView extends GetView<EditProfileController> {
                   const SizedBox(height: 32),
 
                   // Save Button
-                  Obx(() => controller.isSaving.value
-                      ? const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      : Button1(
-                          text: 'SAVE CHANGES',
-                          onPressed: controller.updateProfile,
-                        )),
+                  Obx(() => Button1(
+                    text: 'SAVE CHANGES',
+                    onPressed: controller.updateProfile,
+                    isLoading: controller.isSaving.value,
+                  )),
                   const SizedBox(height: 16),
                 ],
               ),

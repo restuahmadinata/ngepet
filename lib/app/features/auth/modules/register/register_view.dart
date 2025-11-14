@@ -150,26 +150,11 @@ class RegisterView extends GetView<RegisterController> {
                 const SizedBox(height: 32),
 
                 // 6. Register Button dengan Loading Indicator
-                Obx(
-                  () => controller.isLoading.value
-                      ? Center(
-                          child: Column(
-                            children: [
-                              CircularProgressIndicator(
-                                color: colorScheme.primary,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Registering...',
-                                style: textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Button1(text: 'REGISTER', onPressed: controller.register),
-                ),
+                Obx(() => Button1(
+                  text: 'REGISTER',
+                  onPressed: controller.register,
+                  isLoading: controller.isLoading.value,
+                )),
               ],
             ),
           ),

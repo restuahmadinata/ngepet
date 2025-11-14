@@ -36,7 +36,7 @@ class _SplashViewState extends State<SplashView> {
 
         if (adminDoc.exists) {
           final data = adminDoc.data();
-          final name = data?['name'] ?? 'Admin';
+          final name = data?['adminName'] ?? 'Admin';
 
           print('🔍 Splash - Admin Name: $name');
           print('✅ Redirecting to Admin Home');
@@ -52,7 +52,7 @@ class _SplashViewState extends State<SplashView> {
 
         if (userDoc.exists) {
           final data = userDoc.data();
-          final name = data?['name'] ?? 'User';
+          final name = data?['fullName'] ?? 'User';
 
           print('🔍 Splash - User Name: $name');
           print('✅ Redirecting to User Home');

@@ -66,9 +66,9 @@ class ShelterHomeController extends GetxController {
 
       // Count pending adoption requests for this shelter's pets
       final adoptionQuery = await _firestore
-          .collection('adoption_requests')
+          .collection('adoption_applications')
           .where('shelterId', isEqualTo: user.uid)
-          .where('status', isEqualTo: 'pending')
+          .where('applicationStatus', isEqualTo: 'pending')
           .get();
       adoptionRequestCount.value = adoptionQuery.docs.length;
     } catch (e) {

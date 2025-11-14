@@ -130,13 +130,21 @@ class AdoptView extends StatelessWidget {
   }
 
   Widget _buildPetStream() {
+    print('🔍 DEBUG: Building pet stream (Adopt View)...');
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('pets')
-          .where('status', isEqualTo: 'available')
+          .where('adoptionStatus', isEqualTo: 'available')
           .orderBy('createdAt', descending: true)
           .snapshots(),
       builder: (context, snapshot) {
+        print('📊 DEBUG: Pet stream state: ${snapshot.connectionState}');
+        if (snapshot.hasData) {
+          print('✅ DEBUG: Found ${snapshot.data!.docs.length} pets');
+        }
+        if (snapshot.hasError) {
+          print('❌ DEBUG: Error loading pets: ${snapshot.error}');
+        }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: Padding(

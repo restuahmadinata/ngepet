@@ -204,7 +204,7 @@ class EditProfileController extends GetxController {
       final response = await http.get(
         url,
         headers: {'User-Agent': 'ngepet-app/1.0'},
-      );
+      ).timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -252,27 +252,19 @@ class EditProfileController extends GetxController {
           
           address.value = addressParts.join(', ');
           city.value = cityName ?? '';
-          
-          Get.snackbar(
-            "Success",
-            "Address automatically filled",
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
-            duration: const Duration(seconds: 2),
-          );
+        } else {
+          throw Exception('No address data in response');
         }
+      } else {
+        throw Exception('HTTP ${response.statusCode}');
       }
     } catch (e) {
       print('Error reverse geocoding: $e');
-      Get.snackbar(
-        "Info",
-        "Cannot fill address automatically. Please fill manually if needed.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      // Set fallback values
+      address.value = 'Location selected';
+      city.value = '';
+      // Rethrow to let caller handle the error
+      rethrow;
     }
   }
 

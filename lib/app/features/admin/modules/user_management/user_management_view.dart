@@ -69,7 +69,7 @@ class UserManagementView extends GetView<UserManagementController> {
 
   Widget _buildUserCard(Map<String, dynamic> user) {
     final String uid = user['uid'] ?? '';
-    final String name = user['name'] ?? 'No Name';
+    final String name = user['fullName'] ?? user['name'] ?? 'No Name';
     final String email = user['email'] ?? 'No Email';
     final bool isActive = user['isActive'] ?? true;
 

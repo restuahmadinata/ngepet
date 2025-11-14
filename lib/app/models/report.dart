@@ -14,8 +14,8 @@ class Report {
   final String reportStatus; // 'pending', 'reviewing', 'resolved', 'rejected'
   final String? adminId;
   final String? adminNotes;
-  final DateTime? reportedAt;
-  final DateTime? reviewedAt;
+  final DateTime? reportDate;
+  final DateTime? reviewedDate;
 
   Report({
     required this.reportId,
@@ -29,8 +29,8 @@ class Report {
     this.reportStatus = 'pending',
     this.adminId,
     this.adminNotes,
-    this.reportedAt,
-    this.reviewedAt,
+    this.reportDate,
+    this.reviewedDate,
   });
 
   /// Factory constructor to create Report from Firestore document
@@ -49,11 +49,11 @@ class Report {
       reportStatus: data['reportStatus'] ?? 'pending',
       adminId: data['adminId'],
       adminNotes: data['adminNotes'],
-      reportedAt: data['reportedAt'] != null
-          ? (data['reportedAt'] as Timestamp).toDate()
+      reportDate: data['reportDate'] != null
+          ? (data['reportDate'] as Timestamp).toDate()
           : null,
-      reviewedAt: data['reviewedAt'] != null
-          ? (data['reviewedAt'] as Timestamp).toDate()
+      reviewedDate: data['reviewedDate'] != null
+          ? (data['reviewedDate'] as Timestamp).toDate()
           : null,
     );
   }
@@ -72,11 +72,11 @@ class Report {
       reportStatus: data['reportStatus'] ?? 'pending',
       adminId: data['adminId'],
       adminNotes: data['adminNotes'],
-      reportedAt: data['reportedAt'] != null
-          ? (data['reportedAt'] as Timestamp).toDate()
+      reportDate: data['reportDate'] != null
+          ? (data['reportDate'] as Timestamp).toDate()
           : null,
-      reviewedAt: data['reviewedAt'] != null
-          ? (data['reviewedAt'] as Timestamp).toDate()
+      reviewedDate: data['reviewedDate'] != null
+          ? (data['reviewedDate'] as Timestamp).toDate()
           : null,
     );
   }
@@ -95,11 +95,11 @@ class Report {
       'reportStatus': reportStatus,
       'adminId': adminId,
       'adminNotes': adminNotes,
-      'reportedAt': reportedAt != null 
-          ? Timestamp.fromDate(reportedAt!) 
+      'reportDate': reportDate != null 
+          ? Timestamp.fromDate(reportDate!) 
           : FieldValue.serverTimestamp(),
-      'reviewedAt': reviewedAt != null 
-          ? Timestamp.fromDate(reviewedAt!) 
+      'reviewedDate': reviewedDate != null 
+          ? Timestamp.fromDate(reviewedDate!) 
           : null,
     };
   }
@@ -117,8 +117,8 @@ class Report {
     String? reportStatus,
     String? adminId,
     String? adminNotes,
-    DateTime? reportedAt,
-    DateTime? reviewedAt,
+    DateTime? reportDate,
+    DateTime? reviewedDate,
   }) {
     return Report(
       reportId: reportId ?? this.reportId,
@@ -132,8 +132,8 @@ class Report {
       reportStatus: reportStatus ?? this.reportStatus,
       adminId: adminId ?? this.adminId,
       adminNotes: adminNotes ?? this.adminNotes,
-      reportedAt: reportedAt ?? this.reportedAt,
-      reviewedAt: reviewedAt ?? this.reviewedAt,
+      reportDate: reportDate ?? this.reportDate,
+      reviewedDate: reviewedDate ?? this.reviewedDate,
     );
   }
 
