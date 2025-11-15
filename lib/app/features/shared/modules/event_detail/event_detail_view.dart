@@ -272,8 +272,8 @@ class _EventDetailViewState extends State<EventDetailView> {
                       value: widget.eventData['shelterName']?.toString() ?? 
                              widget.eventData['shelter']?.toString() ?? '-',
                       iconColor: Colors.blue,
-                      isClickable: widget.eventData['shelterId'] != null &&
-                          widget.eventData['shelterId'].toString().isNotEmpty,
+                      // Keep tap handler but remove link styling and arrow icon
+                      isClickable: false,
                     ),
                   ),                  const SizedBox(height: 24),
 

@@ -303,8 +303,10 @@ class _PetDetailViewState extends State<PetDetailView> {
                               widget.petData['shelter']?.toString() ??
                               '-',
                           iconColor: Colors.blue,
-                          isClickable: widget.petData['shelterId'] != null &&
-                              widget.petData['shelterId'].toString().isNotEmpty,
+                          // Keep the row tappable (GestureDetector) but don't
+                          // visually indicate it as a link — make text plain black
+                          // and remove the arrow icon by setting isClickable=false.
+                          isClickable: false,
                         ),
                       ),
                       const SizedBox(height: 12),
