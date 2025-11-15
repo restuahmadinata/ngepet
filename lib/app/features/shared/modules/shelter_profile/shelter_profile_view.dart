@@ -287,59 +287,62 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                         ),
                       ],
                     ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => controller.selectedTab.value = 0,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                color: controller.selectedTab.value == 0
-                                    ? const Color(0xFFE27B59)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                'Pets',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: controller.selectedTab.value == 0
-                                      ? Colors.white
-                                      : Colors.grey[600],
+                    child: Obx(
+                      () => Row(
+                        children: [
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () => controller.selectedTab.value = 0,
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                  horizontal: 16,
+                                ),
+                                child: Text(
+                                  'Pets',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: controller.selectedTab.value == 0
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    color: controller.selectedTab.value == 0
+                                        ? Colors.black
+                                        : Colors.grey,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => controller.selectedTab.value = 1,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                color: controller.selectedTab.value == 1
-                                    ? const Color(0xFFE27B59)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                'Events',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: controller.selectedTab.value == 1
-                                      ? Colors.white
-                                      : Colors.grey[600],
+                          const SizedBox(width: 8),
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () => controller.selectedTab.value = 1,
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                  horizontal: 16,
+                                ),
+                                child: Text(
+                                  'Events',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: controller.selectedTab.value == 1
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    color: controller.selectedTab.value == 1
+                                        ? Colors.black
+                                        : Colors.grey,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
