@@ -14,6 +14,10 @@ abstract class AppRoutes {
   static const shelterHome = _Paths.shelterHome;
   static const shelterAddPet = _Paths.shelterAddPet;
   static const shelterAddEvent = _Paths.shelterAddEvent;
+  static const shelterManagePets = _Paths.shelterManagePets;
+  static const shelterManageEvents = _Paths.shelterManageEvents;
+  static const shelterEditPet = _Paths.shelterEditPet;
+  static const shelterEditEvent = _Paths.shelterEditEvent;
   static const editShelterProfile = _Paths.editShelterProfile;
   static const shelterProfile = _Paths.shelterProfile;
   static const adminHome = _Paths.adminHome;
@@ -37,6 +41,10 @@ abstract class _Paths {
   static const shelterHome = '/shelter-home';
   static const shelterAddPet = '/shelter/add-pet';
   static const shelterAddEvent = '/shelter/add-event';
+  static const shelterManagePets = '/shelter/manage-pets';
+  static const shelterManageEvents = '/shelter/manage-events';
+  static const shelterEditPet = '/shelter/edit-pet';
+  static const shelterEditEvent = '/shelter/edit-event';
   static const editShelterProfile = '/shelter/edit-profile';
   static const shelterProfile = '/shelter-profile';
   static const adminHome = '/admin-home';

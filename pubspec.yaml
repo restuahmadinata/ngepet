@@ -55,6 +55,9 @@ dependencies:
   # Image picker for selecting images from gallery/camera
   image_picker:
 
+  # Image compression for faster uploads and loading
+  flutter_image_compress:
+
   # HTTP client
   http:
 

@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import '../../../../../config/imgbb_config.dart';
 import '../../../../../routes/app_routes.dart';
 import '../home/shelter_home_controller.dart';
@@ -94,9 +95,22 @@ class AddEventController extends GetxController {
       try {
         final File image = selectedImages[i];
 
-        // Read image as base64
-        final bytes = await image.readAsBytes();
-        final base64Image = base64Encode(bytes);
+        // Compress image before upload (70% quality, max 800px)
+        final compressedBytes = await FlutterImageCompress.compressWithFile(
+          image.absolute.path,
+          quality: 70,
+          minWidth: 800,
+          minHeight: 800,
+        );
+
+        if (compressedBytes == null) {
+          print('Error: Failed to compress image $i');
+          continue;
+        }
+
+        final base64Image = base64Encode(compressedBytes);
+        
+        print('Image $i: ${image.lengthSync()} bytes -> ${compressedBytes.length} bytes');
 
         // Upload to ImgBB
         final response = await http.post(

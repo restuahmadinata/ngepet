@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../common/controllers/auth_controller.dart';
+import '../../../../../routes/app_routes.dart';
 
 class ShelterHomeController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -78,13 +79,11 @@ class ShelterHomeController extends GetxController {
 
   // Navigation methods
   void goToManagePets() {
-    // TODO: Implement manage pets page
-    Get.snackbar("Info", "Pet management feature is under development");
+    Get.toNamed(AppRoutes.shelterManagePets);
   }
 
   void goToManageEvents() {
-    // TODO: Implement manage events page
-    Get.snackbar("Info", "Event management feature is under development");
+    Get.toNamed(AppRoutes.shelterManageEvents);
   }
 
   void goToAdoptionRequests() {

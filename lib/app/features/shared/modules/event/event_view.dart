@@ -130,16 +130,22 @@ class EventView extends StatelessWidget {
 
   Widget _buildEventStream() {
     print('🔍 DEBUG: Building event stream (Event View)...');
+    // Show all events (temporary fix - should filter by upcoming/ongoing in production)
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('events')
-          .where('eventStatus', isEqualTo: 'upcoming')
-          .orderBy('eventDate', descending: false)
+          .orderBy('dateTime', descending: false)
           .snapshots(),
       builder: (context, snapshot) {
         print('📊 DEBUG: Event stream state: ${snapshot.connectionState}');
         if (snapshot.hasData) {
           print('✅ DEBUG: Found ${snapshot.data!.docs.length} events');
+          if (snapshot.data!.docs.isNotEmpty) {
+            for (var doc in snapshot.data!.docs) {
+              final data = doc.data() as Map<String, dynamic>;
+              print('📋 DEBUG Event: ${data['eventTitle']} - Status: ${data['eventStatus']} - DateTime: ${data['dateTime']}');
+            }
+          }
         }
         if (snapshot.hasError) {
           print('❌ DEBUG: Error loading events: ${snapshot.error}');

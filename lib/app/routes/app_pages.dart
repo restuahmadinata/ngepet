@@ -33,6 +33,14 @@ import '../features/shelter/modules/shelter/add_pet/add_pet_view.dart';
 import '../features/shelter/modules/shelter/add_pet/add_pet_binding.dart';
 import '../features/shelter/modules/shelter/add_event/add_event_view.dart';
 import '../features/shelter/modules/shelter/add_event/add_event_binding.dart';
+import '../features/shelter/modules/shelter/manage_pets/manage_pets_view.dart';
+import '../features/shelter/modules/shelter/manage_pets/manage_pets_binding.dart';
+import '../features/shelter/modules/shelter/manage_events/manage_events_view.dart';
+import '../features/shelter/modules/shelter/manage_events/manage_events_binding.dart';
+import '../features/shelter/modules/shelter/edit_pet/edit_pet_view.dart';
+import '../features/shelter/modules/shelter/edit_pet/edit_pet_binding.dart';
+import '../features/shelter/modules/shelter/edit_event/edit_event_view.dart';
+import '../features/shelter/modules/shelter/edit_event/edit_event_binding.dart';
 import '../features/shelter/modules/shelter/profile/edit_shelter_profile_view.dart';
 import '../features/shelter/modules/shelter/profile/edit_shelter_profile_binding.dart';
 
@@ -127,6 +135,34 @@ class AppPages {
       name: AppRoutes.shelterAddEvent,
       page: () => const AddEventView(),
       binding: AddEventBinding(),
+    ),
+
+    // --- SHELTER MANAGE PETS PAGE ---
+    GetPage(
+      name: AppRoutes.shelterManagePets,
+      page: () => const ManagePetsView(),
+      binding: ManagePetsBinding(),
+    ),
+
+    // --- SHELTER MANAGE EVENTS PAGE ---
+    GetPage(
+      name: AppRoutes.shelterManageEvents,
+      page: () => const ManageEventsView(),
+      binding: ManageEventsBinding(),
+    ),
+
+    // --- SHELTER EDIT PET PAGE ---
+    GetPage(
+      name: AppRoutes.shelterEditPet,
+      page: () => const EditPetView(),
+      binding: EditPetBinding(),
+    ),
+
+    // --- SHELTER EDIT EVENT PAGE ---
+    GetPage(
+      name: AppRoutes.shelterEditEvent,
+      page: () => const EditEventView(),
+      binding: EditEventBinding(),
     ),
 
     // --- EDIT SHELTER PROFILE PAGE ---
