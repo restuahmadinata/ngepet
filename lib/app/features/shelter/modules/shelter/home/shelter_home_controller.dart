@@ -3,16 +3,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../common/controllers/auth_controller.dart';
 import '../../../../../routes/app_routes.dart';
+import '../../../../../services/follower_service.dart';
 
 class ShelterHomeController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FollowerService _followerService = FollowerService();
 
   // Observable variables
   final shelterName = ''.obs;
   final petCount = 0.obs;
   final eventCount = 0.obs;
   final adoptionRequestCount = 0.obs;
+  final followerCount = 0.obs;
 
   @override
   void onInit() {
@@ -72,6 +75,9 @@ class ShelterHomeController extends GetxController {
           .where('applicationStatus', isEqualTo: 'pending')
           .get();
       adoptionRequestCount.value = adoptionQuery.docs.length;
+
+      // Count followers
+      followerCount.value = await _followerService.getFollowerCount(user.uid);
     } catch (e) {
       print('Error loading stats: $e');
     }
@@ -100,6 +106,16 @@ class ShelterHomeController extends GetxController {
 
   void goToEditProfile() {
     Get.toNamed('/shelter/edit-profile');
+  }
+
+  void goToFollowers() {
+    final user = _auth.currentUser;
+    if (user != null) {
+      Get.toNamed('/shelter/followers', arguments: user.uid)?.then((_) {
+        // Refresh follower count when returning from followers page
+        refreshData();
+      });
+    }
   }
 
   // Logout

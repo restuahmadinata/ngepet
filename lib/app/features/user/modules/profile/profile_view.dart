@@ -8,18 +8,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../models/user.dart' as app_user;
 import '../../../../routes/app_routes.dart';
+import '../../../../services/follower_service.dart';
 
 class ProfileController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FollowerService _followerService = FollowerService();
   
   final userData = Rxn<app_user.User>();
   final isLoading = true.obs;
+  final followingCount = 0.obs;
 
   @override
   void onInit() {
     super.onInit();
     _loadUserData();
+    _listenToFollowingCount();
   }
 
   Future<void> _loadUserData() async {
@@ -40,6 +44,13 @@ class ProfileController extends GetxController {
     }
   }
 
+  void _listenToFollowingCount() {
+    // Use stream for real-time updates
+    _followerService.getFollowingCountStream().listen((count) {
+      followingCount.value = count;
+    });
+  }
+
   void goToEditProfile() {
     Get.toNamed(AppRoutes.editProfile)?.then((_) {
       // Reload data after returning from edit
@@ -49,6 +60,11 @@ class ProfileController extends GetxController {
 
   void goToAdoptionStatus() {
     Get.toNamed(AppRoutes.adoptionStatus);
+  }
+
+  void goToFollowing() {
+    Get.toNamed('/following');
+    // No need to reload, stream handles real-time updates
   }
 }
 
@@ -164,7 +180,46 @@ class ProfileView extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
 
-                  // Section 2: Option Menu
+                  // Section 2: Stats (Following count)
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 32),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.neutral400, width: 1),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: controller.goToFollowing,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.favorite, color: Colors.red[400], size: 24),
+                              const SizedBox(width: 12),
+                              Obx(() => Text(
+                                '${controller.followingCount.value} Following',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
+                              )),
+                              const SizedBox(width: 8),
+                              Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.neutral400),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Section 3: Option Menu
                   Card(
                     color: Colors.white,
                     elevation: 0,
@@ -196,7 +251,7 @@ class ProfileView extends StatelessWidget {
                   ),
                   const SizedBox(height: 24),
 
-                  // Section 3: Logout
+                  // Section 4: Logout
                   Card(
                     color: Colors.white,
                     elevation: 0,

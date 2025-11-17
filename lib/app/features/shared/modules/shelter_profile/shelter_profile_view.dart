@@ -184,33 +184,42 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Tombol Follow (decorator)
-                        SizedBox(
+                        // Tombol Follow/Unfollow
+                        Obx(() => SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
-                            onPressed: () {
-                              // TODO: Implement follow functionality
-                              Get.snackbar(
-                                'Info',
-                                'Follow feature coming soon!',
-                                snackPosition: SnackPosition.BOTTOM,
-                                backgroundColor: const Color(0xFFE27B59),
-                                colorText: Colors.white,
-                                margin: const EdgeInsets.all(16),
-                                borderRadius: 8,
-                                duration: const Duration(seconds: 2),
-                              );
-                            },
-                            icon: const Icon(Icons.favorite_border),
+                            onPressed: controller.isFollowingLoading.value
+                                ? null
+                                : controller.toggleFollow,
+                            icon: controller.isFollowingLoading.value
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    ),
+                                  )
+                                : Icon(
+                                    controller.isFollowing.value
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                  ),
                             label: Text(
-                              'Follow Shelter',
+                              controller.isFollowingLoading.value
+                                  ? 'Please wait...'
+                                  : controller.isFollowing.value
+                                      ? 'Following'
+                                      : 'Follow Shelter',
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFE27B59),
+                              backgroundColor: controller.isFollowing.value
+                                  ? Colors.grey[600]
+                                  : const Color(0xFFE27B59),
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               elevation: 0,
@@ -219,7 +228,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                               ),
                             ),
                           ),
-                        ),
+                        )),
 
                         const SizedBox(height: 16),
 

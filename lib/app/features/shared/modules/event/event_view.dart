@@ -4,12 +4,33 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../common/widgets/rectangle_search_bar.dart';
 import '../../../../common/widgets/event_list.dart';
+import '../../../../services/follower_service.dart';
 
 class EventController extends GetxController {
   var selectedTab = 0.obs; // 0 for Exploring, 1 for Following
+  final FollowerService _followerService = FollowerService();
+  final RxList<String> followedShelterIds = <String>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadFollowedShelters();
+  }
+
+  Future<void> _loadFollowedShelters() async {
+    try {
+      followedShelterIds.value = await _followerService.getFollowedShelterIds();
+    } catch (e) {
+      print('Error loading followed shelters: $e');
+    }
+  }
 
   void changeTab(int index) {
     selectedTab.value = index;
+    if (index == 1) {
+      // Refresh followed shelters when switching to Following tab
+      _loadFollowedShelters();
+    }
   }
 }
 
@@ -246,23 +267,128 @@ class EventView extends StatelessWidget {
   }
 
   Widget _buildFollowingEvents() {
-    // For now, show empty state
-    // TODO: Implement user following functionality for events
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          children: [
-            Icon(Icons.favorite_border, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'Following Event feature is under development',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[600]),
+    final EventController controller = Get.find<EventController>();
+    
+    return Obx(() {
+      if (controller.followedShelterIds.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                Icon(Icons.favorite_border, size: 64, color: Colors.grey[400]),
+                const SizedBox(height: 16),
+                Text(
+                  'No followed shelters yet',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Follow shelters to see their events here',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[500]),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
+      }
+
+      return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('events')
+            .where('shelterId', whereIn: controller.followedShelterIds.take(10).toList())
+            .orderBy('dateTime', descending: false)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32.0),
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  children: [
+                    Icon(Icons.error, size: 64, color: Colors.grey[400]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'An error occurred',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  children: [
+                    Icon(Icons.event, size: 64, color: Colors.grey[400]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No events available from followed shelters',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // Convert Firestore data to format expected by EventList
+          final eventsData = snapshot.data!.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+
+            // Get first image from imageUrls array, fallback to imageUrl field or placeholder
+            String imageUrl = 'https://via.placeholder.com/400x200?text=Event';
+            if (data['imageUrls'] != null &&
+                (data['imageUrls'] as List).isNotEmpty) {
+              imageUrl = (data['imageUrls'] as List).first.toString();
+            } else if (data['imageUrl'] != null) {
+              imageUrl = data['imageUrl'].toString();
+            }
+
+            return {
+              'eventId': doc.id,
+              'shelterId': data['shelterId']?.toString() ?? '',
+              'imageUrl': imageUrl,
+              'eventTitle': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
+              'title': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
+              'eventDate': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
+              'date': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
+              'startTime': (data['startTime'] ?? data['time'] ?? '').toString(),
+              'time': (data['startTime'] ?? data['time'] ?? '').toString(),
+              'shelterName': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
+              'shelter': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
+              'location': (data['location'] ?? 'Location').toString(),
+              'eventDescription': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
+              'description': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
+              'imageUrls': data['imageUrls'] ?? [imageUrl],
+            };
+          }).toList();
+
+          return EventList(events: eventsData);
+        },
+      );
+    });
   }
 }

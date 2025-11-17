@@ -5,12 +5,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../common/widgets/rectangle_search_bar.dart';
 import '../../../../common/widgets/pet_list.dart';
 import '../../../../utils/pet_photo_helper.dart';
+import '../../../../services/follower_service.dart';
 
 class AdoptController extends GetxController {
   var selectedTab = 0.obs; // 0 for Exploring, 1 for Following
+  final FollowerService _followerService = FollowerService();
+  final RxList<String> followedShelterIds = <String>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _loadFollowedShelters();
+  }
+
+  Future<void> _loadFollowedShelters() async {
+    try {
+      followedShelterIds.value = await _followerService.getFollowedShelterIds();
+    } catch (e) {
+      print('Error loading followed shelters: $e');
+    }
+  }
 
   void changeTab(int index) {
     selectedTab.value = index;
+    if (index == 1) {
+      // Refresh followed shelters when switching to Following tab
+      _loadFollowedShelters();
+    }
   }
 }
 
@@ -278,23 +299,116 @@ class AdoptView extends StatelessWidget {
   }
 
   Widget _buildFollowingPets() {
-    // For now, show the same pets stream
-    // TODO: Implement user following/favorites functionality
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          children: [
-            Icon(Icons.favorite_border, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'Following feature under development',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[600]),
+    final AdoptController controller = Get.find<AdoptController>();
+    
+    return Obx(() {
+      if (controller.followedShelterIds.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                Icon(Icons.favorite_border, size: 64, color: Colors.grey[400]),
+                const SizedBox(height: 16),
+                Text(
+                  'No followed shelters yet',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Follow shelters to see their pets here',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[500]),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
+      }
+
+      return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('pets')
+            .where('shelterId', whereIn: controller.followedShelterIds.take(10).toList())
+            .where('adoptionStatus', isEqualTo: 'available')
+            .orderBy('createdAt', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32.0),
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  children: [
+                    Icon(Icons.error, size: 64, color: Colors.grey[400]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'An error occurred',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  children: [
+                    Icon(Icons.pets, size: 64, color: Colors.grey[400]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No pets available from followed shelters',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // Convert Firestore data with photos from subcollection
+          return FutureBuilder<List<Map<String, dynamic>>>(
+            future: _buildPetsWithPhotos(snapshot.data!.docs),
+            builder: (context, petsSnapshot) {
+              if (petsSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (!petsSnapshot.hasData || petsSnapshot.data!.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No pet data available',
+                    style: GoogleFonts.poppins(color: Colors.grey),
+                  ),
+                );
+              }
+
+              return PetListWidget(pets: petsSnapshot.data!);
+            },
+          );
+        },
+      );
+    });
   }
 }

@@ -1,11 +1,13 @@
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../models/shelter.dart';
+import '../../../../services/follower_service.dart';
 import '../pet_detail/pet_detail_view.dart';
 import '../event_detail/event_detail_view.dart';
 
 class ShelterProfileController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FollowerService _followerService = FollowerService();
   
   // Observable variables
   final Rx<Shelter?> shelter = Rx<Shelter?>(null);
@@ -15,6 +17,8 @@ class ShelterProfileController extends GetxController {
   final RxInt selectedTab = 0.obs;
   final RxList<Map<String, dynamic>> pets = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> events = <Map<String, dynamic>>[].obs;
+  final RxBool isFollowing = false.obs;
+  final RxBool isFollowingLoading = false.obs;
 
   String? shelterId;
 
@@ -33,6 +37,7 @@ class ShelterProfileController extends GetxController {
 
     if (shelterId != null) {
       loadShelterData();
+      checkFollowStatus();
     } else {
       isLoading.value = false;
     }
@@ -185,5 +190,60 @@ class ShelterProfileController extends GetxController {
       () => EventDetailView(eventData: eventData),
       transition: Transition.rightToLeft,
     );
+  }
+
+  /// Check if current user is following this shelter
+  Future<void> checkFollowStatus() async {
+    if (shelterId == null) return;
+    
+    try {
+      isFollowing.value = await _followerService.isFollowing(shelterId!);
+    } catch (e) {
+      print('Error checking follow status: $e');
+    }
+  }
+
+  /// Toggle follow/unfollow
+  Future<void> toggleFollow() async {
+    if (shelterId == null) return;
+    
+    try {
+      isFollowingLoading.value = true;
+      
+      if (isFollowing.value) {
+        // Unfollow
+        final success = await _followerService.unfollowShelter(shelterId!);
+        if (success) {
+          isFollowing.value = false;
+          Get.snackbar(
+            'Success',
+            'Unfollowed ${shelter.value?.shelterName ?? 'shelter'}',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 2),
+          );
+        }
+      } else {
+        // Follow
+        final success = await _followerService.followShelter(shelterId!);
+        if (success) {
+          isFollowing.value = true;
+          Get.snackbar(
+            'Success',
+            'Now following ${shelter.value?.shelterName ?? 'shelter'}',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: const Duration(seconds: 2),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error toggling follow: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to ${isFollowing.value ? 'unfollow' : 'follow'} shelter',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isFollowingLoading.value = false;
+    }
   }
 }

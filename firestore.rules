@@ -33,8 +33,8 @@ service cloud.firestore {
     
     // Users collection (for regular users only)
     match /users/{userId} {
-      // Read: authenticated users can read their own data OR admin can read all users
-      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      // Read: authenticated users can read their own data OR admin can read all users OR shelters can read user data (for followers list)
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin() || isShelter());
       
       // Update: user can update their own data OR admin can update any user data
       allow update: if request.auth != null && (request.auth.uid == userId || isAdmin());
@@ -48,7 +48,7 @@ service cloud.firestore {
     
     // Shelters collection
     match /shelters/{shelterId} {
-      // Read: shelter can read their own data OR admin can read all shelters OR any authenticated user (for public shelter info)
+      // Read: any authenticated user can read shelter data (for public shelter info, following list, etc.)
       allow read: if request.auth != null;
       
       // Create: anyone authenticated can create (for shelter registration)
@@ -64,17 +64,17 @@ service cloud.firestore {
     // Followers collection
     match /followers/{followerId} {
       // Read: user can read their own follows OR shelter can see their followers OR admin
-      allow read: if request.auth != null && 
-        (request.auth.uid == resource.data.userId || 
-         request.auth.uid == resource.data.shelterId || 
-         isAdmin());
+      // Allow list queries for followers by userId or shelterId
+      allow read: if request.auth != null;
       
       // Create: authenticated user can follow
       allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
       
-      // Delete: user can unfollow OR admin can delete
+      // Delete: user can unfollow OR shelter can remove follower OR admin can delete
       allow delete: if request.auth != null && 
-        (request.auth.uid == resource.data.userId || isAdmin());
+        (request.auth.uid == resource.data.userId || 
+         request.auth.uid == resource.data.shelterId || 
+         isAdmin());
       
       // Update: not allowed
       allow update: if false;

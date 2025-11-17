@@ -22,6 +22,8 @@ import '../features/user/modules/adoption_request/adoption_request_view.dart';
 import '../features/user/modules/adoption_request/adoption_request_binding.dart';
 import '../features/user/modules/adoption_status/adoption_status_view.dart';
 import '../features/user/modules/adoption_status/adoption_status_binding.dart';
+import '../features/user/modules/following/following_view.dart';
+import '../features/user/modules/following/following_binding.dart';
 
 // Shared Feature
 import '../features/shared/modules/event/event_view.dart';
@@ -49,6 +51,8 @@ import '../features/shelter/modules/shelter/profile/edit_shelter_profile_view.da
 import '../features/shelter/modules/shelter/profile/edit_shelter_profile_binding.dart';
 import '../features/shelter/modules/shelter/adoption_management/adoption_management_view.dart';
 import '../features/shelter/modules/shelter/adoption_management/adoption_management_binding.dart';
+import '../features/shelter/modules/shelter/followers/followers_view.dart';
+import '../features/shelter/modules/shelter/followers/followers_binding.dart';
 
 // Admin Feature
 import '../features/admin/modules/home/admin_home_view.dart';
@@ -129,6 +133,13 @@ class AppPages {
       binding: AdoptionStatusBinding(),
     ),
 
+    // --- FOLLOWING PAGE ---
+    GetPage(
+      name: '/following',
+      page: () => const FollowingView(),
+      binding: FollowingBinding(),
+    ),
+
     // --- VERIFICATION PAGE ---
     GetPage(
       name: AppRoutes.verification,
@@ -204,6 +215,13 @@ class AppPages {
       name: AppRoutes.shelterAdoptionManagement,
       page: () => const ShelterAdoptionManagementView(),
       binding: ShelterAdoptionManagementBinding(),
+    ),
+
+    // --- SHELTER FOLLOWERS PAGE ---
+    GetPage(
+      name: '/shelter/followers',
+      page: () => const FollowersView(),
+      binding: FollowersBinding(),
     ),
 
     // --- ADMIN HOME PAGE ---

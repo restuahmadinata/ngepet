@@ -80,13 +80,31 @@ class ShelterHomeView extends GetView<ShelterHomeController> {
                         Colors.green,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Obx(
+                () => Row(
+                  children: [
                     Expanded(
                       child: _buildStatCard(
                         'Adoption Requests',
                         controller.adoptionRequestCount.value.toString(),
                         Icons.assignment,
                         Colors.orange,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: controller.goToFollowers,
+                        child: _buildStatCard(
+                          'Followers',
+                          controller.followerCount.value.toString(),
+                          Icons.people,
+                          Colors.purple,
+                        ),
                       ),
                     ),
                   ],
