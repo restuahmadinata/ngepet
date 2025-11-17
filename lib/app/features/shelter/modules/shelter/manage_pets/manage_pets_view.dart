@@ -169,6 +169,9 @@ class ManagePetsView extends GetView<ManagePetsController> {
     final ageMonths = pet['ageMonths']?.toString() ?? 'Unknown age';
     final adoptionStatus = pet['adoptionStatus']?.toString() ?? 'available';
     
+    // Check if pet is adopted
+    final isAdopted = adoptionStatus.toLowerCase() == 'adopted';
+    
     // Get image URL
     String imageUrl = 'https://via.placeholder.com/300x300?text=No+Image';
     if (pet['imageUrls'] != null && pet['imageUrls'] is List && (pet['imageUrls'] as List).isNotEmpty) {
@@ -192,152 +195,201 @@ class ManagePetsView extends GetView<ManagePetsController> {
         statusText = 'Available';
     }
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: InkWell(
-        onTap: () {
-          // Show pet details or edit
-          controller.editPet(petId);
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Pet image
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.grey[200],
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primary,
-                        strokeWidth: 2,
+    return Opacity(
+      opacity: isAdopted ? 0.6 : 1.0,
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 16),
+        elevation: isAdopted ? 1 : 2,
+        color: isAdopted ? Colors.grey[100] : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: isAdopted 
+              ? BorderSide(color: Colors.grey[300]!, width: 1)
+              : BorderSide.none,
+        ),
+        child: InkWell(
+          onTap: isAdopted 
+              ? () {
+                  // Show message that adopted pets cannot be edited
+                  Get.snackbar(
+                    'Cannot Edit',
+                    'This pet has been adopted and cannot be edited',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: Colors.grey[700],
+                    colorText: Colors.white,
+                    duration: const Duration(seconds: 2),
+                  );
+                }
+              : () {
+                  // Show pet details or edit
+                  controller.editPet(petId);
+                },
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Pet image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: ColorFiltered(
+                    colorFilter: isAdopted
+                        ? ColorFilter.mode(
+                            Colors.grey,
+                            BlendMode.saturation,
+                          )
+                        : const ColorFilter.mode(
+                            Colors.transparent,
+                            BlendMode.multiply,
+                          ),
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[200],
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.pets, size: 40),
                       ),
                     ),
                   ),
-                  errorWidget: (context, url, error) => Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.pets, size: 40),
-                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
+                const SizedBox(width: 12),
 
-              // Pet info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            petName,
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            statusText,
-                            style: GoogleFonts.poppins(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: statusColor,
+                // Pet info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              petName,
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      breed,
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        color: Colors.grey[600],
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: statusColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              statusText,
+                              style: GoogleFonts.poppins(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: statusColor,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        _buildInfoChip(Icons.category, category),
-                        const SizedBox(width: 8),
-                        _buildInfoChip(
-                          gender.toLowerCase() == 'male' 
-                              ? Icons.male 
-                              : Icons.female,
-                          gender,
+                      const SizedBox(height: 4),
+                      Text(
+                        breed,
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: Colors.grey[600],
                         ),
-                        const SizedBox(width: 8),
-                        _buildInfoChip(Icons.cake, ageMonths),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, size: 20),
-                          onPressed: () => controller.editPet(petId),
-                          color: AppColors.primary,
-                          tooltip: 'Edit',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          _buildInfoChip(Icons.category, category),
+                          const SizedBox(width: 8),
+                          _buildInfoChip(
+                            gender.toLowerCase() == 'male' 
+                                ? Icons.male 
+                                : Icons.female,
+                            gender,
+                          ),
+                          const SizedBox(width: 8),
+                          _buildInfoChip(Icons.cake, ageMonths),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      if (!isAdopted)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, size: 20),
+                              onPressed: () => controller.editPet(petId),
+                              color: AppColors.primary,
+                              tooltip: 'Edit',
+                            ),
+                            Obx(() {
+                              final isDeleting = controller.deletingPetId.value == petId;
+                              return IconButton(
+                                icon: isDeleting
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.red,
+                                        ),
+                                      )
+                                    : const Icon(Icons.delete, size: 20),
+                                onPressed: isDeleting 
+                                    ? null 
+                                    : () => controller.deletePet(petId, petName),
+                                color: Colors.red,
+                                tooltip: isDeleting ? 'Deleting...' : 'Delete',
+                              );
+                            }),
+                          ],
+                        )
+                      else
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Row(
+                            children: [
+                              Icon(Icons.lock, size: 14, color: Colors.grey[500]),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Cannot edit adopted pet',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  color: Colors.grey[500],
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        Obx(() {
-                          final isDeleting = controller.deletingPetId.value == petId;
-                          return IconButton(
-                            icon: isDeleting
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.red,
-                                    ),
-                                  )
-                                : const Icon(Icons.delete, size: 20),
-                            onPressed: isDeleting 
-                                ? null 
-                                : () => controller.deletePet(petId, petName),
-                            color: Colors.red,
-                            tooltip: isDeleting ? 'Deleting...' : 'Delete',
-                          );
-                        }),
-                      ],
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
