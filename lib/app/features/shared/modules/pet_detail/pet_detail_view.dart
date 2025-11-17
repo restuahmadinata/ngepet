@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../../../../routes/app_routes.dart';
+import 'pet_detail_controller.dart';
 
 class PetDetailView extends StatefulWidget {
   final Map<String, dynamic> petData;
@@ -16,10 +17,23 @@ class PetDetailView extends StatefulWidget {
 class _PetDetailViewState extends State<PetDetailView> {
   int currentImageIndex = 0;
   final PageController _pageController = PageController();
+  final PetDetailController controller = Get.put(PetDetailController());
+
+  @override
+  void initState() {
+    super.initState();
+    // Check if user has already applied for this pet
+    final petId = widget.petData['petId']?.toString() ?? 
+                  widget.petData['id']?.toString() ?? '';
+    if (petId.isNotEmpty) {
+      controller.checkApplicationStatus(petId);
+    }
+  }
 
   @override
   void dispose() {
     _pageController.dispose();
+    Get.delete<PetDetailController>();
     super.dispose();
   }
 
@@ -331,86 +345,133 @@ class _PetDetailViewState extends State<PetDetailView> {
       ),
 
       // Bottom Action Buttons
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
+      bottomNavigationBar: Obx(() {
+        if (controller.isLoading.value) {
+          return Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, -5),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: SafeArea(
-          child: Row(
-            children: [
-              // Chat Button
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    // TODO: Implement chat functionality
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Chat feature coming soon!'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.chat_bubble_outline),
-                  label: Text(
-                    'Chat Owner',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFFE27B59),
-                    side: const BorderSide(color: Color(0xFFE27B59), width: 2),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
+            child: const SafeArea(
+              child: Center(
+                child: CircularProgressIndicator(),
               ),
-              const SizedBox(width: 12),
+            ),
+          );
+        }
 
-              // Adopt Button
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    // Navigate to adoption request form
-                    Get.toNamed(
-                      AppRoutes.adoptionRequest,
-                      arguments: widget.petData,
-                    );
-                  },
-                  icon: const Icon(Icons.favorite),
-                  label: Text(
-                    'Adopt',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE27B59),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
               ),
             ],
           ),
-        ),
-      ),
+          child: SafeArea(
+            child: Row(
+              children: [
+                // Chat Button
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      // TODO: Implement chat functionality
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Chat feature coming soon!'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.chat_bubble_outline),
+                    label: Text(
+                      'Chat Owner',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFE27B59),
+                      side: const BorderSide(color: Color(0xFFE27B59), width: 2),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+
+                // Adopt Button or Check Status Button
+                Expanded(
+                  child: controller.hasApplied.value
+                      ? ElevatedButton.icon(
+                          onPressed: () {
+                            // Navigate to adoption status page
+                            Get.toNamed(AppRoutes.adoptionStatus);
+                          },
+                          icon: const Icon(Icons.assignment_outlined),
+                          label: Text(
+                            'Check Status',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        )
+                      : ElevatedButton.icon(
+                          onPressed: () {
+                            // Navigate to adoption request form
+                            Get.toNamed(
+                              AppRoutes.adoptionRequest,
+                              arguments: widget.petData,
+                            );
+                          },
+                          icon: const Icon(Icons.favorite),
+                          label: Text(
+                            'Adopt',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE27B59),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
     );
   }
 

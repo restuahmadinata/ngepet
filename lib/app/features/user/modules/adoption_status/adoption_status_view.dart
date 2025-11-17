@@ -84,6 +84,9 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
     final petName = petData?['petName'] ?? 'Unknown Pet';
     final petBreed = petData?['breed'] ?? '';
     final shelterName = shelterData?['shelterName'] ?? 'Unknown Shelter';
+    
+    // Get pet adoption status
+    final petAdoptionStatus = petData?['adoptionStatus']?.toString() ?? 'available';
 
     // Get image URL
     String imageUrl = 'https://via.placeholder.com/100x100?text=Pet';
@@ -98,6 +101,27 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
     if (request['applicationDate'] != null) {
       final date = (request['applicationDate'] as Timestamp).toDate();
       applicationDate = DateFormat('dd MMM yyyy').format(date);
+    }
+    
+    // Determine pet status badge
+    Color statusColor;
+    String statusText;
+    IconData statusIcon;
+    switch (petAdoptionStatus.toLowerCase()) {
+      case 'adopted':
+        statusColor = Colors.green;
+        statusText = 'Adopted';
+        statusIcon = Icons.check_circle;
+        break;
+      case 'pending':
+        statusColor = Colors.orange;
+        statusText = 'Pending';
+        statusIcon = Icons.hourglass_empty;
+        break;
+      default:
+        statusColor = Colors.blue;
+        statusText = 'Available';
+        statusIcon = Icons.pets;
     }
 
     return Card(
@@ -160,6 +184,41 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
                               color: Colors.grey[600],
                             ),
                           ),
+                        const SizedBox(height: 8),
+                        // Pet Status Badge
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: statusColor.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: statusColor.withOpacity(0.5),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                statusIcon,
+                                size: 14,
+                                color: statusColor,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Pet Status: $statusText',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: statusColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         const SizedBox(height: 4),
                         Row(
                           children: [

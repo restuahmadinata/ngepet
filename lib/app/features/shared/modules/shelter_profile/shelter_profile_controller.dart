@@ -99,10 +99,11 @@ class ShelterProfileController extends GetxController {
       isLoadingPets.value = true;
       print('🔍 Loading pets for shelter: $shelterId');
 
-      // Try simpler query first - just filter by shelterId
+      // Filter by shelterId and only show available pets
       final querySnapshot = await _firestore
           .collection('pets')
           .where('shelterId', isEqualTo: shelterId)
+          .where('adoptionStatus', isEqualTo: 'available')
           .get();
 
       print('✅ Found ${querySnapshot.docs.length} pets');

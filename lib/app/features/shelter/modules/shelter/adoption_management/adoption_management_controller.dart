@@ -110,6 +110,19 @@ class ShelterAdoptionManagementController extends GetxController {
     String? notes,
   }) async {
     try {
+      // Get the adoption request to retrieve petId
+      final requestDoc = await _firestore
+          .collection('adoption_applications')
+          .doc(requestId)
+          .get();
+      
+      if (!requestDoc.exists) {
+        throw Exception('Adoption request not found');
+      }
+      
+      final petId = requestDoc.data()?['petId'];
+      
+      // Update adoption request
       await _firestore.collection('adoption_applications').doc(requestId).update({
         'requestStatus': status,
         'requestProcessedDate': FieldValue.serverTimestamp(),
@@ -117,6 +130,25 @@ class ShelterAdoptionManagementController extends GetxController {
         'surveyStatus': status == 'approved' ? 'pending' : 'not_started',
         'updatedAt': FieldValue.serverTimestamp(),
       });
+
+      // Update pet status based on request approval/rejection
+      if (petId != null) {
+        if (status == 'approved') {
+          // When approved, set pet status to 'pending' (reserved for this adopter)
+          await _firestore.collection('pets').doc(petId).update({
+            'adoptionStatus': 'pending',
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+          print('✅ Pet status updated to pending');
+        } else if (status == 'rejected') {
+          // When rejected, set pet status back to 'available'
+          await _firestore.collection('pets').doc(petId).update({
+            'adoptionStatus': 'available',
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+          print('✅ Pet status reverted to available');
+        }
+      }
 
       Get.back(); // Close dialog
       Get.snackbar(
@@ -145,6 +177,19 @@ class ShelterAdoptionManagementController extends GetxController {
     String? notes,
   }) async {
     try {
+      // Get the adoption request to retrieve petId
+      final requestDoc = await _firestore
+          .collection('adoption_applications')
+          .doc(requestId)
+          .get();
+      
+      if (!requestDoc.exists) {
+        throw Exception('Adoption request not found');
+      }
+      
+      final petId = requestDoc.data()?['petId'];
+      
+      // Update survey status
       await _firestore.collection('adoption_applications').doc(requestId).update({
         'surveyStatus': status,
         'surveyCompletedDate': FieldValue.serverTimestamp(),
@@ -152,6 +197,16 @@ class ShelterAdoptionManagementController extends GetxController {
         'handoverStatus': status == 'approved' ? 'pending' : 'not_started',
         'updatedAt': FieldValue.serverTimestamp(),
       });
+
+      // Update pet status based on survey approval/rejection
+      if (petId != null && status == 'rejected') {
+        // When survey is rejected, set pet status back to 'available'
+        await _firestore.collection('pets').doc(petId).update({
+          'adoptionStatus': 'available',
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+        print('✅ Pet status reverted to available due to survey rejection');
+      }
 
       Get.back(); // Close dialog
       Get.snackbar(
