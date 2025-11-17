@@ -382,12 +382,10 @@ class _PetDetailViewState extends State<PetDetailView> {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    // TODO: Implement adoption functionality
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Adoption feature coming soon!'),
-                        duration: Duration(seconds: 2),
-                      ),
+                    // Navigate to adoption request form
+                    Get.toNamed(
+                      AppRoutes.adoptionRequest,
+                      arguments: widget.petData,
                     );
                   },
                   icon: const Icon(Icons.favorite),

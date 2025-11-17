@@ -87,8 +87,7 @@ class ShelterHomeController extends GetxController {
   }
 
   void goToAdoptionRequests() {
-    // TODO: Implement adoption requests page
-    Get.snackbar("Info", "Adoption request feature is under development");
+    Get.toNamed(AppRoutes.shelterAdoptionManagement);
   }
 
   void goToAddPet() {

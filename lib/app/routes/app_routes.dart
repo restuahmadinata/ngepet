@@ -10,6 +10,8 @@ abstract class AppRoutes {
   static const chat = _Paths.chat;
   static const profile = _Paths.profile;
   static const editProfile = _Paths.editProfile;
+  static const adoptionRequest = _Paths.adoptionRequest;
+  static const adoptionStatus = _Paths.adoptionStatus;
   static const verification = _Paths.verification;
   static const shelterHome = _Paths.shelterHome;
   static const shelterAddPet = _Paths.shelterAddPet;
@@ -20,6 +22,7 @@ abstract class AppRoutes {
   static const shelterEditEvent = _Paths.shelterEditEvent;
   static const editShelterProfile = _Paths.editShelterProfile;
   static const shelterProfile = _Paths.shelterProfile;
+  static const shelterAdoptionManagement = _Paths.shelterAdoptionManagement;
   static const adminHome = _Paths.adminHome;
   static const adminUserManagement = _Paths.adminUserManagement;
   static const adminShelterVerification = _Paths.adminShelterVerification;
@@ -37,6 +40,8 @@ abstract class _Paths {
   static const chat = '/chat';
   static const profile = '/profile';
   static const editProfile = '/edit-profile';
+  static const adoptionRequest = '/adoption-request';
+  static const adoptionStatus = '/adoption-status';
   static const verification = '/verification';
   static const shelterHome = '/shelter-home';
   static const shelterAddPet = '/shelter/add-pet';
@@ -47,6 +52,7 @@ abstract class _Paths {
   static const shelterEditEvent = '/shelter/edit-event';
   static const editShelterProfile = '/shelter/edit-profile';
   static const shelterProfile = '/shelter-profile';
+  static const shelterAdoptionManagement = '/shelter/adoption-management';
   static const adminHome = '/admin-home';
   static const adminUserManagement = '/admin/user-management';
   static const adminShelterVerification = '/admin/shelter-verification';

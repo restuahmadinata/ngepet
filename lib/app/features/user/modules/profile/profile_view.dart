@@ -46,6 +46,10 @@ class ProfileController extends GetxController {
       _loadUserData();
     });
   }
+
+  void goToAdoptionStatus() {
+    Get.toNamed(AppRoutes.adoptionStatus);
+  }
 }
 
 class ProfileView extends StatelessWidget {
@@ -176,17 +180,15 @@ class ProfileView extends StatelessWidget {
                           onTap: controller.goToEditProfile,
                         ),
                         _buildMenuItem(
+                          icon: Icons.assignment,
+                          title: 'My Adoption Requests',
+                          onTap: controller.goToAdoptionStatus,
+                        ),
+                        _buildMenuItem(
                           icon: Icons.info,
                           title: 'About Us',
                           onTap: () {
                             // Handle about us
-                          },
-                        ),
-                        _buildMenuItem(
-                          icon: Icons.assignment,
-                          title: 'Adoption Request Status',
-                          onTap: () {
-                            // Handle adoption status
                           },
                         ),
                       ],

@@ -18,6 +18,10 @@ import '../features/user/modules/chat/chat_view.dart';
 import '../features/user/modules/profile/profile_view.dart';
 import '../features/user/modules/profile/edit_profile/edit_profile_view.dart';
 import '../features/user/modules/profile/edit_profile/edit_profile_binding.dart';
+import '../features/user/modules/adoption_request/adoption_request_view.dart';
+import '../features/user/modules/adoption_request/adoption_request_binding.dart';
+import '../features/user/modules/adoption_status/adoption_status_view.dart';
+import '../features/user/modules/adoption_status/adoption_status_binding.dart';
 
 // Shared Feature
 import '../features/shared/modules/event/event_view.dart';
@@ -43,6 +47,8 @@ import '../features/shelter/modules/shelter/edit_event/edit_event_view.dart';
 import '../features/shelter/modules/shelter/edit_event/edit_event_binding.dart';
 import '../features/shelter/modules/shelter/profile/edit_shelter_profile_view.dart';
 import '../features/shelter/modules/shelter/profile/edit_shelter_profile_binding.dart';
+import '../features/shelter/modules/shelter/adoption_management/adoption_management_view.dart';
+import '../features/shelter/modules/shelter/adoption_management/adoption_management_binding.dart';
 
 // Admin Feature
 import '../features/admin/modules/home/admin_home_view.dart';
@@ -107,6 +113,20 @@ class AppPages {
       name: AppRoutes.editProfile,
       page: () => const EditProfileView(),
       binding: EditProfileBinding(),
+    ),
+
+    // --- ADOPTION REQUEST PAGE ---
+    GetPage(
+      name: AppRoutes.adoptionRequest,
+      page: () => const AdoptionRequestView(),
+      binding: AdoptionRequestBinding(),
+    ),
+
+    // --- ADOPTION STATUS PAGE ---
+    GetPage(
+      name: AppRoutes.adoptionStatus,
+      page: () => const AdoptionStatusView(),
+      binding: AdoptionStatusBinding(),
     ),
 
     // --- VERIFICATION PAGE ---
@@ -177,6 +197,13 @@ class AppPages {
       name: AppRoutes.shelterProfile,
       page: () => const ShelterProfileView(),
       binding: ShelterProfileBinding(),
+    ),
+
+    // --- SHELTER ADOPTION MANAGEMENT PAGE ---
+    GetPage(
+      name: AppRoutes.shelterAdoptionManagement,
+      page: () => const ShelterAdoptionManagementView(),
+      binding: ShelterAdoptionManagementBinding(),
     ),
 
     // --- ADMIN HOME PAGE ---
