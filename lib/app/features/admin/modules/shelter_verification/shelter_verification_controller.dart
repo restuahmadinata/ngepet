@@ -5,12 +5,15 @@ class ShelterVerificationController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final verificationRequests = <Map<String, dynamic>>[].obs;
+  final allShelters = <Map<String, dynamic>>[].obs;
   final isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     fetchVerificationRequests();
+    // Also fetch all shelters for debugging
+    fetchAllShelters();
   }
 
   Future<void> fetchVerificationRequests() async {
@@ -114,7 +117,7 @@ class ShelterVerificationController extends GetxController {
           .collection('shelters')
           .get();
 
-      verificationRequests.value = snapshot.docs.map((doc) {
+      allShelters.value = snapshot.docs.map((doc) {
         return {'uid': doc.id, ...doc.data()};
       }).toList();
     } catch (e) {

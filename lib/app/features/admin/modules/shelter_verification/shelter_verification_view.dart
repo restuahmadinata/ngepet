@@ -100,7 +100,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
         return const Center(child: CircularProgressIndicator());
       }
 
-      if (controller.verificationRequests.isEmpty) {
+      if (controller.allShelters.isEmpty) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -123,10 +123,10 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
         onRefresh: controller.fetchAllShelters,
         child: ListView.builder(
           padding: const EdgeInsets.all(16),
-          itemCount: controller.verificationRequests.length,
+          itemCount: controller.allShelters.length,
           itemBuilder: (context, index) {
-            final request = controller.verificationRequests[index];
-            return _buildRequestCard(request, showActions: false);
+            final shelter = controller.allShelters[index];
+            return _buildRequestCard(shelter, showActions: false);
           },
         ),
       );

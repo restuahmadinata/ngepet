@@ -287,7 +287,7 @@ class EditPetView extends GetView<EditPetController> {
                     const SizedBox(height: 8),
                     Obx(
                       () => DropdownButtonFormField<String>(
-                        value: controller.selectedType.value,
+                        initialValue: controller.selectedType.value,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -331,7 +331,7 @@ class EditPetView extends GetView<EditPetController> {
                     const SizedBox(height: 8),
                     Obx(
                       () => DropdownButtonFormField<String>(
-                        value: controller.selectedGender.value,
+                        initialValue: controller.selectedGender.value,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -375,7 +375,7 @@ class EditPetView extends GetView<EditPetController> {
                     const SizedBox(height: 8),
                     Obx(
                       () => DropdownButtonFormField<String>(
-                        value: controller.selectedStatus.value,
+                        initialValue: controller.selectedStatus.value,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),

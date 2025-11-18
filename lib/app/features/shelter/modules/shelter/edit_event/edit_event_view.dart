@@ -346,7 +346,7 @@ class EditEventView extends GetView<EditEventController> {
                     const SizedBox(height: 8),
                     Obx(
                       () => DropdownButtonFormField<String>(
-                        value: controller.selectedStatus.value,
+                        initialValue: controller.selectedStatus.value,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),

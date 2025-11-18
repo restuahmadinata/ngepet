@@ -70,7 +70,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                     ),
                     _buildMenuCard(
                       icon: Icons.store,
-                      title: 'Shelter Verification',
+                      title: 'Manage Shelter',
                       description: 'Manage Submissions',
                       color: AppColors.green700,
                       onTap: () => Get.toNamed('/admin/shelter-verification'),
