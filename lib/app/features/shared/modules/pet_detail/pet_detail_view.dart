@@ -441,12 +441,20 @@ class _PetDetailViewState extends State<PetDetailView> {
                           ),
                         )
                       : ElevatedButton.icon(
-                          onPressed: () {
-                            // Navigate to adoption request form
-                            Get.toNamed(
+                          onPressed: () async {
+                            // Navigate to adoption request form and wait for result
+                            final result = await Get.toNamed(
                               AppRoutes.adoptionRequest,
                               arguments: widget.petData,
                             );
+
+                            // If adoption application was successfully submitted, refresh and update UI
+                            if (result == true) {
+                              final petId = widget.petData['petId']?.toString() ?? widget.petData['id']?.toString() ?? '';
+                              if (petId.isNotEmpty) {
+                                await controller.checkApplicationStatus(petId);
+                              }
+                            }
                           },
                           icon: const Icon(Icons.favorite),
                           label: Text(

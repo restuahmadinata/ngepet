@@ -513,6 +513,37 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
+              // If request is still pending, allow user to cancel it
+              if ((request['requestStatus'] ?? 'pending').toString().toLowerCase() == 'pending')
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      Get.back();
+                      final confirm = await Get.dialog<bool>(
+                        AlertDialog(
+                          title: const Text('Cancel Request'),
+                          content: const Text('Are you sure you want to cancel this adoption request?'),
+                          actions: [
+                            TextButton(onPressed: () => Get.back(result: false), child: const Text('No')),
+                            TextButton(onPressed: () => Get.back(result: true), child: const Text('Yes')),
+                          ],
+                        ),
+                      );
+
+                      if (confirm == true) {
+                        await controller.cancelRequest(request['id'] ?? request['applicationId']);
+                      }
+                    },
+                    child: Text('Cancel Request', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

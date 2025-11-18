@@ -8,6 +8,7 @@ class PetDetailController extends GetxController {
 
   final hasApplied = false.obs;
   final isLoading = true.obs;
+  // Removed requestStatus and applicationStatus fields
   String? applicationId;
 
   Future<void> checkApplicationStatus(String petId) async {
@@ -29,12 +30,15 @@ class PetDetailController extends GetxController {
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
+  final doc = querySnapshot.docs.first;
         hasApplied.value = true;
-        applicationId = querySnapshot.docs.first.id;
+        applicationId = doc.id;
+  // We only track whether user has applied; detailed status view is in Adoption Status screen.
         print('✅ User has already applied for this pet');
       } else {
         hasApplied.value = false;
         applicationId = null;
+  // Resetting status values isn't necessary here
         print('✅ User has not applied for this pet');
       }
     } catch (e) {
@@ -44,4 +48,6 @@ class PetDetailController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  // Cancel logic should only be handled via AdoptionStatusController to keep UI flows consistent.
 }

@@ -106,6 +106,40 @@ class AdoptionStatusController extends GetxController {
     }
   }
 
+  Future<void> cancelRequest(String requestId) async {
+    try {
+      isLoading.value = true;
+      final docRef = _firestore.collection('adoption_applications').doc(requestId);
+      final snapshot = await docRef.get();
+      if (!snapshot.exists) {
+    // No snackbar for not found - UI will stay unchanged and user can refresh
+        return;
+      }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+      final requestStatus = (data['requestStatus'] ?? 'pending').toString();
+      if (requestStatus.toLowerCase() == 'approved') {
+    // No snackbar - do not allow cancel on approved status, UI will remain
+        return;
+      }
+
+      await docRef.update({
+        'requestStatus': 'cancelled',
+        'applicationStatus': 'cancelled',
+        'processedDate': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+  // No snackbar - the list will be refreshed with the updated status
+      await loadAdoptionRequests();
+    } catch (e) {
+      print('❌ Error cancelling request: $e');
+  // No snackbar for error, error printed to console
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void viewRequestDetail(Map<String, dynamic> request) {
     // Navigate to detailed view (we'll create this next)
     Get.toNamed('/adoption-detail', arguments: request);

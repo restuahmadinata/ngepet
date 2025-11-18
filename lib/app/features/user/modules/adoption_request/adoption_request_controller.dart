@@ -145,16 +145,9 @@ class AdoptionRequestController extends GetxController {
       
       print('✅ Adoption request saved with ID: ${docRef.id}');
       
-      // Show success and navigate back
-      Get.back(); // Close adoption form
-      Get.snackbar(
-        'Success',
-        'Adoption request submitted successfully!',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+  // Show success and navigate back; return true to caller so it can refresh
+  Get.back(result: true); // Close adoption form and signal success
+      // No snackbars per request - caller can refresh and show inline feedback
       
     } catch (e, stackTrace) {
       print('❌ Error submitting adoption request: $e');
