@@ -164,6 +164,22 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
+    // Suspensions collection
+    match /suspensions/{suspensionId} {
+      // Read: user can read their own suspension OR admin can read all
+      allow read: if request.auth != null && 
+        (request.auth.uid == resource.data.userId || isAdmin());
+      
+      // Create: only admin can create suspensions
+      allow create: if isAdmin();
+      
+      // Update: only admin can update (for lifting suspension)
+      allow update: if isAdmin();
+      
+      // Delete: only admin can delete
+      allow delete: if isAdmin();
+    }
+    
     // Platform analytics collection
     match /platform_analytics/{analyticsId} {
       // Read: only admin can read

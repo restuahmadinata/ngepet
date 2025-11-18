@@ -53,8 +53,18 @@ class _SplashViewState extends State<SplashView> {
         if (userDoc.exists) {
           final data = userDoc.data();
           final name = data?['fullName'] ?? 'User';
+          final accountStatus = data?['accountStatus'] ?? 'active';
 
           print('🔍 Splash - User Name: $name');
+          print('🔍 Splash - Account Status: $accountStatus');
+
+          // Check if user is suspended
+          if (accountStatus == 'suspended') {
+            print('⚠️ User is suspended, redirecting to Suspended Account Page');
+            Get.offAllNamed(AppRoutes.suspendedAccount);
+            return;
+          }
+
           print('✅ Redirecting to User Home');
           Get.offAllNamed(AppRoutes.userHome, arguments: {'name': name});
           return;

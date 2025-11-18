@@ -29,6 +29,7 @@ users/{user_id}
   
   // Account Status
   "accountStatus": string,       // enum: "active", "suspended", "banned"
+  "isActive": boolean,           // Account active status (for quick filtering)
   
   // Timestamps
   "createdAt": Timestamp,        // Account creation time
@@ -281,6 +282,42 @@ reports/{report_id}
 - `reportedId`
 - `reportStatus`
 - `adminId`
+
+---
+
+### 9️⃣ **suspensions** Collection
+Stores user suspension records and history.
+
+```javascript
+suspensions/{suspension_id}
+{
+  // Identity
+  "suspensionId": string,        // PK - auto-generated
+  "userId": string,              // FK - suspended user
+  "adminId": string,             // FK - admin who issued suspension
+  
+  // Suspension Details
+  "reason": string,              // Reason for suspension
+  "suspensionStart": Timestamp,  // Suspension start date/time
+  "suspensionEnd": Timestamp,    // Suspension end date/time
+  
+  // Status
+  "status": string,              // enum: "active", "lifted", "expired"
+  "liftedBy": string,            // FK - admin who lifted (if applicable)
+  "liftedAt": Timestamp,         // Time when suspension was lifted
+  "liftReason": string,          // Reason for lifting suspension early
+  
+  // Timestamps
+  "createdAt": Timestamp,        // Record creation time
+  "updatedAt": Timestamp         // Last update time
+}
+```
+
+**Indexes:**
+- `userId`
+- `status`
+- Composite: `userId` + `status`
+- Composite: `suspensionEnd` + `status`
 
 ---
 

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class UserManagementController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -78,6 +79,92 @@ class UserManagementController extends GetxController {
       fetchUsers(); // Refresh data
     } catch (e) {
       print('Error toggling user status: $e');
+    }
+  }
+
+  Future<void> suspendUser(
+    String uid,
+    DateTime startDate,
+    DateTime endDate,
+    String reason,
+  ) async {
+    try {
+      final adminId = FirebaseAuth.instance.currentUser?.uid ?? 'unknown';
+
+      // Create suspension record
+      final suspensionRef = await _firestore.collection('suspensions').add({
+        'userId': uid,
+        'adminId': adminId,
+        'reason': reason,
+        'suspensionStart': Timestamp.fromDate(startDate),
+        'suspensionEnd': Timestamp.fromDate(endDate),
+        'status': 'active',
+        'liftedBy': null,
+        'liftedAt': null,
+        'liftReason': null,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      // Update suspension ID
+      await suspensionRef.update({
+        'suspensionId': suspensionRef.id,
+      });
+
+      // Update user's account status
+      await _firestore.collection('users').doc(uid).update({
+        'accountStatus': 'suspended',
+        'isActive': false,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      print('✅ User suspended successfully');
+
+      fetchUsers(); // Refresh data
+    } catch (e) {
+      print('Error suspending user: $e');
+    }
+  }
+
+  Future<void> liftSuspension(String uid, String userName) async {
+    try {
+      final adminId = FirebaseAuth.instance.currentUser?.uid ?? 'unknown';
+
+      // Find active suspension for this user
+      final suspensionQuery = await _firestore
+          .collection('suspensions')
+          .where('userId', isEqualTo: uid)
+          .where('status', isEqualTo: 'active')
+          .get();
+
+      if (suspensionQuery.docs.isEmpty) {
+        print('No active suspension found for this user');
+        return;
+      }
+
+      // Update suspension status
+      for (var doc in suspensionQuery.docs) {
+        await doc.reference.update({
+          'status': 'lifted',
+          'liftedBy': adminId,
+          'liftedAt': FieldValue.serverTimestamp(),
+          'liftReason': 'Lifted by admin',
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      // Update user's account status
+      await _firestore.collection('users').doc(uid).update({
+        'accountStatus': 'active',
+        'isActive': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      print('✅ Suspension lifted for "$userName"');
+
+      fetchUsers(); // Refresh data
+    } catch (e) {
+      print('Error lifting suspension: $e');
     }
   }
 

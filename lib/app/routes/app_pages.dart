@@ -9,6 +9,8 @@ import '../features/auth/modules/register/register_binding.dart';
 import '../features/auth/modules/register/register_view.dart';
 import '../features/auth/modules/splash/splash_view.dart';
 import '../features/auth/modules/splash/splash_binding.dart';
+import '../features/auth/modules/suspended/suspended_account_view.dart';
+import '../features/auth/modules/suspended/suspended_account_binding.dart';
 
 // User Feature
 import '../features/user/modules/home/home_view.dart';
@@ -243,6 +245,13 @@ class AppPages {
       name: AppRoutes.adminShelterVerification,
       page: () => const ShelterVerificationView(),
       binding: ShelterVerificationBinding(),
+    ),
+
+    // --- SUSPENDED ACCOUNT PAGE ---
+    GetPage(
+      name: AppRoutes.suspendedAccount,
+      page: () => const SuspendedAccountView(),
+      binding: SuspendedAccountBinding(),
     ),
   ];
 }

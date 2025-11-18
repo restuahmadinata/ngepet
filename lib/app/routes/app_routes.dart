@@ -26,6 +26,7 @@ abstract class AppRoutes {
   static const adminHome = _Paths.adminHome;
   static const adminUserManagement = _Paths.adminUserManagement;
   static const adminShelterVerification = _Paths.adminShelterVerification;
+  static const suspendedAccount = _Paths.suspendedAccount;
 }
 
 abstract class _Paths {
@@ -56,4 +57,5 @@ abstract class _Paths {
   static const adminHome = '/admin-home';
   static const adminUserManagement = '/admin/user-management';
   static const adminShelterVerification = '/admin/shelter-verification';
+  static const suspendedAccount = '/suspended-account';
 }

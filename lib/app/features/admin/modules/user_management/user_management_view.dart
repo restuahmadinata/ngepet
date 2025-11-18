@@ -113,6 +113,7 @@ class UserManagementView extends GetView<UserManagementController> {
     final String name = user['fullName'] ?? user['name'] ?? 'No Name';
     final String email = user['email'] ?? 'No Email';
     final bool isActive = user['isActive'] ?? true;
+    final String accountStatus = user['accountStatus'] ?? 'active';
     final String? profilePicture = user['profilePicture'];
 
     return Card(
@@ -167,14 +168,26 @@ class UserManagementView extends GetView<UserManagementController> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: isActive ? AppColors.primary.withOpacity(0.1) : Colors.red.shade100,
+                              color: accountStatus == 'suspended'
+                                  ? Colors.orange.shade100
+                                  : isActive
+                                      ? AppColors.primary.withOpacity(0.1)
+                                      : Colors.red.shade100,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              isActive ? 'Aktif' : 'Nonaktif',
+                              accountStatus == 'suspended'
+                                  ? 'Suspended'
+                                  : isActive
+                                      ? 'Aktif'
+                                      : 'Nonaktif',
                               style: GoogleFonts.poppins(
                                 fontSize: 10,
-                                color: isActive ? AppColors.primary : Colors.red,
+                                color: accountStatus == 'suspended'
+                                    ? Colors.orange
+                                    : isActive
+                                        ? AppColors.primary
+                                        : Colors.red,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -205,24 +218,51 @@ class UserManagementView extends GetView<UserManagementController> {
                   onSelected: (value) {
                     if (value == 'toggle_status') {
                       controller.toggleUserStatus(uid, isActive);
+                    } else if (value == 'suspend') {
+                      _showSuspendDialog(uid, name);
+                    } else if (value == 'lift_suspension') {
+                      controller.liftSuspension(uid, name);
                     } else if (value == 'delete') {
                       _showDeleteConfirmation(uid, name);
                     }
                   },
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'toggle_status',
-                      child: Row(
-                        children: [
-                          Icon(
-                            isActive ? Icons.block : Icons.check_circle,
-                            color: AppColors.neutral700,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(isActive ? 'Nonaktifkan' : 'Aktifkan'),
-                        ],
+                    if (accountStatus != 'suspended')
+                      PopupMenuItem(
+                        value: 'toggle_status',
+                        child: Row(
+                          children: [
+                            Icon(
+                              isActive ? Icons.block : Icons.check_circle,
+                              color: AppColors.neutral700,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(isActive ? 'Nonaktifkan' : 'Aktifkan'),
+                          ],
+                        ),
                       ),
-                    ),
+                    if (accountStatus != 'suspended')
+                      PopupMenuItem(
+                        value: 'suspend',
+                        child: Row(
+                          children: [
+                            Icon(Icons.schedule, color: AppColors.neutral700),
+                            const SizedBox(width: 8),
+                            const Text('Suspend'),
+                          ],
+                        ),
+                      ),
+                    if (accountStatus == 'suspended')
+                      PopupMenuItem(
+                        value: 'lift_suspension',
+                        child: Row(
+                          children: [
+                            Icon(Icons.check_circle, color: Colors.green),
+                            const SizedBox(width: 8),
+                            const Text('Lift Suspension'),
+                          ],
+                        ),
+                      ),
                     PopupMenuItem(
                       value: 'delete',
                       child: Row(
@@ -267,5 +307,199 @@ class UserManagementView extends GetView<UserManagementController> {
         ],
       ),
     );
+  }
+
+  void _showSuspendDialog(String uid, String name) {
+    final reasonController = TextEditingController();
+    final startDate = Rx<DateTime>(DateTime.now());
+    final endDate = Rx<DateTime>(DateTime.now().add(const Duration(days: 7)));
+    bool isDisposed = false;
+
+    Get.dialog(
+      WillPopScope(
+        onWillPop: () async {
+          if (!isDisposed) {
+            reasonController.dispose();
+            isDisposed = true;
+          }
+          return true;
+        },
+        child: AlertDialog(
+          title: Text(
+            'Suspend User',
+            style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Suspend user: "$name"',
+                  style: GoogleFonts.poppins(fontSize: 14),
+                ),
+                const SizedBox(height: 16),
+                
+                // Start Date
+                Text(
+                  'Suspension Start:',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Obx(() => InkWell(
+                  onTap: () async {
+                    final picked = await showDatePicker(
+                      context: Get.context!,
+                      initialDate: startDate.value,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                    );
+                    if (picked != null) {
+                      startDate.value = picked;
+                      // Ensure end date is after start date
+                      if (endDate.value.isBefore(picked)) {
+                        endDate.value = picked.add(const Duration(days: 1));
+                      }
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.calendar_today, size: 16, color: AppColors.neutral600),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${startDate.value.day}/${startDate.value.month}/${startDate.value.year}',
+                          style: GoogleFonts.poppins(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                )),
+                const SizedBox(height: 16),
+                
+                // End Date
+                Text(
+                  'Suspension End:',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Obx(() => InkWell(
+                  onTap: () async {
+                    final picked = await showDatePicker(
+                      context: Get.context!,
+                      initialDate: endDate.value,
+                      firstDate: startDate.value.add(const Duration(days: 1)),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                    );
+                    if (picked != null) {
+                      endDate.value = picked;
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.calendar_today, size: 16, color: AppColors.neutral600),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${endDate.value.day}/${endDate.value.month}/${endDate.value.year}',
+                          style: GoogleFonts.poppins(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                )),
+                const SizedBox(height: 16),
+                
+                // Reason
+                Text(
+                  'Reason for Suspension:',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: reasonController,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: 'Enter reason for suspension...',
+                    hintStyle: GoogleFonts.poppins(fontSize: 13),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    contentPadding: const EdgeInsets.all(12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (!isDisposed) {
+                  reasonController.dispose();
+                  isDisposed = true;
+                }
+                Get.back();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final reason = reasonController.text.trim();
+                if (reason.isEmpty) {
+                  // Don't use snackbar, just return
+                  return;
+                }
+                
+                // Store values
+                final start = startDate.value;
+                final end = endDate.value;
+                
+                // Close dialog first
+                Get.back();
+                
+                // Wait for dialog to fully close, then dispose
+                await Future.delayed(const Duration(milliseconds: 100));
+                if (!isDisposed) {
+                  reasonController.dispose();
+                  isDisposed = true;
+                }
+                
+                // Call suspend
+                controller.suspendUser(uid, start, end, reason);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+              ),
+              child: const Text('Suspend'),
+            ),
+          ],
+        ),
+      ),
+    ).then((_) {
+      // Ensure disposal if dialog is dismissed by tapping outside
+      if (!isDisposed) {
+        reasonController.dispose();
+        isDisposed = true;
+      }
+    });
   }
 }

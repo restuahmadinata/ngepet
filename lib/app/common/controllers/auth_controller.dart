@@ -47,8 +47,18 @@ class AuthController extends GetxController {
         if (userDoc.exists) {
           final data = userDoc.data();
           final name = data?['fullName'] ?? 'User';
+          final accountStatus = data?['accountStatus'];
 
           print('🔍 Login - User Name: $name');
+          print('🔍 Login - Account Status: $accountStatus');
+
+          // Check if user is suspended
+          if (accountStatus == 'suspended') {
+            print('⚠️ User is suspended, redirecting to Suspended Account');
+            Get.offAllNamed(AppRoutes.suspendedAccount);
+            return;
+          }
+
           print('✅ Redirecting to User Home');
           Get.offAllNamed(AppRoutes.userHome, arguments: {'name': name});
           return;
@@ -61,9 +71,18 @@ class AuthController extends GetxController {
           final data = shelterDoc.data();
           final name = data?['shelterName'] ?? 'Shelter';
           final verificationStatus = data?['verificationStatus'];
+          final accountStatus = data?['accountStatus'];
           
           print('🔍 Login - Shelter Name: $name');
           print('🔍 Login - Verification Status: $verificationStatus');
+          print('🔍 Login - Account Status: $accountStatus');
+
+          // Check if shelter is suspended
+          if (accountStatus == 'suspended') {
+            print('⚠️ Shelter is suspended, redirecting to Suspended Account');
+            Get.offAllNamed(AppRoutes.suspendedAccount);
+            return;
+          }
 
           // Check verification status
           if (verificationStatus == 'approved') {
