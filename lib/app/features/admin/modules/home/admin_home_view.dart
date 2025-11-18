@@ -25,7 +25,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () => controller.signOut(),
+            onPressed: () => _showLogoutDialog(context),
           ),
         ],
       ),
@@ -156,6 +156,41 @@ class AdminHomeView extends GetView<AdminHomeController> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Logout',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'Are you sure you want to logout from your admin account?',
+          style: GoogleFonts.poppins(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(color: Colors.grey[600]),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              controller.signOut();
+            },
+            child: Text(
+              'Logout',
+              style: GoogleFonts.poppins(color: Colors.red),
+            ),
+          ),
+        ],
       ),
     );
   }

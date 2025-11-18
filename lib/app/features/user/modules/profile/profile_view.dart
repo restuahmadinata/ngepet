@@ -263,9 +263,7 @@ class ProfileView extends StatelessWidget {
                       icon: Icons.logout,
                       title: 'Logout',
                       textColor: Colors.red,
-                      onTap: () async {
-                        await Get.find<AuthController>().signOut();
-                      },
+                      onTap: () => _showLogoutDialog(context),
                     ),
                   ),
                 ],
@@ -317,6 +315,41 @@ class ProfileView extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Logout',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'Are you sure you want to logout from your account?',
+          style: GoogleFonts.poppins(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(color: Colors.grey[600]),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Get.back();
+              await Get.find<AuthController>().signOut();
+            },
+            child: Text(
+              'Logout',
+              style: GoogleFonts.poppins(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
