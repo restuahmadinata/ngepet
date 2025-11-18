@@ -137,45 +137,8 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      if (user.address != null && user.address!.isNotEmpty)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.location_on,
-                                size: 20, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            Flexible(
-                              child: Text(
-                                user.address!,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 13,
-                                  color: Colors.grey,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      if (user.phoneNumber != null) ...[
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.phone,
-                                size: 20, color: Colors.grey),
-                            const SizedBox(width: 4),
-                            Text(
-                              user.phoneNumber!,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                      // Location and phone removed from profile.
+                      // (Location has been moved to Home view below the greeting.)
                     ],
                   ),
                   const SizedBox(height: 40),

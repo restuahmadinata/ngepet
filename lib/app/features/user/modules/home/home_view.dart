@@ -56,12 +56,14 @@ class HomeView extends GetView<HomeController> {
                             color: Colors.grey,
                           ),
                           const SizedBox(width: 4),
-                          Text(
-                            'Jakarta, Indonesia', // dummy data
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                          ),
+                          Obx(() => Text(
+                                controller.userLocation.value.isNotEmpty
+                                    ? controller.userLocation.value
+                                    : 'Location not set',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                              )),
                         ],
                       ),
                     ],
