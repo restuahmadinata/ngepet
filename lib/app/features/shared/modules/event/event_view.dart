@@ -70,7 +70,7 @@ class EventView extends StatelessWidget {
               child: Column(
                 children: [
                   RectangleSearchBar(
-                    hintText: 'search events',
+                    hintText: 'Search events...',
                     onChanged: (value) {
                       // Handle search
                     },

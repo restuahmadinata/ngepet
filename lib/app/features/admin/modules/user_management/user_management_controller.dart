@@ -7,6 +7,21 @@ class UserManagementController extends GetxController {
   final users = <Map<String, dynamic>>[].obs;
   final isLoading = false.obs;
   final selectedRole = ''.obs;
+  final searchQuery = ''.obs;
+
+  // Filtered users based on search query
+  List<Map<String, dynamic>> get filteredUsers {
+    if (searchQuery.value.isEmpty) {
+      return users;
+    }
+    
+    final query = searchQuery.value.toLowerCase();
+    return users.where((user) {
+      final name = (user['fullName'] ?? user['name'] ?? '').toString().toLowerCase();
+      final email = (user['email'] ?? '').toString().toLowerCase();
+      return name.contains(query) || email.contains(query);
+    }).toList();
+  }
 
   @override
   void onInit() {
@@ -23,11 +38,7 @@ class UserManagementController extends GetxController {
         return {'uid': doc.id, ...doc.data()};
       }).toList();
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to fetch user data: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      print('Error fetching users: $e');
     } finally {
       isLoading.value = false;
     }
@@ -37,20 +48,10 @@ class UserManagementController extends GetxController {
     try {
       // No need to update role anymore as users collection is only for regular users
       // 'role' field is no longer used
-      
-      Get.snackbar(
-        'Info',
-        'User is already in the correct collection',
-        snackPosition: SnackPosition.BOTTOM,
-      );
 
       fetchUsers(); // Refresh data
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to change role: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      print('Error updating user role: $e');
     }
   }
 
@@ -62,19 +63,9 @@ class UserManagementController extends GetxController {
       // Note: Deleting user from Firebase Auth requires Admin SDK
       // For now we only delete from Firestore
 
-      Get.snackbar(
-        'Success',
-        'User successfully deleted from database',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-
       fetchUsers(); // Refresh data
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to delete user: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      print('Error deleting user: $e');
     }
   }
 
@@ -84,19 +75,9 @@ class UserManagementController extends GetxController {
         'isActive': !currentStatus,
       });
 
-      Get.snackbar(
-        'Success',
-        currentStatus ? 'User deactivated' : 'User activated',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-
       fetchUsers(); // Refresh data
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to change status: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      print('Error toggling user status: $e');
     }
   }
 

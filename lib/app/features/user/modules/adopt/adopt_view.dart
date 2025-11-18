@@ -71,7 +71,7 @@ class AdoptView extends StatelessWidget {
               child: Column(
                 children: [
                   RectangleSearchBar(
-                    hintText: 'search pets',
+                    hintText: 'Search pets...',
                     onChanged: (value) {
                       // Handle search
                     },

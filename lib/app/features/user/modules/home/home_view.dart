@@ -119,7 +119,9 @@ class HomePage extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
-                child: RectangleSearchBar(),
+                child: RectangleSearchBar(
+                  hintText: 'Search events and pets...',
+                ),
               ),
               const SizedBox(height: 24),
               Padding(

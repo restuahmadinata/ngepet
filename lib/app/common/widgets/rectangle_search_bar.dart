@@ -26,8 +26,8 @@ class RectangleSearchBar extends StatelessWidget {
             child: TextField(
               controller: controller,
               onChanged: onChanged,
-              decoration: const InputDecoration(
-                hintText: 'cari',
+              decoration: InputDecoration(
+                hintText: hintText,
                 hintStyle: TextStyle(color: Colors.grey),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(horizontal: 16),

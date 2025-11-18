@@ -7,6 +7,37 @@ class ShelterVerificationController extends GetxController {
   final verificationRequests = <Map<String, dynamic>>[].obs;
   final allShelters = <Map<String, dynamic>>[].obs;
   final isLoading = false.obs;
+  final searchQuery = ''.obs;
+
+  // Filtered verification requests based on search query
+  List<Map<String, dynamic>> get filteredRequests {
+    if (searchQuery.value.isEmpty) {
+      return verificationRequests;
+    }
+    
+    final query = searchQuery.value.toLowerCase();
+    return verificationRequests.where((shelter) {
+      final name = (shelter['shelterName'] ?? '').toString().toLowerCase();
+      final email = (shelter['shelterEmail'] ?? shelter['email'] ?? '').toString().toLowerCase();
+      final phone = (shelter['shelterPhone'] ?? shelter['phone'] ?? '').toString().toLowerCase();
+      return name.contains(query) || email.contains(query) || phone.contains(query);
+    }).toList();
+  }
+
+  // Filtered all shelters based on search query
+  List<Map<String, dynamic>> get filteredAllShelters {
+    if (searchQuery.value.isEmpty) {
+      return allShelters;
+    }
+    
+    final query = searchQuery.value.toLowerCase();
+    return allShelters.where((shelter) {
+      final name = (shelter['shelterName'] ?? '').toString().toLowerCase();
+      final email = (shelter['shelterEmail'] ?? shelter['email'] ?? '').toString().toLowerCase();
+      final phone = (shelter['shelterPhone'] ?? shelter['phone'] ?? '').toString().toLowerCase();
+      return name.contains(query) || email.contains(query) || phone.contains(query);
+    }).toList();
+  }
 
   @override
   void onInit() {
@@ -128,6 +159,40 @@ class ShelterVerificationController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> toggleShelterStatus(String uid, bool currentStatus) async {
+    try {
+      await _firestore.collection('shelters').doc(uid).update({
+        'isActive': !currentStatus,
+      });
+
+      // Refresh lists
+      fetchAllShelters();
+      fetchVerificationRequests();
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to toggle shelter status: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> deleteShelter(String uid) async {
+    try {
+      await _firestore.collection('shelters').doc(uid).delete();
+
+      // Refresh lists
+      fetchAllShelters();
+      fetchVerificationRequests();
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to delete shelter: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 }
