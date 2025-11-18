@@ -368,26 +368,11 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
                   elevation: 0,
                   color: AppColors.neutral100,
                   onSelected: (value) {
-                    if (value == 'toggle_status') {
-                      controller.toggleShelterStatus(uid, isActive);
-                    } else if (value == 'delete') {
+                    if (value == 'delete') {
                       _showDeleteConfirmation(uid, shelterName);
                     }
                   },
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'toggle_status',
-                      child: Row(
-                        children: [
-                          Icon(
-                            isActive ? Icons.block : Icons.check_circle,
-                            color: AppColors.neutral700,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(isActive ? 'Nonaktifkan' : 'Aktifkan'),
-                        ],
-                      ),
-                    ),
                     PopupMenuItem(
                       value: 'delete',
                       child: Row(

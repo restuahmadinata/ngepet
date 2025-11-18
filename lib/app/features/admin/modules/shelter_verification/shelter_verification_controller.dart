@@ -162,24 +162,6 @@ class ShelterVerificationController extends GetxController {
     }
   }
 
-  Future<void> toggleShelterStatus(String uid, bool currentStatus) async {
-    try {
-      await _firestore.collection('shelters').doc(uid).update({
-        'isActive': !currentStatus,
-      });
-
-      // Refresh lists
-      fetchAllShelters();
-      fetchVerificationRequests();
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to toggle shelter status: $e',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    }
-  }
-
   Future<void> deleteShelter(String uid) async {
     try {
       await _firestore.collection('shelters').doc(uid).delete();

@@ -216,9 +216,7 @@ class UserManagementView extends GetView<UserManagementController> {
                   elevation: 0,
                   color: AppColors.neutral100,
                   onSelected: (value) {
-                    if (value == 'toggle_status') {
-                      controller.toggleUserStatus(uid, isActive);
-                    } else if (value == 'suspend') {
+                    if (value == 'suspend') {
                       _showSuspendDialog(uid, name);
                     } else if (value == 'lift_suspension') {
                       controller.liftSuspension(uid, name);
@@ -227,20 +225,6 @@ class UserManagementView extends GetView<UserManagementController> {
                     }
                   },
                   itemBuilder: (context) => [
-                    if (accountStatus != 'suspended')
-                      PopupMenuItem(
-                        value: 'toggle_status',
-                        child: Row(
-                          children: [
-                            Icon(
-                              isActive ? Icons.block : Icons.check_circle,
-                              color: AppColors.neutral700,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(isActive ? 'Nonaktifkan' : 'Aktifkan'),
-                          ],
-                        ),
-                      ),
                     if (accountStatus != 'suspended')
                       PopupMenuItem(
                         value: 'suspend',

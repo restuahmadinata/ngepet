@@ -70,18 +70,6 @@ class UserManagementController extends GetxController {
     }
   }
 
-  Future<void> toggleUserStatus(String uid, bool currentStatus) async {
-    try {
-      await _firestore.collection('users').doc(uid).update({
-        'isActive': !currentStatus,
-      });
-
-      fetchUsers(); // Refresh data
-    } catch (e) {
-      print('Error toggling user status: $e');
-    }
-  }
-
   Future<void> suspendUser(
     String uid,
     DateTime startDate,
