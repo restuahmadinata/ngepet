@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../theme/app_colors.dart';
 import 'adoption_status_controller.dart';
 
@@ -84,9 +82,6 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
     final petName = petData?['petName'] ?? 'Unknown Pet';
     final petBreed = petData?['breed'] ?? '';
     final shelterName = shelterData?['shelterName'] ?? 'Unknown Shelter';
-    
-    // Get pet adoption status
-    final petAdoptionStatus = petData?['adoptionStatus']?.toString() ?? 'available';
 
     // Get image URL
     String imageUrl = 'https://via.placeholder.com/100x100?text=Pet';
@@ -96,138 +91,69 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
       imageUrl = petData['imageUrls'][0].toString();
     }
 
-    // Get application date
-    String applicationDate = 'N/A';
-    if (request['applicationDate'] != null) {
-      final date = (request['applicationDate'] as Timestamp).toDate();
-      applicationDate = DateFormat('dd MMM yyyy').format(date);
-    }
-    
-    // Determine pet status badge
-    Color statusColor;
-    String statusText;
-    IconData statusIcon;
-    switch (petAdoptionStatus.toLowerCase()) {
-      case 'adopted':
-        statusColor = Colors.green;
-        statusText = 'Adopted';
-        statusIcon = Icons.check_circle;
-        break;
-      case 'pending':
-        statusColor = Colors.orange;
-        statusText = 'Pending';
-        statusIcon = Icons.hourglass_empty;
-        break;
-      default:
-        statusColor = Colors.blue;
-        statusText = 'Available';
-        statusIcon = Icons.pets;
-    }
-
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
       ),
-      child: InkWell(
-        onTap: () => _showDetailDialog(request),
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Pet Info
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showDetailDialog(request),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    // Pet image
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
                         width: 80,
                         height: 80,
-                        color: Colors.grey[200],
-                        child: const Center(child: CircularProgressIndicator()),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        width: 80,
-                        height: 80,
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.pets, size: 40),
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[200],
+                          child: const Center(child: CircularProgressIndicator()),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.pets, size: 40),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          petName,
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        if (petBreed.isNotEmpty)
-                          Text(
-                            petBreed,
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        const SizedBox(height: 8),
-                        // Pet Status Badge
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: statusColor.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
-                              color: statusColor.withOpacity(0.5),
-                              width: 1,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                statusIcon,
-                                size: 14,
-                                color: statusColor,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Pet Status: $statusText',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: statusColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
+                    const SizedBox(width: 12),
+
+                    // Pet info
+                    Expanded(
+                      child: SizedBox(
+                        height: 80,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.home,
-                                size: 14, color: Colors.grey[600]),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                shelterName,
+                            Text(
+                              petName,
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            if (petBreed.isNotEmpty)
+                              Text(
+                                petBreed,
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   color: Colors.grey[600],
@@ -235,29 +161,42 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Icon(Icons.home, size: 12, color: Colors.grey[600]),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    shelterName,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Applied: $applicationDate',
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Divider(height: 1),
-              const SizedBox(height: 16),
 
-              // Timeline
-              _buildTimeline(request),
-            ],
+                    // Status indicator
+                    Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+                  ],
+                ),
+                
+                const SizedBox(height: 12),
+                const Divider(height: 1),
+                const SizedBox(height: 12),
+                
+                // Timeline
+                _buildTimeline(request),
+              ],
+            ),
           ),
         ),
       ),
@@ -503,13 +442,17 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
                   onPressed: () => Get.back(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: Text(
                     'Close',
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -523,11 +466,29 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
                       Get.back();
                       final confirm = await Get.dialog<bool>(
                         AlertDialog(
-                          title: const Text('Cancel Request'),
-                          content: const Text('Are you sure you want to cancel this adoption request?'),
+                          title: Text(
+                            'Cancel Request',
+                            style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+                          ),
+                          content: Text(
+                            'Are you sure you want to cancel this adoption request?',
+                            style: GoogleFonts.poppins(),
+                          ),
                           actions: [
-                            TextButton(onPressed: () => Get.back(result: false), child: const Text('No')),
-                            TextButton(onPressed: () => Get.back(result: true), child: const Text('Yes')),
+                            TextButton(
+                              onPressed: () => Get.back(result: false),
+                              child: Text(
+                                'No',
+                                style: GoogleFonts.poppins(color: Colors.grey[700]),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => Get.back(result: true),
+                              child: Text(
+                                'Yes',
+                                style: GoogleFonts.poppins(color: Colors.red),
+                              ),
+                            ),
                           ],
                         ),
                       );
@@ -541,7 +502,13 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
                       side: const BorderSide(color: Colors.red),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: Text('Cancel Request', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                    child: Text(
+                      'Cancel Request',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.red,
+                      ),
+                    ),
                   ),
                 ),
             ],

@@ -35,8 +35,8 @@ import '../features/shared/modules/shelter_profile/shelter_profile_binding.dart'
 // Shelter Feature
 import '../features/shelter/modules/shelter/verification/verification_view.dart';
 import '../features/shelter/modules/shelter/verification/verification_binding.dart';
-import '../features/shelter/modules/shelter/home/shelter_home_view.dart';
-import '../features/shelter/modules/shelter/home/shelter_home_binding.dart';
+import '../features/shelter/modules/shelter/navigation/shelter_navigation_view.dart';
+import '../features/shelter/modules/shelter/navigation/shelter_navigation_binding.dart';
 import '../features/shelter/modules/shelter/add_pet/add_pet_view.dart';
 import '../features/shelter/modules/shelter/add_pet/add_pet_binding.dart';
 import '../features/shelter/modules/shelter/add_event/add_event_view.dart';
@@ -149,11 +149,11 @@ class AppPages {
       binding: VerificationBinding(),
     ),
 
-    // --- SHELTER HOME PAGE ---
+    // --- SHELTER HOME PAGE (with Bottom Nav) ---
     GetPage(
       name: AppRoutes.shelterHome,
-      page: () => const ShelterHomeView(),
-      binding: ShelterHomeBinding(),
+      page: () => const ShelterNavigationView(),
+      binding: ShelterNavigationBinding(),
     ),
 
     // --- SHELTER ADD PET PAGE ---

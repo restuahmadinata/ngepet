@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import '../../../../../config/imgbb_config.dart';
 import '../../../../../routes/app_routes.dart';
-import '../home/shelter_home_controller.dart';
+import '../dashboard/shelter_dashboard_controller.dart';
 
 class AddPetController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -328,10 +328,10 @@ class AddPetController extends GetxController {
       // Navigate back to shelter home and refresh data
       Get.offAllNamed(AppRoutes.shelterHome);
       
-      // Refresh shelter home data
+      // Refresh shelter dashboard data
       try {
-        final shelterHomeController = Get.find<ShelterHomeController>();
-        await shelterHomeController.refreshData();
+        final shelterDashboardController = Get.find<ShelterDashboardController>();
+        await shelterDashboardController.refreshData();
       } catch (e) {
         print('Debug - Could not refresh shelter home: $e');
       }
@@ -371,10 +371,12 @@ class AddPetController extends GetxController {
     if (value == null || value.trim().isEmpty) {
       return 'Age is required';
     }
-    // Accept only numeric values for months
-    final ageValue = int.tryParse(value.trim());
-    if (ageValue == null || ageValue <= 0) {
-      return 'Please enter a valid number (example: 24 for 24 months)';
+    // Allow formats like "2 years", "6 months", etc.
+    if (!RegExp(
+      r'^.+(year|month|week)s?.*$',
+      caseSensitive: false,
+    ).hasMatch(value)) {
+      return 'Invalid age format (example: 2 years, 6 months)';
     }
     return null;
   }

@@ -22,20 +22,13 @@ class ManageEventsView extends GetView<ManageEventsController> {
         backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.black),
         elevation: 1,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: controller.addNewEvent,
-            tooltip: 'Add New Event',
-          ),
-        ],
       ),
       body: Column(
         children: [
           // Search bar
           Container(
             padding: const EdgeInsets.all(16),
-            color: Colors.white,
+            color: Colors.transparent,
             child: TextField(
               onChanged: controller.searchEvents,
               decoration: InputDecoration(
@@ -55,7 +48,7 @@ class ManageEventsView extends GetView<ManageEventsController> {
                   borderSide: const BorderSide(color: Colors.purple),
                 ),
                 filled: true,
-                fillColor: Colors.grey[50],
+                fillColor: Colors.transparent,
               ),
             ),
           ),
@@ -147,6 +140,12 @@ class ManageEventsView extends GetView<ManageEventsController> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: controller.addNewEvent,
+        backgroundColor: Colors.purple,
+        child: const Icon(Icons.add, color: Colors.white),
+        tooltip: 'Add Event',
+      ),
     );
   }
 
@@ -155,8 +154,6 @@ class ManageEventsView extends GetView<ManageEventsController> {
     final eventTitle = event['eventTitle']?.toString() ?? 'Unknown Event';
     final location = event['location']?.toString() ?? 'Unknown location';
     final eventDate = event['eventDate']?.toString() ?? 'TBA';
-    final eventTime = event['eventTime']?.toString() ?? '';
-    final eventStatus = event['eventStatus']?.toString() ?? 'upcoming';
     
     // Get image URL
     String imageUrl = 'https://via.placeholder.com/400x200?text=Event';
@@ -164,57 +161,33 @@ class ManageEventsView extends GetView<ManageEventsController> {
       imageUrl = event['imageUrls'][0].toString();
     }
 
-    // Status color
-    Color statusColor;
-    String statusText;
-    switch (eventStatus.toLowerCase()) {
-      case 'completed':
-        statusColor = Colors.grey;
-        statusText = 'Completed';
-        break;
-      case 'ongoing':
-        statusColor = Colors.green;
-        statusText = 'Ongoing';
-        break;
-      case 'cancelled':
-        statusColor = Colors.red;
-        statusText = 'Cancelled';
-        break;
-      default:
-        statusColor = Colors.blue;
-        statusText = 'Upcoming';
-    }
-
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
       ),
-      child: InkWell(
-        onTap: () {
-          // Show event details or edit
-          controller.editEvent(eventId);
-        },
-        borderRadius: BorderRadius.circular(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Event image
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-              child: Stack(
-                children: [
-                  CachedNetworkImage(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => controller.editEvent(eventId),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                // Event image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: CachedNetworkImage(
                     imageUrl: imageUrl,
-                    width: double.infinity,
-                    height: 150,
+                    width: 80,
+                    height: 80,
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Container(
-                      height: 150,
+                      width: 80,
+                      height: 80,
                       color: Colors.grey[200],
                       child: const Center(
                         child: CircularProgressIndicator(
@@ -224,158 +197,106 @@ class ManageEventsView extends GetView<ManageEventsController> {
                       ),
                     ),
                     errorWidget: (context, url, error) => Container(
-                      height: 150,
+                      width: 80,
+                      height: 80,
                       color: Colors.grey[200],
-                      child: const Icon(Icons.event, size: 60),
+                      child: const Icon(Icons.event, size: 40),
                     ),
                   ),
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: statusColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        statusText,
-                        style: GoogleFonts.poppins(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+                const SizedBox(width: 12),
 
-            // Event info
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    eventTitle,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(Icons.location_on, size: 14, color: Colors.grey[600]),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          location,
+                // Event info
+                Expanded(
+                  child: SizedBox(
+                    height: 80,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          eventTitle,
                           style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            color: Colors.grey[600],
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_today, size: 14, color: Colors.grey[600]),
-                      const SizedBox(width: 4),
-                      Text(
-                        eventDate,
-                        style: GoogleFonts.poppins(
-                          fontSize: 13,
-                          color: Colors.grey[600],
+                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            Icon(Icons.location_on, size: 12, color: Colors.grey[600]),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                location,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      if (eventTime.isNotEmpty) ...[
-                        const SizedBox(width: 12),
-                        Icon(Icons.access_time, size: 14, color: Colors.grey[600]),
-                        const SizedBox(width: 4),
-                        Text(
-                          eventTime,
-                          style: GoogleFonts.poppins(
-                            fontSize: 13,
-                            color: Colors.grey[600],
-                          ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_today, size: 12, color: Colors.grey[600]),
+                            const SizedBox(width: 4),
+                            Text(
+                              eventDate,
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      OutlinedButton.icon(
-                        onPressed: () => controller.editEvent(eventId),
-                        icon: const Icon(Icons.edit, size: 16),
-                        label: Text(
-                          'Edit',
-                          style: GoogleFonts.poppins(fontSize: 12),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.purple,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
+                ),
+
+                // More options button
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert, color: Colors.grey[600]),
+                  onSelected: (value) {
+                    if (value == 'edit') {
+                      controller.editEvent(eventId);
+                    } else if (value == 'delete') {
+                      controller.deleteEvent(eventId, eventTitle);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, size: 18, color: Colors.grey[700]),
+                          const SizedBox(width: 8),
+                          Text('Edit', style: GoogleFonts.poppins()),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      Obx(() {
-                        final isDeleting = controller.deletingEventId.value == eventId;
-                        return OutlinedButton.icon(
-                          onPressed: isDeleting 
-                              ? null 
-                              : () => controller.deleteEvent(eventId, eventTitle),
-                          icon: isDeleting
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.red,
-                                  ),
-                                )
-                              : const Icon(Icons.delete, size: 16),
-                          label: Text(
-                            isDeleting ? 'Deleting...' : 'Delete',
-                            style: GoogleFonts.poppins(fontSize: 12),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.red,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, size: 18, color: Colors.grey[700]),
+                          const SizedBox(width: 8),
+                          Text('Delete', style: GoogleFonts.poppins()),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

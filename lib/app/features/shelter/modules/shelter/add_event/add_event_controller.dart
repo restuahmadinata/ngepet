@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import '../../../../../config/imgbb_config.dart';
 import '../../../../../routes/app_routes.dart';
-import '../home/shelter_home_controller.dart';
+import '../dashboard/shelter_dashboard_controller.dart';
 
 class AddEventController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -290,10 +290,10 @@ class AddEventController extends GetxController {
       // Navigate back to shelter home and refresh data
       Get.offAllNamed(AppRoutes.shelterHome);
       
-      // Refresh shelter home data
+      // Refresh shelter dashboard data
       try {
-        final shelterHomeController = Get.find<ShelterHomeController>();
-        await shelterHomeController.refreshData();
+        final shelterDashboardController = Get.find<ShelterDashboardController>();
+        await shelterDashboardController.refreshData();
       } catch (e) {
         print('Debug - Could not refresh shelter home: $e');
       }

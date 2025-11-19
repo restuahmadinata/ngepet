@@ -74,9 +74,7 @@ class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementCon
     final userData = request['userData'] as Map<String, dynamic>?;
 
     final petName = petData?['petName'] ?? 'Unknown Pet';
-    final petBreed = petData?['breed'] ?? '';
     final userName = userData?['fullName'] ?? 'Unknown User';
-    final userPhone = userData?['phoneNumber'] ?? '';
 
     // Get image URL
     String imageUrl = 'https://via.placeholder.com/100x100?text=Pet';
@@ -93,121 +91,115 @@ class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementCon
       applicationDate = DateFormat('dd MMM yyyy').format(date);
     }
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
       ),
-      child: InkWell(
-        onTap: () => _showManageDialog(request),
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Pet & User Info
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: CachedNetworkImage(
-                      imageUrl: imageUrl,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _showManageDialog(request),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    // Pet image
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: CachedNetworkImage(
+                        imageUrl: imageUrl,
                         width: 80,
                         height: 80,
-                        color: Colors.grey[200],
-                        child: const Center(child: CircularProgressIndicator()),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        width: 80,
-                        height: 80,
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.pets, size: 40),
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[200],
+                          child: const Center(child: CircularProgressIndicator()),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.pets, size: 40),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          petName,
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        if (petBreed.isNotEmpty)
-                          Text(
-                            petBreed,
-                            style: GoogleFonts.poppins(
-                              fontSize: 13,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        const SizedBox(height: 8),
-                        Row(
+                    const SizedBox(width: 12),
+
+                    // Request info
+                    Expanded(
+                      child: SizedBox(
+                        height: 80,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.person,
-                                size: 14, color: Colors.grey[600]),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                userName,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                            Text(
+                              petName,
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Row(
+                              children: [
+                                Icon(Icons.person, size: 12, color: Colors.grey[600]),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    userName,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Icon(Icons.calendar_today, size: 12, color: Colors.grey[600]),
+                                const SizedBox(width: 4),
+                                Text(
+                                  applicationDate,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                        if (userPhone.isNotEmpty)
-                          Row(
-                            children: [
-                              Icon(Icons.phone,
-                                  size: 14, color: Colors.grey[600]),
-                              const SizedBox(width: 4),
-                              Text(
-                                userPhone,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Applied: $applicationDate',
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Divider(height: 1),
-              const SizedBox(height: 16),
 
-              // Timeline
-              _buildTimeline(request),
-            ],
+                    // Status indicator
+                    Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+                  ],
+                ),
+                
+                const SizedBox(height: 12),
+                const Divider(height: 1),
+                const SizedBox(height: 12),
+                
+                // Timeline
+                _buildTimeline(request),
+              ],
+            ),
           ),
         ),
       ),
@@ -678,6 +670,7 @@ class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementCon
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -702,6 +695,7 @@ class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementCon
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -726,6 +720,7 @@ class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementCon
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -813,7 +808,10 @@ class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementCon
             ),
             child: Text(
               'Approve', 
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
@@ -898,7 +896,10 @@ class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementCon
             ),
             child: Text(
               'Reject', 
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
@@ -964,7 +965,10 @@ class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementCon
             ),
             child: Text(
               'Complete', 
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
