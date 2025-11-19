@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'package:ngepet/app/theme/app_colors.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../common/widgets/fullscreen_image_gallery.dart';
 import 'pet_detail_controller.dart';
@@ -59,7 +60,7 @@ class _PetDetailViewState extends State<PetDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.neutral100,
       body: CustomScrollView(
         slivers: [
           // App Bar with Image Carousel
@@ -189,164 +190,64 @@ class _PetDetailViewState extends State<PetDetailView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              widget.petData['petName']?.toString() ??
-                                  widget.petData['name']?.toString() ??
-                                  'Pet Name',
-                              style: GoogleFonts.poppins(
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color:
-                                  (widget.petData['gender']?.toString() == 'Male')
-                                  ? Colors.blue[100]
-                                  : Colors.pink[100],
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  (widget.petData['gender']?.toString() == 'Male')
-                                      ? Icons.male
-                                      : Icons.female,
-                                  size: 16,
-                                  color:
-                                      (widget.petData['gender']?.toString() == 'Male')
-                                      ? Colors.blue[700]
-                                      : Colors.pink[700],
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  widget.petData['gender']?.toString() ??
-                                      'Male',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        (widget.petData['gender']?.toString() == 'Male')
-                                        ? Colors.blue[700]
-                                        : Colors.pink[700],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Info Cards
-                      Row(
-                        children: [
-                          _buildInfoCard(
-                            icon: Icons.pets,
-                            label: 'Breed',
-                            value: widget.petData['breed']?.toString() ?? '-',
-                            color: Colors.orange,
-                          ),
-                          const SizedBox(width: 12),
-                          _buildInfoCard(
-                            icon: Icons.cake,
-                            label: 'Age',
-                            value: '${widget.petData['ageMonths']?.toString() ?? widget.petData['age']?.toString() ?? '-'} months',
-                            color: Colors.green,
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Description
+                      // Pet Name
                       Text(
-                        'Description',
+                        widget.petData['petName']?.toString() ??
+                            widget.petData['name']?.toString() ??
+                            'Pet Name',
                         style: GoogleFonts.poppins(
-                          fontSize: 18,
+                          fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.petData['description']?.toString() ??
-                            'No description available.',
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          color: Colors.black54,
-                          height: 1.6,
+
+                      // Grid of attribute cards: Category, Breed, Gender, Age
+                      _buildAttributeGrid(),
+
+                      const SizedBox(height: 16),
+
+                      // Shelter + Location combined card (no shadow, gray border)
+                      _buildShelterLocationCard(context),
+                      const SizedBox(height: 12),
+
+                      // Description
+                      SizedBox(
+                        width: double.infinity,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade200),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Description',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                widget.petData['description']?.toString() ??
+                                    'No description available.',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: Colors.black54,
+                                  height: 1.6,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
 
                       const SizedBox(height: 20),
-
-                      // Location
-                      _buildDetailRow(
-                        icon: Icons.location_on,
-                        label: 'Location',
-                        value: widget.petData['location']?.toString() ?? '-',
-                        iconColor: Colors.red,
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Shelter
-                      GestureDetector(
-                        onTap: () {
-                          // Navigate to shelter profile
-                          print('🔍 Pet data keys: ${widget.petData.keys}');
-                          print('🔍 ShelterId: ${widget.petData['shelterId']}');
-                          
-                          if (widget.petData['shelterId'] != null && 
-                              widget.petData['shelterId'].toString().isNotEmpty) {
-                            print('✅ Navigating to shelter profile');
-                            Get.toNamed(
-                              AppRoutes.shelterProfile,
-                              arguments: widget.petData['shelterId'],
-                            );
-                          } else {
-                            print('❌ No shelterId found');
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Shelter data not available'),
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          }
-                        },
-                        child: _buildDetailRow(
-                          icon: Icons.home,
-                          label: 'Shelter',
-                          value:
-                              widget.petData['shelterName']?.toString() ??
-                              widget.petData['shelter']?.toString() ??
-                              '-',
-                          iconColor: Colors.blue,
-                          // Keep the row tappable (GestureDetector) but don't
-                          // visually indicate it as a link — make text plain black
-                          // and remove the arrow icon by setting isClickable=false.
-                          isClickable: false,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Type
-                      _buildDetailRow(
-                        icon: Icons.category,
-                        label: 'Category',
-                        value: widget.petData['category']?.toString() ?? 
-                               widget.petData['type']?.toString() ?? '-',
-                        iconColor: Colors.purple,
-                      ),
 
                       if (!widget.isPreview) const SizedBox(height: 100), // Space for bottom buttons
                     ],
@@ -360,6 +261,7 @@ class _PetDetailViewState extends State<PetDetailView> {
 
       // Bottom Action Buttons
       bottomNavigationBar: widget.isPreview ? null : Obx(() {
+        final primaryColor = Theme.of(context).primaryColor;
         if (controller.isLoading.value) {
           return Container(
             padding: const EdgeInsets.all(20),
@@ -385,13 +287,6 @@ class _PetDetailViewState extends State<PetDetailView> {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, -5),
-              ),
-            ],
           ),
           child: SafeArea(
             child: Row(
@@ -417,8 +312,8 @@ class _PetDetailViewState extends State<PetDetailView> {
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFE27B59),
-                      side: const BorderSide(color: Color(0xFFE27B59), width: 2),
+                      foregroundColor: primaryColor,
+                      side: BorderSide(color: primaryColor, width: 2),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -445,7 +340,7 @@ class _PetDetailViewState extends State<PetDetailView> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                            backgroundColor: primaryColor,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             elevation: 0,
@@ -479,7 +374,7 @@ class _PetDetailViewState extends State<PetDetailView> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE27B59),
+                            backgroundColor: primaryColor,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             elevation: 0,
@@ -497,97 +392,215 @@ class _PetDetailViewState extends State<PetDetailView> {
     );
   }
 
-  Widget _buildInfoCard({
+  Widget _buildAttributeGrid() {
+    final category = widget.petData['category']?.toString() ?? widget.petData['type']?.toString() ?? '-';
+    final breed = widget.petData['breed']?.toString() ?? '-';
+    final gender = widget.petData['gender']?.toString() ?? '-';
+    final age = (widget.petData['ageMonths'] != null)
+        ? '${widget.petData['ageMonths']?.toString()} months'
+        : (widget.petData['age']?.toString() ?? '-');
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = 2;
+        // Desired target height for each card in logical pixels; increase to make cards bigger
+        final targetCardHeight = 75.0;
+        final totalSpacing = 8.0 * (crossAxisCount - 1);
+        final columnWidth = (constraints.maxWidth - totalSpacing) / crossAxisCount;
+        final childAspectRatio = columnWidth / targetCardHeight;
+
+        return GridView.count(
+          crossAxisCount: crossAxisCount,
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
+      // Reduce aspect ratio to give each card more vertical space and avoid overflow
+      // width / height = 3.0 means card height will be larger for the current column width
+          // computed dynamically to maintain the desired card height
+          childAspectRatio: childAspectRatio,
+      children: [
+        _buildAttributeCard(
+          icon: Icons.category,
+          label: 'Category',
+          value: category,
+          color: Colors.purple,
+        ),
+        _buildAttributeCard(
+          icon: Icons.pets,
+          label: 'Breed',
+          value: breed,
+          color: Colors.orange,
+        ),
+        _buildAttributeCard(
+          icon: widget.petData['gender']?.toString() == 'Male' ? Icons.male : Icons.female,
+          label: 'Gender',
+          value: gender,
+          color: widget.petData['gender']?.toString() == 'Male' ? Colors.blue : Colors.pink,
+        ),
+        _buildAttributeCard(
+          icon: Icons.cake,
+          label: 'Age',
+          value: age,
+          color: Colors.green,
+        ),
+      ],
+        );
+      },
+    );
+  }
+
+  Widget _buildAttributeCard({
     required IconData icon,
     required String label,
     required String value,
     required Color color,
   }) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.3), width: 1),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: color, size: 20),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: GoogleFonts.poppins(fontSize: 11, color: Colors.black54),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(8),
             ),
-            const SizedBox(height: 4),
-            Text(
-              value,
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                Flexible(
+                  child: Text(
+                    label,
+                    style: GoogleFonts.poppins(fontSize: 13, color: Colors.black54),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Flexible(
+                  child: Text(
+                    value,
+                    style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildDetailRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color iconColor,
-    bool isClickable = false,
-  }) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, color: iconColor, size: 20),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
-              ),
-              Row(
+  // Combined shelter and location card will be rendered by _buildShelterLocationCard
+  Widget _buildShelterLocationCard(BuildContext context) {
+    final shelterName = widget.petData['shelterName']?.toString() ?? widget.petData['shelter']?.toString() ?? '-';
+    final shelterId = widget.petData['shelterId']?.toString() ?? '';
+    final location = widget.petData['location']?.toString() ?? '-';
+
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+            onTap: () {
+              if (shelterId.isNotEmpty) {
+                Get.toNamed(AppRoutes.shelterProfile, arguments: shelterId);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Shelter data not available')),
+                );
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
                 children: [
+                  const CircleAvatar(
+                    backgroundColor: Color(0xFFEEEFF3),
+                    child: Icon(Icons.apartment, color: Color(0xFF444654)),
+                  ),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
-                      value,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isClickable ? Colors.blue[700] : Colors.black87,
-                        decoration: isClickable ? TextDecoration.underline : null,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          shelterName,
+                          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'View shelter profile',
+                          style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
+                        ),
+                      ],
                     ),
                   ),
-                  if (isClickable)
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14,
-                      color: Colors.blue[700],
-                    ),
+                  const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black45),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ],
+
+          // Divider between shelter and location
+          Container(color: Colors.grey.shade50, height: 1),
+
+          // Location area
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Icon(Icons.location_on, color: Colors.red, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Location',
+                        style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
+                      ),
+                      Text(
+                        location,
+                        style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
