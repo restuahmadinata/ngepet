@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ngepet/app/theme/app_colors.dart';
 import '../../features/shared/modules/event_detail/event_detail_view.dart';
 
 class EventListItem extends StatelessWidget {
@@ -29,6 +30,10 @@ class EventListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
+            shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: AppColors.neutral300, width: 1),
+      ),
       elevation: 0,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: Material(

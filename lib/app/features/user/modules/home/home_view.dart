@@ -34,45 +34,43 @@ class HomeView extends GetView<HomeController> {
     return Obx(() {
       final currentIndex = controller.currentIndex.value;
       return Scaffold(
-        // 3. Added to fix navbar radius issue
         extendBody: true,
         // 4. Use constant '_homeIndex'
         appBar: currentIndex == _homeIndex
             ? AppBar(
-                title: Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Halo, ${_getFirstName()}',
-                        style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.location_on,
-                            size: 18,
-                            color: Colors.grey,
-                          ),
-                          const SizedBox(width: 4),
-                          Obx(() => Text(
-                                controller.userLocation.value.isNotEmpty
-                                    ? controller.userLocation.value
-                                    : 'Location not set',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                              )),
-                        ],
-                      ),
-                    ],
-                  ),
+              titleSpacing: 16,
+              toolbarHeight: 80,
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                Text(
+                  'Halo, ${_getFirstName()}',
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
                 ),
-                elevation: 0,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                foregroundColor: Theme.of(context).textTheme.titleLarge?.color,
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                  const Icon(
+                    Icons.location_on,
+                    size: 18,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(width: 4),
+                  Obx(() => Text(
+                      controller.userLocation.value.isNotEmpty
+                        ? controller.userLocation.value
+                        : 'Location not set',
+                      style: Theme.of(
+                      context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                    )),
+                  ],
+                ),
+                ],
+              ),
+              elevation: 0,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              foregroundColor: Theme.of(context).textTheme.titleLarge?.color,
               )
             : null,
 
@@ -121,14 +119,14 @@ class HomePage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: RectangleSearchBar(
                   hintText: 'Search events and pets...',
                   onChanged: controller.onSearchChanged,
                   controller: controller.textController,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Obx(() {
                 // Show search results if searching
                 if (controller.searchController.searchQuery.value.trim().isNotEmpty) {
@@ -139,11 +137,11 @@ class HomePage extends StatelessWidget {
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Community Events',
+                          'Recent Events',
                           style: GoogleFonts.poppins(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -154,16 +152,16 @@ class HomePage extends StatelessWidget {
                     const SizedBox(height: 12),
                     // EventCarousel with consistent padding
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: EventCarousel(),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Recommended Pets',
+                          'Recent Pets',
                           style: GoogleFonts.poppins(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -173,7 +171,7 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: _buildRecommendedPets(),
                     ),
                   ],
@@ -197,7 +195,7 @@ class HomePage extends StatelessWidget {
       if (isSearching) {
         return const Center(
           child: Padding(
-            padding: EdgeInsets.all(32.0),
+            padding: EdgeInsets.all(16.0),
             child: CircularProgressIndicator(),
           ),
         );
@@ -206,7 +204,7 @@ class HomePage extends StatelessWidget {
       if (!hasEvents && !hasPets) {
         return Center(
           child: Padding(
-            padding: const EdgeInsets.all(32.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
                 Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
@@ -235,7 +233,7 @@ class HomePage extends StatelessWidget {
       }
 
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -265,7 +263,7 @@ class HomePage extends StatelessWidget {
                           ),
                   ),
                 ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
             ],
             
             // Pets section

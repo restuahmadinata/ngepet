@@ -91,7 +91,7 @@ class ProfileView extends StatelessWidget {
 
           return Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

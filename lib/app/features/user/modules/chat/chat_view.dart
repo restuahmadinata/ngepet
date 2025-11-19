@@ -54,12 +54,9 @@ class ChatView extends StatelessWidget {
       backgroundColor: Colors.transparent,
       extendBody: true,
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
-          child: Text(
-            'Chats',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-          ),
+        title: Text(
+          'Chats',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -67,7 +64,7 @@ class ChatView extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
               RectangleSearchBar(

@@ -66,7 +66,7 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
           onRefresh: controller.loadAdoptionRequests,
           color: AppColors.primary,
           child: ListView.builder(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(16),
             itemCount: controller.adoptionRequests.length,
             itemBuilder: (context, index) {
               final request = controller.adoptionRequests[index];

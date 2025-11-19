@@ -34,7 +34,7 @@ class FollowingView extends GetView<FollowingController> {
           if (controller.followingShelters.isEmpty) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(32),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -63,7 +63,7 @@ class FollowingView extends GetView<FollowingController> {
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(16),
             itemCount: controller.followingShelters.length,
             itemBuilder: (context, index) {
               final shelter = controller.followingShelters[index];

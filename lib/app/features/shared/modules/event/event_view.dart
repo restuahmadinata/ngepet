@@ -67,12 +67,9 @@ class EventView extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
-          child: Text(
-            'Event',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-          ),
+        title: Text(
+          'Event',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -81,7 +78,7 @@ class EventView extends StatelessWidget {
         child: RefreshIndicator(
           onRefresh: _refreshData,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(

@@ -68,12 +68,9 @@ class AdoptView extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
-          child: Text(
+        title: Text(
             'Adopt',
             style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -81,10 +78,10 @@ class AdoptView extends StatelessWidget {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _refreshData,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
                   RectangleSearchBar(
@@ -194,7 +191,7 @@ class AdoptView extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: Padding(
-              padding: EdgeInsets.all(32.0),
+              padding: EdgeInsets.all(16.0),
               child: CircularProgressIndicator(),
             ),
           );
@@ -203,7 +200,7 @@ class AdoptView extends StatelessWidget {
         if (snapshot.hasError) {
           return Center(
             child: Padding(
-              padding: const EdgeInsets.all(32.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
                   Icon(Icons.error, size: 64, color: Colors.grey[400]),
@@ -328,7 +325,7 @@ class AdoptView extends StatelessWidget {
       if (controller.searchController.isSearching.value) {
         return const Center(
           child: Padding(
-            padding: EdgeInsets.all(32.0),
+            padding: EdgeInsets.all(16.0),
             child: CircularProgressIndicator(),
           ),
         );
@@ -337,7 +334,7 @@ class AdoptView extends StatelessWidget {
       if (controller.searchController.petResults.isEmpty) {
         return Center(
           child: Padding(
-            padding: const EdgeInsets.all(32.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
                 Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
@@ -393,7 +390,7 @@ class AdoptView extends StatelessWidget {
       if (controller.followedShelterIds.isEmpty) {
         return Center(
           child: Padding(
-            padding: const EdgeInsets.all(32.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
                 Icon(Icons.favorite_border, size: 64, color: Colors.grey[400]),
@@ -500,7 +497,7 @@ class _FollowingPetsStreamState extends State<_FollowingPetsStream> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: Padding(
-              padding: EdgeInsets.all(32.0),
+              padding: EdgeInsets.all(16.0),
               child: CircularProgressIndicator(),
             ),
           );
@@ -509,7 +506,7 @@ class _FollowingPetsStreamState extends State<_FollowingPetsStream> {
         if (snapshot.hasError) {
           return Center(
             child: Padding(
-              padding: const EdgeInsets.all(32.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
                   Icon(Icons.error, size: 64, color: Colors.grey[400]),
