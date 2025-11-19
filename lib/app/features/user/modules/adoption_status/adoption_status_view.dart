@@ -13,14 +13,11 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
-          child: Text(
-            'My Adoption Requests',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+        title: Text(
+          'My Adoption Requests',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
         backgroundColor: Colors.transparent,
