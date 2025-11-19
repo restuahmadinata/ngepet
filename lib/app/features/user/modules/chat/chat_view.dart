@@ -54,24 +54,22 @@ class ChatView extends StatelessWidget {
       backgroundColor: Colors.transparent,
       extendBody: true,
       appBar: AppBar(
-        titleSpacing: 32,
-        toolbarHeight: 80,
         title: Padding(
-          padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+          padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
           child: Text(
             'Chats',
             style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
           ),
         ),
+        backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Column(
             children: [
-              const SizedBox(height: 16),
               RectangleSearchBar(
                 hintText: 'Search chats...',
                 onChanged: controller.onSearchChanged,

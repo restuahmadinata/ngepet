@@ -11,20 +11,10 @@ class FollowersView extends GetView<FollowersController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 32,
-        toolbarHeight: 80,
-        title: Padding(
-          padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
-          child: Text(
-            'Followers',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
+        title: Text(
+          'Followers',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
       ),
       body: RefreshIndicator(
         onRefresh: controller.refreshFollowers,

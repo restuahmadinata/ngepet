@@ -13,13 +13,6 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
     return Scaffold(
       backgroundColor: AppColors.neutral100,
       appBar: AppBar(
-        title: Text(
-          'Profile',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -65,6 +58,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                     ),
                   )),
                   const SizedBox(height: 8),
+
                   Obx(() {
                     final city = controller.city.value;
                     if (city.isNotEmpty) {

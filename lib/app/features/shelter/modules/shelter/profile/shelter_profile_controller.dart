@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../common/controllers/auth_controller.dart';
 
 class ShelterProfileController extends GetxController {
+    final followerCount = 0.obs;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -30,6 +31,9 @@ class ShelterProfileController extends GetxController {
         shelterName.value = data?['shelterName'] ?? 'Shelter';
         shelterPhoto.value = data?['shelterPhoto'];
         city.value = data?['city'] ?? '';
+        // Fetch followers count (assuming followers is a subcollection)
+        final followersSnapshot = await _firestore.collection('shelters').doc(user.uid).collection('followers').get();
+        followerCount.value = followersSnapshot.size;
       }
     } catch (e) {
       print('Error loading shelter data: $e');

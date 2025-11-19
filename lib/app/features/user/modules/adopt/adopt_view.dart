@@ -68,10 +68,8 @@ class AdoptView extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        titleSpacing: 32,
-        toolbarHeight: 80,
         title: Padding(
-          padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+          padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
           child: Text(
             'Adopt',
             style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
@@ -84,7 +82,7 @@ class AdoptView extends StatelessWidget {
         child: RefreshIndicator(
           onRefresh: _refreshData,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 32),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(

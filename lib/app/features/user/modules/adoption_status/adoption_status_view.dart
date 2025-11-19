@@ -13,16 +13,19 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: Text(
-          'My Adoption Requests',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
+          child: Text(
+            'My Adoption Requests',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         iconTheme: const IconThemeData(color: Colors.black),
-        elevation: 1,
+        elevation: 0,
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -63,7 +66,7 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
           onRefresh: controller.loadAdoptionRequests,
           color: AppColors.primary,
           child: ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(32),
             itemCount: controller.adoptionRequests.length,
             itemBuilder: (context, index) {
               final request = controller.adoptionRequests[index];

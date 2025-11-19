@@ -143,46 +143,7 @@ class ProfileView extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
 
-                  // Section 2: Stats (Following count)
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 32),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.neutral400, width: 1),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: controller.goToFollowing,
-                        borderRadius: BorderRadius.circular(8),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.favorite, color: Colors.red[400], size: 24),
-                              const SizedBox(width: 12),
-                              Obx(() => Text(
-                                '${controller.followingCount.value} Following',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              )),
-                              const SizedBox(width: 8),
-                              Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.neutral400),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Section 3: Option Menu
+                  // Section 2: Option Menu (including Following count)
                   Card(
                     color: Colors.white,
                     elevation: 0,
@@ -192,15 +153,47 @@ class ProfileView extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        _buildMenuItem(
-                          icon: Icons.edit,
-                          title: 'Edit Profile',
-                          onTap: controller.goToEditProfile,
-                        ),
+                        // Following count as first menu item
                         _buildMenuItem(
                           icon: Icons.assignment,
                           title: 'My Adoption Requests',
                           onTap: controller.goToAdoptionStatus,
+                        ),
+                        Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: controller.goToFollowing,
+                            borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.favorite, color: AppColors.neutral400, size: 24),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Obx(() => Text(
+                                      '${controller.followingCount.value} Following',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                      ),
+                                    )),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 18,
+                                    color: AppColors.neutral400,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        _buildMenuItem(
+                          icon: Icons.edit,
+                          title: 'Edit Profile',
+                          onTap: controller.goToEditProfile,
                         ),
                         _buildMenuItem(
                           icon: Icons.info,

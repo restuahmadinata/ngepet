@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../dashboard/shelter_dashboard_view.dart';
 import '../manage/shelter_manage_view.dart';
 import '../profile/shelter_profile_view.dart';
+import '../chat/shelter_chat_view.dart';
 import 'shelter_navigation_controller.dart';
 
 class ShelterNavigationView extends GetView<ShelterNavigationController> {
@@ -11,6 +12,7 @@ class ShelterNavigationView extends GetView<ShelterNavigationController> {
   final List<Widget> _pages = const [
     ShelterDashboardView(),
     ShelterManageView(),
+    ShelterChatView(),
     ShelterProfileView(),
   ];
 
@@ -54,6 +56,12 @@ class ShelterNavigationView extends GetView<ShelterNavigationController> {
               ),
               _buildNavItem(
                 index: 2,
+                icon: Icons.chat,
+                label: 'Chat',
+                currentIndex: currentIndex,
+              ),
+              _buildNavItem(
+                index: 3,
                 icon: Icons.person,
                 label: 'Profile',
                 currentIndex: currentIndex,

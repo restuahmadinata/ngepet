@@ -40,7 +40,7 @@ class HomeView extends GetView<HomeController> {
         appBar: currentIndex == _homeIndex
             ? AppBar(
                 title: Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 16, bottom: 16),
+                  padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

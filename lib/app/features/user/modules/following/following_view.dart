@@ -11,10 +11,8 @@ class FollowingView extends GetView<FollowingController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 32,
-        toolbarHeight: 80,
         title: Padding(
-          padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+          padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
           child: Text(
             'Following',
             style: GoogleFonts.poppins(
@@ -65,7 +63,7 @@ class FollowingView extends GetView<FollowingController> {
           }
 
           return ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(32),
             itemCount: controller.followingShelters.length,
             itemBuilder: (context, index) {
               final shelter = controller.followingShelters[index];
