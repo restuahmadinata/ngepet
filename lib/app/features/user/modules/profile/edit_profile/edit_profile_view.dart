@@ -16,17 +16,17 @@ class EditProfileView extends GetView<EditProfileController> {
     return Scaffold(
       backgroundColor: AppColors.neutral100,
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Edit Profile',
           style: GoogleFonts.poppins(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Obx(() {
         if (controller.isLoading.value && 

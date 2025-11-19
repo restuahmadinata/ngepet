@@ -5,16 +5,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../common/widgets/rectangle_search_bar.dart';
 import '../../../../common/widgets/event_list.dart';
 import '../../../../services/follower_service.dart';
+import '../../../../common/controllers/search_controller.dart' as search;
 
 class EventController extends GetxController {
   var selectedTab = 0.obs; // 0 for Exploring, 1 for Following
   final FollowerService _followerService = FollowerService();
   final RxList<String> followedShelterIds = <String>[].obs;
+  final searchController = Get.put(search.SearchController(), tag: 'event');
+  final textController = TextEditingController();
 
   @override
   void onInit() {
     super.onInit();
     _listenToFollowedShelters();
+  }
+
+  @override
+  void onClose() {
+    textController.dispose();
+    super.onClose();
   }
 
   void _listenToFollowedShelters() {
@@ -27,6 +36,18 @@ class EventController extends GetxController {
 
   void changeTab(int index) {
     selectedTab.value = index;
+    // Clear search when switching tabs
+    if (textController.text.isNotEmpty) {
+      textController.clear();
+      searchController.clearResults();
+    }
+  }
+
+  void onSearchChanged(String value) {
+    searchController.updateSearchQuery(value);
+    if (value.trim().isNotEmpty) {
+      searchController.searchEvents();
+    }
   }
 }
 
@@ -67,75 +88,83 @@ class EventView extends StatelessWidget {
                 children: [
                   RectangleSearchBar(
                     hintText: 'Search events...',
-                    onChanged: (value) {
-                      // Handle search
-                    },
-                    controller: TextEditingController(),
+                    onChanged: controller.onSearchChanged,
+                    controller: controller.textController,
                   ),
                   const SizedBox(height: 24),
-                  Obx(
-                    () => Row(
+                  Obx(() {
+                    // Show search results if searching
+                    if (controller.searchController.searchQuery.value.trim().isNotEmpty) {
+                      return _buildSearchResults();
+                    }
+                    
+                    // Show tabs if not searching
+                    return Column(
                       children: [
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () => controller.changeTab(0),
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 16,
-                              ),
-                              child: Text(
-                                'Exploring',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: controller.selectedTab.value == 0
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  color: controller.selectedTab.value == 0
-                                      ? Colors.black
-                                      : Colors.grey,
+                        Row(
+                          children: [
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () => controller.changeTab(0),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                    horizontal: 16,
+                                  ),
+                                  child: Text(
+                                    'Exploring',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: controller.selectedTab.value == 0
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      color: controller.selectedTab.value == 0
+                                          ? Colors.black
+                                          : Colors.grey,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                            const SizedBox(width: 8),
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () => controller.changeTab(1),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                    horizontal: 16,
+                                  ),
+                                  child: Text(
+                                    'Following',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: controller.selectedTab.value == 1
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      color: controller.selectedTab.value == 1
+                                          ? Colors.black
+                                          : Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () => controller.changeTab(1),
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16,
-                                horizontal: 16,
-                              ),
-                              child: Text(
-                                'Following',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: controller.selectedTab.value == 1
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  color: controller.selectedTab.value == 1
-                                      ? Colors.black
-                                      : Colors.grey,
-                                ),
-                              ),
-                            ),
-                          ),
+                        const SizedBox(height: 24),
+                        Obx(
+                          () => controller.selectedTab.value == 0
+                              ? _buildEventStream()
+                              : _buildFollowingEvents(),
                         ),
                       ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Obx(
-                    () => controller.selectedTab.value == 0
-                        ? _buildEventStream()
-                        : _buildFollowingEvents(),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -260,6 +289,71 @@ class EventView extends StatelessWidget {
         return EventList(events: eventsData);
       },
     );
+  }
+
+  Widget _buildSearchResults() {
+    final EventController controller = Get.find<EventController>();
+    
+    return Obx(() {
+      if (controller.searchController.isSearching.value) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+
+      if (controller.searchController.eventResults.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+                const SizedBox(height: 16),
+                Text(
+                  'No events found',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Try searching with different keywords',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.grey[500],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      return Column(
+        children: [
+          EventList(events: controller.searchController.eventResults),
+          if (controller.searchController.hasMoreEvents.value)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: controller.searchController.isLoadingMore.value
+                  ? const CircularProgressIndicator()
+                  : OutlinedButton(
+                      onPressed: () => controller.searchController.loadMoreEvents(),
+                      child: Text(
+                        'Load More',
+                        style: GoogleFonts.poppins(),
+                      ),
+                    ),
+            ),
+        ],
+      );
+    });
   }
 
   Widget _buildFollowingEvents() {

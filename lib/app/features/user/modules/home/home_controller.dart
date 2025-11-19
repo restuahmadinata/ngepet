@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import '../../../../common/controllers/search_controller.dart' as search;
 
 class HomeController extends GetxController {
   var currentIndex = 2.obs; // Default to Home (index 2)
@@ -9,6 +11,10 @@ class HomeController extends GetxController {
 
   // Location shown below greeting on the Home app bar
   final userLocation = ''.obs;
+  
+  // Search functionality for home page
+  final searchController = Get.put(search.SearchController(), tag: 'home');
+  final textController = TextEditingController();
 
   void changePage(int index) {
     currentIndex.value = index;
@@ -18,6 +24,19 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     _loadUserLocation();
+  }
+
+  @override
+  void onClose() {
+    textController.dispose();
+    super.onClose();
+  }
+
+  void onSearchChanged(String value) {
+    searchController.updateSearchQuery(value);
+    if (value.trim().isNotEmpty) {
+      searchController.searchAll(); // Search both pets and events
+    }
   }
 
   Future<void> _loadUserLocation() async {

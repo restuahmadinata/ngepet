@@ -9,6 +9,7 @@ import 'home_controller.dart';
 import '../../../../common/widgets/rectangle_search_bar.dart';
 import '../../../../common/widgets/event_carousel.dart';
 import '../../../../common/widgets/pet_list.dart';
+import '../../../../common/widgets/event_list.dart';
 import '../../../../common/widgets/custom_bottom_navigation_bar.dart';
 import '../../../../utils/pet_photo_helper.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -106,6 +107,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<HomeController>();
+    
     // 5. SafeArea diatur 'bottom: false' agar konten bisa scroll
     //    di belakang navigation bar (karena ada extendBody: true)
     return SafeArea(
@@ -121,52 +124,181 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
                 child: RectangleSearchBar(
                   hintText: 'Search events and pets...',
+                  onChanged: controller.onSearchChanged,
+                  controller: controller.textController,
                 ),
               ),
               const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Community Events',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+              Obx(() {
+                // Show search results if searching
+                if (controller.searchController.searchQuery.value.trim().isNotEmpty) {
+                  return _buildSearchResults();
+                }
+                
+                // Show normal content if not searching
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Community Events',
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              // EventCarousel with consistent padding
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: EventCarousel(),
-              ),
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Recommended Pets',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 12),
+                    // EventCarousel with consistent padding
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: EventCarousel(),
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: _buildRecommendedPets(),
-              ),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Recommended Pets',
+                          style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: _buildRecommendedPets(),
+                    ),
+                  ],
+                );
+              }),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildSearchResults() {
+    final controller = Get.find<HomeController>();
+    
+    return Obx(() {
+      final isSearching = controller.searchController.isSearching.value;
+      final hasEvents = controller.searchController.eventResults.isNotEmpty;
+      final hasPets = controller.searchController.petResults.isNotEmpty;
+      
+      if (isSearching) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+
+      if (!hasEvents && !hasPets) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+                const SizedBox(height: 16),
+                Text(
+                  'No results found',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Try searching with different keywords',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.grey[500],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Events section
+            if (hasEvents) ...[
+              Text(
+                'Events',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              EventList(events: controller.searchController.eventResults.take(10).toList()),
+              if (controller.searchController.hasMoreEvents.value)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: controller.searchController.isLoadingMore.value
+                        ? const CircularProgressIndicator()
+                        : OutlinedButton(
+                            onPressed: () => controller.searchController.loadMoreEvents(),
+                            child: Text(
+                              'Load More Events',
+                              style: GoogleFonts.poppins(),
+                            ),
+                          ),
+                  ),
+                ),
+              const SizedBox(height: 24),
+            ],
+            
+            // Pets section
+            if (hasPets) ...[
+              Text(
+                'Pets',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              PetListWidget(pets: controller.searchController.petResults.take(10).toList()),
+              if (controller.searchController.hasMorePets.value)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: controller.searchController.isLoadingMore.value
+                        ? const CircularProgressIndicator()
+                        : OutlinedButton(
+                            onPressed: () => controller.searchController.loadMorePets(),
+                            child: Text(
+                              'Load More Pets',
+                              style: GoogleFonts.poppins(),
+                            ),
+                          ),
+                  ),
+                ),
+            ],
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildRecommendedPets() {

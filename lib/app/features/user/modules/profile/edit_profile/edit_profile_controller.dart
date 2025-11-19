@@ -318,21 +318,9 @@ class EditProfileController extends GetxController {
       });
 
       isSaving.value = false;
-
-      // Navigate back to profile page first
-      Get.back();
       
-      // Then show success notification
-      await Future.delayed(const Duration(milliseconds: 300));
-      Get.snackbar(
-        "Success",
-        "Profile successfully updated",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-        margin: const EdgeInsets.all(16),
-      );
+      // Navigate back to profile page
+      Get.back();
     } catch (e) {
       isSaving.value = false;
       
