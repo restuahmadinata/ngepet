@@ -39,7 +39,10 @@ class ShelterProfileController extends GetxController {
   }
 
   void goToFollowers() {
-    Get.toNamed('/shelter/followers');
+    final user = _auth.currentUser;
+    if (user != null) {
+      Get.toNamed('/shelter/followers', arguments: user.uid);
+    }
   }
 
   void goToEditProfile() {
