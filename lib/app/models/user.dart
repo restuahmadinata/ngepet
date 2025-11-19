@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'enums.dart';
 
 /// Model for User
 /// Collection: users/{userId}
@@ -10,9 +11,9 @@ class User {
   final String? address;
   final String? city;
   final DateTime? dateOfBirth;
-  final String? gender; // 'male', 'female', 'other'
+  final Gender? gender; // Male, Female
   final String? profilePhoto;
-  final String accountStatus; // 'active', 'suspended', 'banned'
+  final AccountStatus accountStatus; // active, suspended, banned
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -26,7 +27,7 @@ class User {
     this.dateOfBirth,
     this.gender,
     this.profilePhoto,
-    this.accountStatus = 'active',
+    this.accountStatus = AccountStatus.active,
     this.createdAt,
     this.updatedAt,
   });
@@ -43,9 +44,9 @@ class User {
       address: data['address'],
       city: data['city'],
       dateOfBirth: (data['dateOfBirth'] as Timestamp?)?.toDate(),
-      gender: data['gender'],
+      gender: data['gender'] != null ? Gender.fromString(data['gender']) : null,
       profilePhoto: data['profilePhoto'],
-      accountStatus: data['accountStatus'] ?? 'active',
+      accountStatus: AccountStatus.fromString(data['accountStatus']),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -61,9 +62,9 @@ class User {
       address: data['address'],
       city: data['city'],
       dateOfBirth: (data['dateOfBirth'] as Timestamp?)?.toDate(),
-      gender: data['gender'],
+      gender: data['gender'] != null ? Gender.fromString(data['gender']) : null,
       profilePhoto: data['profilePhoto'],
-      accountStatus: data['accountStatus'] ?? 'active',
+      accountStatus: AccountStatus.fromString(data['accountStatus']),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -79,9 +80,9 @@ class User {
       'address': address,
       'city': city,
       'dateOfBirth': dateOfBirth != null ? Timestamp.fromDate(dateOfBirth!) : null,
-      'gender': gender,
+      'gender': gender?.value,
       'profilePhoto': profilePhoto,
-      'accountStatus': accountStatus,
+      'accountStatus': accountStatus.value,
       'createdAt': createdAt != null 
           ? Timestamp.fromDate(createdAt!) 
           : FieldValue.serverTimestamp(),
@@ -98,9 +99,9 @@ class User {
     String? address,
     String? city,
     DateTime? dateOfBirth,
-    String? gender,
+    Gender? gender,
     String? profilePhoto,
-    String? accountStatus,
+    AccountStatus? accountStatus,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {

@@ -33,7 +33,8 @@ class EditProfileController extends GetxController {
   final address = ''.obs;
   final city = ''.obs;
 
-  final genderOptions = ['male', 'female', 'other'];
+  // Gender options using enum values
+  final genderOptions = ['Male', 'Female'];
 
   @override
   void onInit() {
@@ -65,7 +66,7 @@ class EditProfileController extends GetxController {
         address.value = userData.address ?? '';
         city.value = userData.city ?? '';
         
-        selectedGender.value = userData.gender;
+        selectedGender.value = userData.gender?.value;
         selectedDate.value = userData.dateOfBirth;
         profileImageUrl.value = userData.profilePhoto;
         
@@ -351,19 +352,5 @@ class EditProfileController extends GetxController {
       return 'Invalid phone number format';
     }
     return null;
-  }
-
-  // Format display for gender
-  String getGenderDisplay(String gender) {
-    switch (gender) {
-      case 'male':
-        return 'Male';
-      case 'female':
-        return 'Female';
-      case 'other':
-        return 'Other';
-      default:
-        return gender;
-    }
   }
 }

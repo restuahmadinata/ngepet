@@ -413,7 +413,7 @@ class HomePage extends StatelessWidget {
         'name': (data['petName'] ?? data['name'] ?? 'Pet Name').toString(),
         'breed': (data['breed'] ?? 'Breed').toString(),
         'ageMonths': data['ageMonths'] ?? 0,
-        'age': data['ageMonths']?.toString() ?? data['age']?.toString() ?? 'Age',
+        'age': data['ageMonths']?.toString() ?? '0',
         'shelter': (data['shelterName'] ?? 'Shelter').toString(),
         'shelterName': (data['shelterName'] ?? 'Shelter').toString(),
         'location': (data['location'] ?? 'Location').toString(),

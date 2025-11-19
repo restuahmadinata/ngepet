@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'enums.dart';
 
 /// Model for Event
 /// Collection: events/{eventId}
@@ -12,7 +13,7 @@ class Event {
   final String? startTime; // Format: HH:mm
   final String? endTime; // Format: HH:mm
   final List<String> imageUrls; // Array of event image URLs
-  final String eventStatus; // 'upcoming', 'ongoing', 'completed', 'cancelled'
+  final EventStatus eventStatus; // upcoming, ongoing, completed, cancelled
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -26,7 +27,7 @@ class Event {
     this.startTime,
     this.endTime,
     this.imageUrls = const [],
-    this.eventStatus = 'upcoming',
+    this.eventStatus = EventStatus.upcoming,
     this.createdAt,
     this.updatedAt,
   });
@@ -47,7 +48,7 @@ class Event {
       imageUrls: data['imageUrls'] != null 
           ? List<String>.from(data['imageUrls'])
           : [],
-      eventStatus: data['eventStatus'] ?? 'upcoming',
+      eventStatus: EventStatus.fromString(data['eventStatus']),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -67,7 +68,7 @@ class Event {
       imageUrls: data['imageUrls'] != null 
           ? List<String>.from(data['imageUrls'])
           : [],
-      eventStatus: data['eventStatus'] ?? 'upcoming',
+      eventStatus: EventStatus.fromString(data['eventStatus']),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -108,7 +109,7 @@ class Event {
       'startTime': startTime,
       'endTime': endTime,
       'imageUrls': imageUrls,
-      'eventStatus': eventStatus,
+      'eventStatus': eventStatus.value,
       'createdAt': createdAt != null 
           ? Timestamp.fromDate(createdAt!) 
           : FieldValue.serverTimestamp(),
@@ -127,7 +128,7 @@ class Event {
     String? startTime,
     String? endTime,
     List<String>? imageUrls,
-    String? eventStatus,
+    EventStatus? eventStatus,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {

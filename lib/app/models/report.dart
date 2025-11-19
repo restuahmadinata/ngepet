@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'enums.dart';
 
 /// Model for Report
 /// Collection: reports/{reportId}
@@ -6,12 +7,12 @@ class Report {
   final String reportId;
   final String reporterId;
   final String reportedId;
-  final String entityType; // 'user', 'shelter', 'pet'
-  final String violationCategory; // 'fraud', 'animal_abuse', 'spam', 'inappropriate_content'
+  final EntityType entityType; // user, shelter, pet
+  final ViolationCategory violationCategory; // fraud, animal_abuse, spam, inappropriate_content
   final String reportDescription;
   final String? incidentLocation;
   final String? evidenceAttachment;
-  final String reportStatus; // 'pending', 'reviewing', 'resolved', 'rejected'
+  final ReportStatus reportStatus; // pending, reviewing, resolved, rejected
   final String? adminId;
   final String? adminNotes;
   final DateTime? reportDate;
@@ -26,7 +27,7 @@ class Report {
     required this.reportDescription,
     this.incidentLocation,
     this.evidenceAttachment,
-    this.reportStatus = 'pending',
+    this.reportStatus = ReportStatus.pending,
     this.adminId,
     this.adminNotes,
     this.reportDate,
@@ -41,12 +42,12 @@ class Report {
       reportId: doc.id,
       reporterId: data['reporterId'] ?? '',
       reportedId: data['reportedId'] ?? '',
-      entityType: data['entityType'] ?? '',
-      violationCategory: data['violationCategory'] ?? '',
+      entityType: EntityType.fromString(data['entityType']),
+      violationCategory: ViolationCategory.fromString(data['violationCategory']),
       reportDescription: data['reportDescription'] ?? '',
       incidentLocation: data['incidentLocation'],
       evidenceAttachment: data['evidenceAttachment'],
-      reportStatus: data['reportStatus'] ?? 'pending',
+      reportStatus: ReportStatus.fromString(data['reportStatus']),
       adminId: data['adminId'],
       adminNotes: data['adminNotes'],
       reportDate: data['reportDate'] != null
@@ -64,12 +65,12 @@ class Report {
       reportId: id,
       reporterId: data['reporterId'] ?? '',
       reportedId: data['reportedId'] ?? '',
-      entityType: data['entityType'] ?? '',
-      violationCategory: data['violationCategory'] ?? '',
+      entityType: EntityType.fromString(data['entityType']),
+      violationCategory: ViolationCategory.fromString(data['violationCategory']),
       reportDescription: data['reportDescription'] ?? '',
       incidentLocation: data['incidentLocation'],
       evidenceAttachment: data['evidenceAttachment'],
-      reportStatus: data['reportStatus'] ?? 'pending',
+      reportStatus: ReportStatus.fromString(data['reportStatus']),
       adminId: data['adminId'],
       adminNotes: data['adminNotes'],
       reportDate: data['reportDate'] != null
@@ -87,12 +88,12 @@ class Report {
       'reportId': reportId,
       'reporterId': reporterId,
       'reportedId': reportedId,
-      'entityType': entityType,
-      'violationCategory': violationCategory,
+      'entityType': entityType.value,
+      'violationCategory': violationCategory.value,
       'reportDescription': reportDescription,
       'incidentLocation': incidentLocation,
       'evidenceAttachment': evidenceAttachment,
-      'reportStatus': reportStatus,
+      'reportStatus': reportStatus.value,
       'adminId': adminId,
       'adminNotes': adminNotes,
       'reportDate': reportDate != null 
@@ -109,12 +110,12 @@ class Report {
     String? reportId,
     String? reporterId,
     String? reportedId,
-    String? entityType,
-    String? violationCategory,
+    EntityType? entityType,
+    ViolationCategory? violationCategory,
     String? reportDescription,
     String? incidentLocation,
     String? evidenceAttachment,
-    String? reportStatus,
+    ReportStatus? reportStatus,
     String? adminId,
     String? adminNotes,
     DateTime? reportDate,

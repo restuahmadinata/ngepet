@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../models/adoption_request.dart';
+import '../../../../models/enums.dart';
 
 class AdoptionRequestController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -123,15 +124,15 @@ class AdoptionRequestController extends GetxController {
         shelterId: shelterId,
         adoptionReason: adoptionReasonController.text.trim(),
         petExperience: petExperienceController.text.trim(),
-        residenceStatus: selectedResidenceStatus.value,
+        residenceStatus: ResidenceStatus.fromString(selectedResidenceStatus.value),
         hasYard: hasYard.value,
         familyMembers: int.parse(familyMembersController.text.trim()),
         environmentDescription: environmentDescriptionController.text.trim(),
-        applicationStatus: 'pending',
-        requestStatus: 'pending',
+        applicationStatus: ApplicationStatus.pending,
+        requestStatus: RequestStatus.pending,
         requestDate: DateTime.now(),
-        surveyStatus: 'not_started',
-        handoverStatus: 'not_started',
+        surveyStatus: SurveyStatus.notStarted,
+        handoverStatus: HandoverStatus.notStarted,
         applicationDate: DateTime.now(),
       );
       

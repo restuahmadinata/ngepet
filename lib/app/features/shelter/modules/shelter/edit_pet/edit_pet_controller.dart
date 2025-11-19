@@ -252,6 +252,11 @@ class EditPetController extends GetxController {
     if (value == null || value.trim().isEmpty) {
       return 'Age is required';
     }
+    // Accept only numeric values for months
+    final ageValue = int.tryParse(value.trim());
+    if (ageValue == null || ageValue <= 0) {
+      return 'Please enter a valid number (example: 24 for 24 months)';
+    }
     return null;
   }
 }

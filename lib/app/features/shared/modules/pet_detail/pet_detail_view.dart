@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../../../../routes/app_routes.dart';
+import '../../../../common/widgets/fullscreen_image_gallery.dart';
 import 'pet_detail_controller.dart';
 
 class PetDetailView extends StatefulWidget {
@@ -94,21 +95,29 @@ class _PetDetailViewState extends State<PetDetailView> {
                     },
                     itemCount: images.length,
                     itemBuilder: (context, index) {
-                      return CachedNetworkImage(
-                        imageUrl: images[index],
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey[200],
-                          child: const Center(
-                            child: CircularProgressIndicator(),
+                      return GestureDetector(
+                        onTap: () {
+                          Get.to(() => FullscreenImageGallery(
+                                imageUrls: images,
+                                initialIndex: index,
+                              ));
+                        },
+                        child: CachedNetworkImage(
+                          imageUrl: images[index],
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[200],
-                          child: const Icon(
-                            Icons.pets,
-                            size: 64,
-                            color: Colors.grey,
+                          errorWidget: (context, url, error) => Container(
+                            color: Colors.grey[200],
+                            child: const Icon(
+                              Icons.pets,
+                              size: 64,
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
                       );

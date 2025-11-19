@@ -4,6 +4,12 @@
 
 This document explains the Firestore database structure for the Ngepet app (Pet Adoption Platform).
 
+**⚠️ IMPORTANT: Type Safety with Enums**
+
+All enum fields are strictly enforced in the Dart models through the `enums.dart` file. When storing data to Firestore, enum values are converted to their string representations. When reading from Firestore, strings are parsed back to enums with proper defaults.
+
+See `lib/app/models/enums.dart` for all enum definitions.
+
 ---
 
 ## 📊 Collections
@@ -24,11 +30,11 @@ users/{user_id}
   "address": string,             // Full address
   "city": string,                // City/regency
   "dateOfBirth": Timestamp,      // Date of birth
-  "gender": string,              // enum: "Male", "Female"
+  "gender": string,              // ENUM: "Male", "Female" (see Gender enum)
   "profilePhoto": string,        // Profile photo URL
   
   // Account Status
-  "accountStatus": string,       // enum: "active", "suspended", "banned"
+  "accountStatus": string,       // ENUM: "active", "suspended", "banned" (see AccountStatus enum)
   "isActive": boolean,           // Account active status (for quick filtering)
   
   // Timestamps
@@ -66,7 +72,7 @@ shelters/{shelter_id}
   "shelterPhoto": string,        // Shelter profile photo URL
   
   // Verification
-  "verificationStatus": string,  // enum: "pending", "approved", "rejected"
+  "verificationStatus": string,  // ENUM: "pending", "approved", "rejected" (see VerificationStatus enum)
   "verificationDate": Timestamp, // Verification date
   "legalNumber": string,         // Shelter legal number
   "rejectionReason": string,     // Rejection reason (if rejected)
@@ -114,18 +120,18 @@ pets/{pet_id}
   "shelterId": string,           // FK - owner shelter
   
   // Category
-  "category": string,            // Pet type (Dog, Cat, Rabbit, Bird, etc.)
+  "category": string,            // ENUM: Pet type (Dog, Cat, Rabbit, Bird, Hamster, Guinea Pig, Fish, Turtle, Other) (see PetCategory enum)
   
   // Basic Information
   "petName": string,             // Pet name
-  "gender": string,              // enum: "Male", "Female"
-  "ageMonths": number,           // Age in months
+  "gender": string,              // ENUM: "Male", "Female" (see Gender enum)
+  "ageMonths": number,           // Age in months (MUST be in months - strictly enforced)
   "breed": string,               // Pet breed
   "description": string,         // Pet description
   
   // Health & Status
   "healthCondition": string,     // Health condition
-  "adoptionStatus": string,      // enum: "available", "pending", "adopted"
+  "adoptionStatus": string,      // ENUM: "available", "pending", "adopted" (see AdoptionStatus enum)
   
   // Location
   "location": string,            // Pet location (from shelter address)
@@ -165,13 +171,13 @@ adoption_applications/{application_id}
   // Application Details
   "adoptionReason": string,      // Reason for wanting to adopt
   "petExperience": string,       // Experience caring for pets
-  "residenceStatus": string,     // enum: "own_house", "rental", "boarding"
+  "residenceStatus": string,     // ENUM: "own_house", "rental", "boarding" (see ResidenceStatus enum)
   "hasYard": boolean,            // Has a yard
   "familyMembers": number,       // Number of family members
   "environmentDescription": string, // Description of living environment
   
   // Status & Processing
-  "applicationStatus": string,   // enum: "pending", "approved", "rejected", "completed"
+  "applicationStatus": string,   // ENUM: "pending", "approved", "rejected", "completed" (see ApplicationStatus enum)
   "shelterNotes": string,        // Notes from shelter
   
   // Timestamps
@@ -233,7 +239,7 @@ events/{event_id}
   "imageUrls": string,           // Event banner URL
   
   // Status
-  "eventStatus": string,         // enum: "upcoming", "ongoing", "completed", "cancelled"
+  "eventStatus": string,         // ENUM: "upcoming", "ongoing", "completed", "cancelled" (see EventStatus enum)
   
   // Timestamps
   "createdAt": Timestamp,        // Creation time
@@ -260,14 +266,14 @@ reports/{report_id}
   "reportedId": string,          // FK - reported user/shelter
   
   // Report Details
-  "entityType": string,          // enum: "user", "shelter", "pet"
-  "violationCategory": string,   // enum: "fraud", "animal_abuse", "spam", "inappropriate_content"
+  "entityType": string,          // ENUM: "user", "shelter", "pet" (see EntityType enum)
+  "violationCategory": string,   // ENUM: "fraud", "animal_abuse", "spam", "inappropriate_content" (see ViolationCategory enum)
   "reportDescription": string,   // Report description
   "incidentLocation": string,    // Incident location
   "evidenceAttachment": string,  // Evidence URL (photo/document)
   
   // Status & Processing
-  "reportStatus": string,        // enum: "pending", "reviewing", "resolved", "rejected"
+  "reportStatus": string,        // ENUM: "pending", "reviewing", "resolved", "rejected" (see ReportStatus enum)
   "adminId": string,             // FK - reviewing admin
   "adminNotes": string,          // Notes from admin
   
@@ -302,7 +308,7 @@ suspensions/{suspension_id}
   "suspensionEnd": Timestamp,    // Suspension end date/time
   
   // Status
-  "status": string,              // enum: "active", "lifted", "expired"
+  "status": string,              // ENUM: "active", "lifted", "expired" (see SuspensionStatus enum)
   "liftedBy": string,            // FK - admin who lifted (if applicable)
   "liftedAt": Timestamp,         // Time when suspension was lifted
   "liftReason": string,          // Reason for lifting suspension early
@@ -363,5 +369,142 @@ platform_analytics/{analytics_id}
 
 **Indexes:**
 - `recordDate` (unique)
+
+---
+
+## 🎯 ENUM Definitions
+
+All enum fields in the database are strictly type-checked in the Dart application layer. Below are all the enums used:
+
+### User & Authentication Enums
+
+**Gender**
+- `Male`
+- `Female`
+
+**AccountStatus**
+- `active` - User can access the app normally
+- `suspended` - Temporarily cannot access (e.g., pending review)
+- `banned` - Permanently blocked from the platform
+
+### Shelter Enums
+
+**VerificationStatus**
+- `pending` - Awaiting admin verification
+- `approved` - Shelter verified and active
+- `rejected` - Verification rejected
+
+### Pet Enums
+
+**PetCategory** (Extensible list)
+- `Dog`
+- `Cat`
+- `Rabbit`
+- `Bird`
+- `Hamster`
+- `Guinea Pig`
+- `Fish`
+- `Turtle`
+- `Other`
+
+**AdoptionStatus**
+- `available` - Pet can be adopted
+- `pending` - Adoption application in progress
+- `adopted` - Pet has been adopted
+
+### Adoption Application Enums
+
+**ResidenceStatus**
+- `own_house` - Applicant owns their home
+- `rental` - Living in rental property
+- `boarding` - Boarding/temporary housing
+
+**ApplicationStatus** (Overall status)
+- `pending` - Application submitted, under review
+- `approved` - Application approved
+- `rejected` - Application rejected
+- `completed` - Adoption completed
+
+**RequestStatus** (Stage 1)
+- `pending` - Request under review
+- `approved` - Request approved, moving to survey
+- `rejected` - Request rejected
+
+**SurveyStatus** (Stage 2)
+- `not_started` - Survey stage not yet begun
+- `pending` - Survey scheduled or in progress
+- `approved` - Survey passed, moving to handover
+- `rejected` - Survey failed
+
+**HandoverStatus** (Stage 3)
+- `not_started` - Handover not yet begun
+- `pending` - Handover scheduled
+- `completed` - Pet successfully handed over
+
+### Event Enums
+
+**EventStatus**
+- `upcoming` - Event scheduled for future
+- `ongoing` - Event currently happening
+- `completed` - Event finished
+- `cancelled` - Event cancelled
+
+### Report & Moderation Enums
+
+**EntityType** (What is being reported)
+- `user` - Reporting a user
+- `shelter` - Reporting a shelter
+- `pet` - Reporting a pet listing
+
+**ViolationCategory**
+- `fraud` - Fraudulent activity
+- `animal_abuse` - Animal abuse/neglect
+- `spam` - Spam content
+- `inappropriate_content` - Inappropriate content
+
+**ReportStatus**
+- `pending` - Report submitted, awaiting review
+- `reviewing` - Admin is reviewing the report
+- `resolved` - Report resolved/action taken
+- `rejected` - Report dismissed as invalid
+
+**SuspensionStatus**
+- `active` - Suspension currently in effect
+- `lifted` - Suspension lifted early by admin
+- `expired` - Suspension period ended naturally
+
+---
+
+## 📝 Validation Rules
+
+### Age Validation
+- **Pet Age (`ageMonths`)**: MUST be in months only. No years, no mixed units. This is strictly enforced by the integer type and model parsing logic.
+  - Example: A 2-year-old pet should be stored as `24` months
+  - The UI can display "2 years" but must store as `24` months
+
+### Enum Validation
+- All enum fields have default values if invalid data is encountered
+- String values in Firestore must match enum values exactly (case-insensitive parsing)
+- When creating/updating documents, use enum `.value` property to get the string representation
+
+### Implementation Example
+```dart
+// Creating a pet with enums
+Pet pet = Pet(
+  category: PetCategory.dog,  // Enum type
+  gender: Gender.male,         // Enum type
+  ageMonths: 24,               // Integer (2 years)
+  adoptionStatus: AdoptionStatus.available,  // Enum type
+  // ... other fields
+);
+
+// Convert to Firestore document
+Map<String, dynamic> data = pet.toMap();
+// category becomes "Dog", gender becomes "Male", etc.
+
+// Reading from Firestore
+Pet petFromDb = Pet.fromFirestore(docSnapshot);
+// String values parsed back to enums automatically
+```
 
 ---

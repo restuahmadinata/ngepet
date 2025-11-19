@@ -536,12 +536,12 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
                         await controller.cancelRequest(request['id'] ?? request['applicationId']);
                       }
                     },
-                    child: Text('Cancel Request', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.red,
                       side: const BorderSide(color: Colors.red),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
+                    child: Text('Cancel Request', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
                   ),
                 ),
             ],

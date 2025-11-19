@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'enums.dart';
 
 /// Model for Adoption Request
 /// Collection: adoption_applications/{applicationId}
@@ -16,28 +17,28 @@ class AdoptionRequest {
   // User form data
   final String adoptionReason;
   final String petExperience;
-  final String residenceStatus; // 'own_house', 'rental', 'boarding'
+  final ResidenceStatus residenceStatus; // own_house, rental, boarding
   final bool hasYard;
   final int familyMembers;
   final String environmentDescription;
   
   // Overall application status
-  final String applicationStatus; // 'pending', 'approved', 'rejected', 'completed'
+  final ApplicationStatus applicationStatus; // pending, approved, rejected, completed
   
   // Stage 1: Application Request
-  final String requestStatus; // 'pending', 'approved', 'rejected'
+  final RequestStatus requestStatus; // pending, approved, rejected
   final DateTime? requestDate;
   final DateTime? requestProcessedDate;
   final String? requestNotes; // Shelter notes for this stage
   
   // Stage 2: Survey
-  final String surveyStatus; // 'pending', 'approved', 'rejected', 'not_started'
+  final SurveyStatus surveyStatus; // pending, approved, rejected, not_started
   final DateTime? surveyScheduledDate;
   final DateTime? surveyCompletedDate;
   final String? surveyNotes; // Shelter notes for this stage
   
   // Stage 3: Handover
-  final String handoverStatus; // 'pending', 'completed', 'not_started'
+  final HandoverStatus handoverStatus; // pending, completed, not_started
   final DateTime? handoverScheduledDate;
   final DateTime? handoverCompletedDate;
   final String? handoverNotes; // Shelter notes for this stage
@@ -59,16 +60,16 @@ class AdoptionRequest {
     required this.hasYard,
     required this.familyMembers,
     required this.environmentDescription,
-    this.applicationStatus = 'pending',
-    this.requestStatus = 'pending',
+    this.applicationStatus = ApplicationStatus.pending,
+    this.requestStatus = RequestStatus.pending,
     this.requestDate,
     this.requestProcessedDate,
     this.requestNotes,
-    this.surveyStatus = 'not_started',
+    this.surveyStatus = SurveyStatus.notStarted,
     this.surveyScheduledDate,
     this.surveyCompletedDate,
     this.surveyNotes,
-    this.handoverStatus = 'not_started',
+    this.handoverStatus = HandoverStatus.notStarted,
     this.handoverScheduledDate,
     this.handoverCompletedDate,
     this.handoverNotes,
@@ -89,12 +90,12 @@ class AdoptionRequest {
       shelterId: data['shelterId'] ?? '',
       adoptionReason: data['adoptionReason'] ?? '',
       petExperience: data['petExperience'] ?? '',
-      residenceStatus: data['residenceStatus'] ?? '',
+      residenceStatus: ResidenceStatus.fromString(data['residenceStatus']),
       hasYard: data['hasYard'] ?? false,
       familyMembers: data['familyMembers'] ?? 0,
       environmentDescription: data['environmentDescription'] ?? '',
-      applicationStatus: data['applicationStatus'] ?? 'pending',
-      requestStatus: data['requestStatus'] ?? 'pending',
+      applicationStatus: ApplicationStatus.fromString(data['applicationStatus']),
+      requestStatus: RequestStatus.fromString(data['requestStatus']),
       requestDate: data['requestDate'] != null 
           ? (data['requestDate'] as Timestamp).toDate() 
           : null,
@@ -102,7 +103,7 @@ class AdoptionRequest {
           ? (data['requestProcessedDate'] as Timestamp).toDate() 
           : null,
       requestNotes: data['requestNotes'],
-      surveyStatus: data['surveyStatus'] ?? 'not_started',
+      surveyStatus: SurveyStatus.fromString(data['surveyStatus']),
       surveyScheduledDate: data['surveyScheduledDate'] != null 
           ? (data['surveyScheduledDate'] as Timestamp).toDate() 
           : null,
@@ -110,7 +111,7 @@ class AdoptionRequest {
           ? (data['surveyCompletedDate'] as Timestamp).toDate() 
           : null,
       surveyNotes: data['surveyNotes'],
-      handoverStatus: data['handoverStatus'] ?? 'not_started',
+      handoverStatus: HandoverStatus.fromString(data['handoverStatus']),
       handoverScheduledDate: data['handoverScheduledDate'] != null 
           ? (data['handoverScheduledDate'] as Timestamp).toDate() 
           : null,
@@ -138,12 +139,12 @@ class AdoptionRequest {
       shelterId: data['shelterId'] ?? '',
       adoptionReason: data['adoptionReason'] ?? '',
       petExperience: data['petExperience'] ?? '',
-      residenceStatus: data['residenceStatus'] ?? '',
+      residenceStatus: ResidenceStatus.fromString(data['residenceStatus']),
       hasYard: data['hasYard'] ?? false,
       familyMembers: data['familyMembers'] ?? 0,
       environmentDescription: data['environmentDescription'] ?? '',
-      applicationStatus: data['applicationStatus'] ?? 'pending',
-      requestStatus: data['requestStatus'] ?? 'pending',
+      applicationStatus: ApplicationStatus.fromString(data['applicationStatus']),
+      requestStatus: RequestStatus.fromString(data['requestStatus']),
       requestDate: data['requestDate'] != null 
           ? (data['requestDate'] as Timestamp).toDate() 
           : null,
@@ -151,7 +152,7 @@ class AdoptionRequest {
           ? (data['requestProcessedDate'] as Timestamp).toDate() 
           : null,
       requestNotes: data['requestNotes'],
-      surveyStatus: data['surveyStatus'] ?? 'not_started',
+      surveyStatus: SurveyStatus.fromString(data['surveyStatus']),
       surveyScheduledDate: data['surveyScheduledDate'] != null 
           ? (data['surveyScheduledDate'] as Timestamp).toDate() 
           : null,
@@ -159,7 +160,7 @@ class AdoptionRequest {
           ? (data['surveyCompletedDate'] as Timestamp).toDate() 
           : null,
       surveyNotes: data['surveyNotes'],
-      handoverStatus: data['handoverStatus'] ?? 'not_started',
+      handoverStatus: HandoverStatus.fromString(data['handoverStatus']),
       handoverScheduledDate: data['handoverScheduledDate'] != null 
           ? (data['handoverScheduledDate'] as Timestamp).toDate() 
           : null,
@@ -187,12 +188,12 @@ class AdoptionRequest {
       'shelterId': shelterId,
       'adoptionReason': adoptionReason,
       'petExperience': petExperience,
-      'residenceStatus': residenceStatus,
+      'residenceStatus': residenceStatus.value,
       'hasYard': hasYard,
       'familyMembers': familyMembers,
       'environmentDescription': environmentDescription,
-      'applicationStatus': applicationStatus,
-      'requestStatus': requestStatus,
+      'applicationStatus': applicationStatus.value,
+      'requestStatus': requestStatus.value,
       'requestDate': requestDate != null 
           ? Timestamp.fromDate(requestDate!) 
           : null,
@@ -200,7 +201,7 @@ class AdoptionRequest {
           ? Timestamp.fromDate(requestProcessedDate!) 
           : null,
       'requestNotes': requestNotes,
-      'surveyStatus': surveyStatus,
+      'surveyStatus': surveyStatus.value,
       'surveyScheduledDate': surveyScheduledDate != null 
           ? Timestamp.fromDate(surveyScheduledDate!) 
           : null,
@@ -208,7 +209,7 @@ class AdoptionRequest {
           ? Timestamp.fromDate(surveyCompletedDate!) 
           : null,
       'surveyNotes': surveyNotes,
-      'handoverStatus': handoverStatus,
+      'handoverStatus': handoverStatus.value,
       'handoverScheduledDate': handoverScheduledDate != null 
           ? Timestamp.fromDate(handoverScheduledDate!) 
           : null,
@@ -235,20 +236,20 @@ class AdoptionRequest {
     String? shelterId,
     String? adoptionReason,
     String? petExperience,
-    String? residenceStatus,
+    ResidenceStatus? residenceStatus,
     bool? hasYard,
     int? familyMembers,
     String? environmentDescription,
-    String? applicationStatus,
-    String? requestStatus,
+    ApplicationStatus? applicationStatus,
+    RequestStatus? requestStatus,
     DateTime? requestDate,
     DateTime? requestProcessedDate,
     String? requestNotes,
-    String? surveyStatus,
+    SurveyStatus? surveyStatus,
     DateTime? surveyScheduledDate,
     DateTime? surveyCompletedDate,
     String? surveyNotes,
-    String? handoverStatus,
+    HandoverStatus? handoverStatus,
     DateTime? handoverScheduledDate,
     DateTime? handoverCompletedDate,
     String? handoverNotes,

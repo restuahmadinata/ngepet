@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'enums.dart';
 
 /// Model for Shelter
 /// Collection: shelters/{shelterId}
@@ -11,7 +12,7 @@ class Shelter {
   final String shelterPhone;
   final String shelterEmail;
   final String? shelterPhoto;
-  final String verificationStatus; // 'pending', 'approved', 'rejected'
+  final VerificationStatus verificationStatus; // pending, approved, rejected
   final DateTime? verificationDate;
   final String? legalNumber;
   final String? rejectionReason;
@@ -27,7 +28,7 @@ class Shelter {
     required this.shelterPhone,
     required this.shelterEmail,
     this.shelterPhoto,
-    this.verificationStatus = 'pending',
+    this.verificationStatus = VerificationStatus.pending,
     this.verificationDate,
     this.legalNumber,
     this.rejectionReason,
@@ -48,7 +49,7 @@ class Shelter {
       shelterPhone: data['shelterPhone'] ?? '',
       shelterEmail: data['shelterEmail'] ?? '',
       shelterPhoto: data['shelterPhoto'],
-      verificationStatus: data['verificationStatus'] ?? 'pending',
+      verificationStatus: VerificationStatus.fromString(data['verificationStatus']),
       verificationDate: (data['verificationDate'] as Timestamp?)?.toDate(),
       legalNumber: data['legalNumber'],
       rejectionReason: data['rejectionReason'],
@@ -68,7 +69,7 @@ class Shelter {
       shelterPhone: data['shelterPhone'] ?? '',
       shelterEmail: data['shelterEmail'] ?? '',
       shelterPhoto: data['shelterPhoto'],
-      verificationStatus: data['verificationStatus'] ?? 'pending',
+      verificationStatus: VerificationStatus.fromString(data['verificationStatus']),
       verificationDate: (data['verificationDate'] as Timestamp?)?.toDate(),
       legalNumber: data['legalNumber'],
       rejectionReason: data['rejectionReason'],
@@ -88,7 +89,7 @@ class Shelter {
       'shelterPhone': shelterPhone,
       'shelterEmail': shelterEmail,
       'shelterPhoto': shelterPhoto,
-      'verificationStatus': verificationStatus,
+      'verificationStatus': verificationStatus.value,
       'verificationDate': verificationDate != null 
           ? Timestamp.fromDate(verificationDate!) 
           : null,
@@ -111,7 +112,7 @@ class Shelter {
     String? shelterPhone,
     String? shelterEmail,
     String? shelterPhoto,
-    String? verificationStatus,
+    VerificationStatus? verificationStatus,
     DateTime? verificationDate,
     String? legalNumber,
     String? rejectionReason,

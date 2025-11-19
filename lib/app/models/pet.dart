@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'enums.dart';
 
 /// Model for Pet/Animal
 /// Collection: pets/{petId}
@@ -6,14 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Pet {
   final String petId;
   final String shelterId;
-  final String category; // Pet type: 'Dog', 'Cat', 'Rabbit', 'Bird', etc
+  final PetCategory category; // Pet type: Dog, Cat, Rabbit, Bird, etc
   final String petName;
-  final String gender; // 'Male', 'Female'
-  final int ageMonths;
+  final Gender gender; // Male, Female
+  final int ageMonths; // Age must be in months only
   final String breed;
   final String description;
   final String healthCondition;
-  final String adoptionStatus; // 'available', 'pending', 'adopted'
+  final AdoptionStatus adoptionStatus; // available, pending, adopted
   final String location;
   final String shelterName;
   final List<String> imageUrls; // Array of image URLs, index 0 = primary photo/thumbnail
@@ -30,7 +31,7 @@ class Pet {
     required this.breed,
     required this.description,
     required this.healthCondition,
-    this.adoptionStatus = 'available',
+    this.adoptionStatus = AdoptionStatus.available,
     required this.location,
     required this.shelterName,
     this.imageUrls = const [],
@@ -45,14 +46,14 @@ class Pet {
     return Pet(
       petId: doc.id,
       shelterId: data['shelterId'] ?? '',
-      category: data['category'] ?? '',
+      category: PetCategory.fromString(data['category']),
       petName: data['petName'] ?? '',
-      gender: data['gender'] ?? 'Male',
+      gender: Gender.fromString(data['gender']),
       ageMonths: _parseAgeMonths(data['ageMonths']),
       breed: data['breed'] ?? '',
       description: data['description'] ?? '',
       healthCondition: data['healthCondition'] ?? 'Healthy',
-      adoptionStatus: data['adoptionStatus'] ?? 'available',
+      adoptionStatus: AdoptionStatus.fromString(data['adoptionStatus']),
       location: data['location'] ?? '',
       shelterName: data['shelterName'] ?? '',
       imageUrls: data['imageUrls'] != null 
@@ -68,14 +69,14 @@ class Pet {
     return Pet(
       petId: id,
       shelterId: data['shelterId'] ?? '',
-      category: data['category'] ?? '',
+      category: PetCategory.fromString(data['category']),
       petName: data['petName'] ?? '',
-      gender: data['gender'] ?? 'Male',
+      gender: Gender.fromString(data['gender']),
       ageMonths: _parseAgeMonths(data['ageMonths']),
       breed: data['breed'] ?? '',
       description: data['description'] ?? '',
       healthCondition: data['healthCondition'] ?? 'Healthy',
-      adoptionStatus: data['adoptionStatus'] ?? 'available',
+      adoptionStatus: AdoptionStatus.fromString(data['adoptionStatus']),
       location: data['location'] ?? '',
       shelterName: data['shelterName'] ?? '',
       imageUrls: data['imageUrls'] != null 
@@ -106,14 +107,14 @@ class Pet {
     return {
       'petId': petId,
       'shelterId': shelterId,
-      'category': category,
+      'category': category.value,
       'petName': petName,
-      'gender': gender,
+      'gender': gender.value,
       'ageMonths': ageMonths,
       'breed': breed,
       'description': description,
       'healthCondition': healthCondition,
-      'adoptionStatus': adoptionStatus,
+      'adoptionStatus': adoptionStatus.value,
       'location': location,
       'shelterName': shelterName,
       'imageUrls': imageUrls,
@@ -128,14 +129,14 @@ class Pet {
   Pet copyWith({
     String? petId,
     String? shelterId,
-    String? category,
+    PetCategory? category,
     String? petName,
-    String? gender,
+    Gender? gender,
     int? ageMonths,
     String? breed,
     String? description,
     String? healthCondition,
-    String? adoptionStatus,
+    AdoptionStatus? adoptionStatus,
     String? location,
     String? shelterName,
     List<String>? imageUrls,

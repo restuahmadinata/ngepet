@@ -352,7 +352,7 @@ class ManagePetsView extends GetView<ManagePetsController> {
                             gender,
                           ),
                           const SizedBox(width: 8),
-                          _buildInfoChip(Icons.cake, ageMonths),
+                          _buildInfoChip(Icons.cake, '$ageMonths months'),
                         ],
                       ),
                       const SizedBox(height: 8),

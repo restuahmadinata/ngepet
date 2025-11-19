@@ -119,7 +119,7 @@ class PetListItem extends StatelessWidget {
                       ),
                       const SizedBox(height: 0),
                       Text(
-                        '$breed - $age',
+                        '$breed - $age months',
                         style: const TextStyle(
                           color: Colors.green,
                           fontSize: 12,

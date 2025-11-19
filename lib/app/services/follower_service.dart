@@ -121,7 +121,19 @@ class FollowerService {
           .where('shelterId', isEqualTo: shelterId)
           .get();
 
-      return snapshot.docs.length;
+      // Only count followers where the referenced user document actually exists.
+      // This avoids showing followers that reference deleted/invalid users.
+      int validFollowers = 0;
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final userId = data['userId'] as String?;
+        if (userId == null) continue;
+
+        final userDoc = await _firestore.collection('users').doc(userId).get();
+        if (userDoc.exists) validFollowers++;
+      }
+
+      return validFollowers;
     } catch (e) {
       print('Error getting follower count: $e');
       return 0;
@@ -130,11 +142,24 @@ class FollowerService {
 
   /// Stream of follower count for a shelter (real-time)
   Stream<int> getFollowerCountStream(String shelterId) {
+    // Count only followers whose user documents still exist. We map snapshot
+    // to an async computation that checks each referenced user document.
     return _firestore
         .collection('followers')
         .where('shelterId', isEqualTo: shelterId)
         .snapshots()
-        .map((snapshot) => snapshot.docs.length);
+        .asyncMap((snapshot) async {
+      int validFollowers = 0;
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final userId = data['userId'] as String?;
+        if (userId == null) continue;
+
+        final userDoc = await _firestore.collection('users').doc(userId).get();
+        if (userDoc.exists) validFollowers++;
+      }
+      return validFollowers;
+    });
   }
 
   /// Get following count for current user

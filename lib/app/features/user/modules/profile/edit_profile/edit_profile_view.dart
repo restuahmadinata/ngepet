@@ -165,7 +165,7 @@ class EditProfileView extends GetView<EditProfileController> {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(
-                                  controller.getGenderDisplay(value),
+                                  value,
                                   style: GoogleFonts.poppins(fontSize: 14),
                                 ),
                               );
