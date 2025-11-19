@@ -15,23 +15,19 @@ class AdoptController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadFollowedShelters();
+    _listenToFollowedShelters();
   }
 
-  Future<void> _loadFollowedShelters() async {
-    try {
-      followedShelterIds.value = await _followerService.getFollowedShelterIds();
-    } catch (e) {
-      print('Error loading followed shelters: $e');
-    }
+  void _listenToFollowedShelters() {
+    // Use stream for real-time updates
+    _followerService.getFollowedShelterIdsStream().listen((shelterIds) {
+      followedShelterIds.value = shelterIds;
+      print('📊 Followed shelters updated: ${shelterIds.length} shelters');
+    });
   }
 
   void changeTab(int index) {
     selectedTab.value = index;
-    if (index == 1) {
-      // Refresh followed shelters when switching to Following tab
-      _loadFollowedShelters();
-    }
   }
 }
 
@@ -242,7 +238,7 @@ class AdoptView extends StatelessWidget {
     );
   }
 
-  // Helper function to fetch pets with their photos from subcollection
+  // Helper function to fetch pets with their photos from subcollection (for Exploring tab)
   Future<List<Map<String, dynamic>>> _buildPetsWithPhotos(
       List<QueryDocumentSnapshot> docs) async {
     final List<Map<String, dynamic>> petsData = [];
@@ -261,7 +257,6 @@ class AdoptView extends StatelessWidget {
         if (photos.isNotEmpty) {
           imageUrls = photos;
           imageUrl = photos[0];
-          print('DEBUG AdoptView - Using subcollection photo: $imageUrl');
         } else if (data['imageUrls'] != null &&
             (data['imageUrls'] as List).isNotEmpty) {
           // Fallback to old imageUrls field
@@ -269,7 +264,6 @@ class AdoptView extends StatelessWidget {
               .map((e) => e.toString())
               .toList();
           imageUrl = imageUrls[0];
-          print('DEBUG AdoptView - Using old imageUrls: $imageUrl');
         }
       } catch (e) {
         print('Error fetching photos for pet ${doc.id}: $e');
@@ -327,88 +321,161 @@ class AdoptView extends StatelessWidget {
         );
       }
 
-      return StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('pets')
-            .where('shelterId', whereIn: controller.followedShelterIds.take(10).toList())
-            .where('adoptionStatus', isEqualTo: 'available')
-            .orderBy('createdAt', descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32.0),
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  children: [
-                    Icon(Icons.error, size: 64, color: Colors.grey[400]),
-                    const SizedBox(height: 16),
-                    Text(
-                      'An error occurred',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Column(
-                  children: [
-                    Icon(Icons.pets, size: 64, color: Colors.grey[400]),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No pets available from followed shelters',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          // Convert Firestore data with photos from subcollection
-          return FutureBuilder<List<Map<String, dynamic>>>(
-            future: _buildPetsWithPhotos(snapshot.data!.docs),
-            builder: (context, petsSnapshot) {
-              if (petsSnapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (!petsSnapshot.hasData || petsSnapshot.data!.isEmpty) {
-                return Center(
-                  child: Text(
-                    'No pet data available',
-                    style: GoogleFonts.poppins(color: Colors.grey),
-                  ),
-                );
-              }
-
-              return PetListWidget(pets: petsSnapshot.data!);
-            },
-          );
-        },
-      );
+      // Use a key based on the shelter IDs to prevent unnecessary rebuilds
+      final shelterIdsKey = controller.followedShelterIds.take(10).join(',');
+      return _FollowingPetsStream(key: ValueKey(shelterIdsKey), shelterIds: controller.followedShelterIds.take(10).toList());
     });
+  }
+}
+
+// Separate StatefulWidget to prevent StreamBuilder from rebuilding unnecessarily
+class _FollowingPetsStream extends StatefulWidget {
+  final List<String> shelterIds;
+
+  const _FollowingPetsStream({super.key, required this.shelterIds});
+
+  @override
+  State<_FollowingPetsStream> createState() => _FollowingPetsStreamState();
+}
+
+class _FollowingPetsStreamState extends State<_FollowingPetsStream> {
+  // Helper function to fetch pets with their photos from subcollection
+  Future<List<Map<String, dynamic>>> _buildPetsWithPhotos(
+      List<QueryDocumentSnapshot> docs) async {
+    final List<Map<String, dynamic>> petsData = [];
+    
+    for (var doc in docs) {
+      final data = doc.data() as Map<String, dynamic>;
+      
+      // Get photos from subcollection
+      String imageUrl = 'https://via.placeholder.com/300x300?text=Pet';
+      List<String> imageUrls = [];
+      
+      try {
+        final helper = PetPhotoHelper();
+        final photos = await helper.getPetPhotoUrls(doc.id);
+        
+        if (photos.isNotEmpty) {
+          imageUrls = photos;
+          imageUrl = photos[0];
+        } else if (data['imageUrls'] != null &&
+            (data['imageUrls'] as List).isNotEmpty) {
+          // Fallback to old imageUrls field
+          imageUrls = (data['imageUrls'] as List)
+              .map((e) => e.toString())
+              .toList();
+          imageUrl = imageUrls[0];
+        }
+      } catch (e) {
+        print('Error fetching photos for pet ${doc.id}: $e');
+      }
+
+      petsData.add({
+        'petId': doc.id,
+        'shelterId': data['shelterId']?.toString() ?? '',
+        'imageUrl': imageUrl,
+        'petName': (data['petName'] ?? 'Pet Name').toString(),
+        'name': (data['petName'] ?? data['name'] ?? 'Pet Name').toString(),
+        'breed': (data['breed'] ?? 'Breed').toString(),
+        'ageMonths': data['ageMonths'] ?? 0,
+        'age': data['ageMonths']?.toString() ?? data['age']?.toString() ?? 'Age',
+        'shelter': (data['shelterName'] ?? 'Shelter').toString(),
+        'shelterName': (data['shelterName'] ?? 'Shelter').toString(),
+        'location': (data['location'] ?? 'Location').toString(),
+        'gender': (data['gender'] ?? 'Male').toString(),
+        'description': (data['description'] ?? '').toString(),
+        'category': (data['category'] ?? '').toString(),
+        'type': (data['category'] ?? data['type'] ?? '').toString(),
+        'imageUrls': imageUrls.isNotEmpty ? imageUrls : [imageUrl],
+      });
+    }
+    
+    return petsData;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('pets')
+          .where('shelterId', whereIn: widget.shelterIds)
+          .where('adoptionStatus', isEqualTo: 'available')
+          .orderBy('createdAt', descending: true)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                children: [
+                  Icon(Icons.error, size: 64, color: Colors.grey[400]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'An error occurred',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
+                children: [
+                  Icon(Icons.pets, size: 64, color: Colors.grey[400]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No pets available from followed shelters',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        // Convert Firestore data with photos from subcollection
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: _buildPetsWithPhotos(snapshot.data!.docs),
+          builder: (context, petsSnapshot) {
+            if (petsSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (!petsSnapshot.hasData || petsSnapshot.data!.isEmpty) {
+              return Center(
+                child: Text(
+                  'No pet data available',
+                  style: GoogleFonts.poppins(color: Colors.grey),
+                ),
+              );
+            }
+
+            return PetListWidget(pets: petsSnapshot.data!);
+          },
+        );
+      },
+    );
   }
 }
