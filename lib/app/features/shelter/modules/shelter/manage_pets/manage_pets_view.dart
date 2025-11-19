@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../../theme/app_colors.dart';
+import '../../../../../features/shared/modules/pet_detail/pet_detail_view.dart';
 import 'manage_pets_controller.dart';
 
 class ManagePetsView extends GetView<ManagePetsController> {
@@ -169,20 +170,12 @@ class ManagePetsView extends GetView<ManagePetsController> {
     }
 
     // Status color
-    Color statusColor;
-    String statusText;
     switch (adoptionStatus.toLowerCase()) {
       case 'adopted':
-        statusColor = Colors.green;
-        statusText = 'Adopted';
         break;
       case 'pending':
-        statusColor = Colors.orange;
-        statusText = 'Pending';
         break;
       default:
-        statusColor = Colors.blue;
-        statusText = 'Available';
     }
 
     return Opacity(
@@ -210,8 +203,8 @@ class ManagePetsView extends GetView<ManagePetsController> {
                     );
                   }
                 : () {
-                    // Show pet details or edit
-                    controller.editPet(petId);
+                    // Show pet details preview
+                    Get.to(() => PetDetailView(petData: pet, isPreview: true));
                   },
             borderRadius: BorderRadius.circular(16),
             child: Padding(

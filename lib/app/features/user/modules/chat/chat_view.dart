@@ -54,8 +54,10 @@ class ChatView extends StatelessWidget {
       backgroundColor: Colors.transparent,
       extendBody: true,
       appBar: AppBar(
+        titleSpacing: 32,
+        toolbarHeight: 80,
         title: Padding(
-          padding: const EdgeInsets.only(top: 16, left: 16, bottom: 8),
+          padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
           child: Text(
             'Chats',
             style: GoogleFonts.poppins(fontWeight: FontWeight.bold),

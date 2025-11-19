@@ -11,11 +11,16 @@ class FollowingView extends GetView<FollowingController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Following',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+        titleSpacing: 32,
+        toolbarHeight: 80,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 24.0, bottom: 16.0),
+          child: Text(
+            'Following',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
         ),
         backgroundColor: Colors.transparent,

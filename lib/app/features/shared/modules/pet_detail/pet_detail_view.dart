@@ -8,8 +8,13 @@ import 'pet_detail_controller.dart';
 
 class PetDetailView extends StatefulWidget {
   final Map<String, dynamic> petData;
+  final bool isPreview;
 
-  const PetDetailView({super.key, required this.petData});
+  const PetDetailView({
+    super.key, 
+    required this.petData,
+    this.isPreview = false,
+  });
 
   @override
   State<PetDetailView> createState() => _PetDetailViewState();
@@ -343,7 +348,7 @@ class _PetDetailViewState extends State<PetDetailView> {
                         iconColor: Colors.purple,
                       ),
 
-                      const SizedBox(height: 100), // Space for bottom buttons
+                      if (!widget.isPreview) const SizedBox(height: 100), // Space for bottom buttons
                     ],
                   ),
                 ),
@@ -354,7 +359,7 @@ class _PetDetailViewState extends State<PetDetailView> {
       ),
 
       // Bottom Action Buttons
-      bottomNavigationBar: Obx(() {
+      bottomNavigationBar: widget.isPreview ? null : Obx(() {
         if (controller.isLoading.value) {
           return Container(
             padding: const EdgeInsets.all(20),

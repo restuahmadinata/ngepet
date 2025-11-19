@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../../../features/shared/modules/event_detail/event_detail_view.dart';
 import 'manage_events_controller.dart';
 
 class ManageEventsView extends GetView<ManageEventsController> {
@@ -171,7 +172,7 @@ class ManageEventsView extends GetView<ManageEventsController> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => controller.editEvent(eventId),
+          onTap: () => Get.to(() => EventDetailView(eventData: event)),
           borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.all(12),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../dashboard/shelter_dashboard_view.dart';
 import '../manage/shelter_manage_view.dart';
 import '../profile/shelter_profile_view.dart';
@@ -23,17 +22,20 @@ class ShelterNavigationView extends GetView<ShelterNavigationController> {
         extendBody: true,
         body: _pages[currentIndex],
         bottomNavigationBar: Container(
-          height: 80,
+          height: 100,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+              topLeft: Radius.circular(40),
+              topRight: Radius.circular(40),
             ),
-            border: Border.all(
-              color: Colors.grey.shade300,
-              width: 1,
-            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -87,17 +89,6 @@ class ShelterNavigationView extends GetView<ShelterNavigationController> {
                       ? Theme.of(Get.context!).primaryColor
                       : Colors.grey,
                   size: 24,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  label,
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                    color: isSelected
-                        ? Theme.of(Get.context!).primaryColor
-                        : Colors.grey,
-                  ),
                 ),
               ],
             ),
