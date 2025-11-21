@@ -86,7 +86,7 @@ class UserManagementController extends GetxController {
         'reason': reason,
         'suspensionStart': Timestamp.fromDate(startDate),
         'suspensionEnd': Timestamp.fromDate(endDate),
-        'status': 'active',
+        'suspensionStatus': 'active',
         'liftedBy': null,
         'liftedAt': null,
         'liftReason': null,
@@ -122,7 +122,7 @@ class UserManagementController extends GetxController {
       final suspensionQuery = await _firestore
           .collection('suspensions')
           .where('userId', isEqualTo: uid)
-          .where('status', isEqualTo: 'active')
+          .where('suspensionStatus', isEqualTo: 'active')
           .get();
 
       if (suspensionQuery.docs.isEmpty) {
@@ -133,7 +133,7 @@ class UserManagementController extends GetxController {
       // Update suspension status
       for (var doc in suspensionQuery.docs) {
         await doc.reference.update({
-          'status': 'lifted',
+          'suspensionStatus': 'lifted',
           'liftedBy': adminId,
           'liftedAt': FieldValue.serverTimestamp(),
           'liftReason': 'Lifted by admin',

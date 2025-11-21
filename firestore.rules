@@ -150,9 +150,9 @@ service cloud.firestore {
     
     // Reports collection
     match /reports/{reportId} {
-      // Read: reporter can read their own reports OR admin can read all
-      allow read: if request.auth != null && 
-        (request.auth.uid == resource.data.reporterId || isAdmin());
+      // Read: admin can read all reports OR reporter can read their own
+      allow read: if request.auth != null && isAdmin();
+      allow read: if request.auth != null && request.auth.uid == resource.data.reporterId;
       
       // Create: any authenticated user can create report
       allow create: if request.auth != null && request.auth.uid == request.resource.data.reporterId;

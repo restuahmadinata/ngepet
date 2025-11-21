@@ -28,7 +28,7 @@ class SuspendedAccountController extends GetxController {
       final suspensionQuery = await _firestore
           .collection('suspensions')
           .where('userId', isEqualTo: userId)
-          .where('status', isEqualTo: 'active')
+          .where('suspensionStatus', isEqualTo: 'active')
           .limit(1)
           .get();
 

@@ -1,5 +1,6 @@
 /// Enums for type-safe field values across the application
 /// This ensures data consistency in Firestore
+library;
 
 // ==================== USER ENUMS ====================
 

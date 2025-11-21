@@ -4,6 +4,8 @@ import 'chat_list_item.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../common/widgets/rectangle_search_bar.dart';
+import '../../../../models/enums.dart';
+import '../../../../routes/app_routes.dart';
 
 class ChatController extends GetxController {
   final RxString searchQuery = ''.obs;
@@ -60,6 +62,18 @@ class ChatView extends StatelessWidget {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.report_outlined),
+            tooltip: 'Report Shelter',
+            onPressed: () {
+              Get.toNamed(
+                AppRoutes.selectEntityToReport,
+                arguments: {'entityType': EntityType.shelter},
+              );
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         bottom: false,

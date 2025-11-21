@@ -109,9 +109,20 @@ class _SplashViewState extends State<SplashView> {
           final data = shelterDoc.data();
           final name = data?['shelterName'] ?? 'Shelter';
           final verificationStatus = data?['verificationStatus'];
+          final accountStatus = data?['accountStatus'] ?? 'active';
 
           print('🔍 Splash - Shelter Name: $name');
           print('🔍 Splash - Verification Status: $verificationStatus');
+          print('🔍 Splash - Account Status: $accountStatus');
+
+          // Check if shelter is suspended
+          if (accountStatus == 'suspended') {
+            print(
+              '⚠️ Shelter is suspended, redirecting to Suspended Account Page',
+            );
+            Get.offAllNamed(AppRoutes.suspendedAccount);
+            return;
+          }
 
           // Check verification status
           if (verificationStatus == 'approved') {

@@ -144,8 +144,8 @@ class ManageEventsView extends GetView<ManageEventsController> {
       floatingActionButton: FloatingActionButton(
         onPressed: controller.addNewEvent,
         backgroundColor: Colors.purple,
-        child: const Icon(Icons.add, color: Colors.white),
         tooltip: 'Add Event',
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

@@ -101,6 +101,13 @@ class AdminHomeView extends GetView<AdminHomeController> {
                       color: AppColors.green700,
                       onTap: () => Get.toNamed('/admin/shelter-verification'),
                     ),
+                    _buildMenuCard(
+                      icon: Icons.report,
+                      title: 'Reports',
+                      description: 'Review Reports',
+                      color: Colors.red,
+                      onTap: () => Get.toNamed('/admin/report-management'),
+                    ),
                   ],
                 ),
               ],

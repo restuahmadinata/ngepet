@@ -63,6 +63,16 @@ import '../features/admin/modules/user_management/user_management_view.dart';
 import '../features/admin/modules/user_management/user_management_binding.dart';
 import '../features/admin/modules/shelter_verification/shelter_verification_view.dart';
 import '../features/admin/modules/shelter_verification/shelter_verification_binding.dart';
+import '../features/admin/modules/report_management/report_management_view.dart';
+import '../features/admin/modules/report_management/report_management_binding.dart';
+import '../features/admin/modules/report_details/report_details_view.dart';
+import '../features/admin/modules/report_details/report_details_binding.dart';
+
+// Report Feature
+import '../features/shared/modules/report/select_entity/select_entity_view.dart';
+import '../features/shared/modules/report/select_entity/select_entity_binding.dart';
+import '../features/shared/modules/report/report_form/report_form_view.dart';
+import '../features/shared/modules/report/report_form/report_form_binding.dart';
 
 import 'app_routes.dart';
 
@@ -245,6 +255,34 @@ class AppPages {
       name: AppRoutes.adminShelterVerification,
       page: () => const ShelterVerificationView(),
       binding: ShelterVerificationBinding(),
+    ),
+
+    // --- ADMIN REPORT MANAGEMENT PAGE ---
+    GetPage(
+      name: AppRoutes.adminReportManagement,
+      page: () => const ReportManagementView(),
+      binding: ReportManagementBinding(),
+    ),
+
+    // --- ADMIN REPORT DETAILS PAGE ---
+    GetPage(
+      name: AppRoutes.adminReportDetails,
+      page: () => const ReportDetailsView(),
+      binding: ReportDetailsBinding(),
+    ),
+
+    // --- SELECT ENTITY TO REPORT PAGE ---
+    GetPage(
+      name: AppRoutes.selectEntityToReport,
+      page: () => const SelectEntityView(),
+      binding: SelectEntityBinding(),
+    ),
+
+    // --- REPORT FORM PAGE ---
+    GetPage(
+      name: AppRoutes.reportForm,
+      page: () => const ReportFormView(),
+      binding: ReportFormBinding(),
     ),
 
     // --- SUSPENDED ACCOUNT PAGE ---

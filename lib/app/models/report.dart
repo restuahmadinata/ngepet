@@ -11,7 +11,7 @@ class Report {
   final ViolationCategory violationCategory; // fraud, animal_abuse, spam, inappropriate_content
   final String reportDescription;
   final String? incidentLocation;
-  final String? evidenceAttachment;
+  final List<String> evidenceAttachments; // Array of evidence image URLs
   final ReportStatus reportStatus; // pending, reviewing, resolved, rejected
   final String? adminId;
   final String? adminNotes;
@@ -26,7 +26,7 @@ class Report {
     required this.violationCategory,
     required this.reportDescription,
     this.incidentLocation,
-    this.evidenceAttachment,
+    this.evidenceAttachments = const [],
     this.reportStatus = ReportStatus.pending,
     this.adminId,
     this.adminNotes,
@@ -46,7 +46,9 @@ class Report {
       violationCategory: ViolationCategory.fromString(data['violationCategory']),
       reportDescription: data['reportDescription'] ?? '',
       incidentLocation: data['incidentLocation'],
-      evidenceAttachment: data['evidenceAttachment'],
+      evidenceAttachments: data['evidenceAttachments'] != null 
+          ? List<String>.from(data['evidenceAttachments']) 
+          : [],
       reportStatus: ReportStatus.fromString(data['reportStatus']),
       adminId: data['adminId'],
       adminNotes: data['adminNotes'],
@@ -69,7 +71,9 @@ class Report {
       violationCategory: ViolationCategory.fromString(data['violationCategory']),
       reportDescription: data['reportDescription'] ?? '',
       incidentLocation: data['incidentLocation'],
-      evidenceAttachment: data['evidenceAttachment'],
+      evidenceAttachments: data['evidenceAttachments'] != null 
+          ? List<String>.from(data['evidenceAttachments']) 
+          : [],
       reportStatus: ReportStatus.fromString(data['reportStatus']),
       adminId: data['adminId'],
       adminNotes: data['adminNotes'],
@@ -92,7 +96,7 @@ class Report {
       'violationCategory': violationCategory.value,
       'reportDescription': reportDescription,
       'incidentLocation': incidentLocation,
-      'evidenceAttachment': evidenceAttachment,
+      'evidenceAttachments': evidenceAttachments,
       'reportStatus': reportStatus.value,
       'adminId': adminId,
       'adminNotes': adminNotes,
@@ -114,7 +118,7 @@ class Report {
     ViolationCategory? violationCategory,
     String? reportDescription,
     String? incidentLocation,
-    String? evidenceAttachment,
+    List<String>? evidenceAttachments,
     ReportStatus? reportStatus,
     String? adminId,
     String? adminNotes,
@@ -129,7 +133,7 @@ class Report {
       violationCategory: violationCategory ?? this.violationCategory,
       reportDescription: reportDescription ?? this.reportDescription,
       incidentLocation: incidentLocation ?? this.incidentLocation,
-      evidenceAttachment: evidenceAttachment ?? this.evidenceAttachment,
+      evidenceAttachments: evidenceAttachments ?? this.evidenceAttachments,
       reportStatus: reportStatus ?? this.reportStatus,
       adminId: adminId ?? this.adminId,
       adminNotes: adminNotes ?? this.adminNotes,

@@ -26,7 +26,11 @@ abstract class AppRoutes {
   static const adminHome = _Paths.adminHome;
   static const adminUserManagement = _Paths.adminUserManagement;
   static const adminShelterVerification = _Paths.adminShelterVerification;
+  static const adminReportManagement = _Paths.adminReportManagement;
+  static const adminReportDetails = _Paths.adminReportDetails;
   static const suspendedAccount = _Paths.suspendedAccount;
+  static const selectEntityToReport = _Paths.selectEntityToReport;
+  static const reportForm = _Paths.reportForm;
 }
 
 abstract class _Paths {
@@ -57,5 +61,9 @@ abstract class _Paths {
   static const adminHome = '/admin-home';
   static const adminUserManagement = '/admin/user-management';
   static const adminShelterVerification = '/admin/shelter-verification';
+  static const adminReportManagement = '/admin/report-management';
+  static const adminReportDetails = '/admin/report-details';
   static const suspendedAccount = '/suspended-account';
+  static const selectEntityToReport = '/select-entity-to-report';
+  static const reportForm = '/report-form';
 }

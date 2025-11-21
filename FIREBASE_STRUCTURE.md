@@ -270,7 +270,7 @@ reports/{report_id}
   "violationCategory": string,   // ENUM: "fraud", "animal_abuse", "spam", "inappropriate_content" (see ViolationCategory enum)
   "reportDescription": string,   // Report description
   "incidentLocation": string,    // Incident location
-  "evidenceAttachment": string,  // Evidence URL (photo/document)
+  "evidenceAttachments": array,  // Array of evidence URLs (photos/documents)
   
   // Status & Processing
   "reportStatus": string,        // ENUM: "pending", "reviewing", "resolved", "rejected" (see ReportStatus enum)
@@ -300,15 +300,17 @@ suspensions/{suspension_id}
   // Identity
   "suspensionId": string,        // PK - auto-generated
   "userId": string,              // FK - suspended user
-  "adminId": string,             // FK - admin who issued suspension
+  "adminId": string,             // FK - admin who issued suspension (optional)
+  "reportId": string,            // FK - related report (if from report)
   
   // Suspension Details
   "reason": string,              // Reason for suspension
+  "violationCategory": string,   // ENUM: violation category from report (optional)
   "suspensionStart": Timestamp,  // Suspension start date/time
   "suspensionEnd": Timestamp,    // Suspension end date/time
   
   // Status
-  "status": string,              // ENUM: "active", "lifted", "expired" (see SuspensionStatus enum)
+  "suspensionStatus": string,    // ENUM: "active", "lifted", "expired"
   "liftedBy": string,            // FK - admin who lifted (if applicable)
   "liftedAt": Timestamp,         // Time when suspension was lifted
   "liftReason": string,          // Reason for lifting suspension early
@@ -321,9 +323,9 @@ suspensions/{suspension_id}
 
 **Indexes:**
 - `userId`
-- `status`
-- Composite: `userId` + `status`
-- Composite: `suspensionEnd` + `status`
+- `suspensionStatus`
+- Composite: `userId` + `suspensionStatus`
+- Composite: `suspensionEnd` + `suspensionStatus`
 
 ---
 

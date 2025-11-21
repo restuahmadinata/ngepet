@@ -145,8 +145,8 @@ class ManagePetsView extends GetView<ManagePetsController> {
       floatingActionButton: FloatingActionButton(
         onPressed: controller.addNewPet,
         backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: Colors.white),
         tooltip: 'Add Pet',
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
