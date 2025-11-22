@@ -28,15 +28,16 @@ class EventListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-            shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: AppColors.neutral300, width: 1),
-      ),
-      elevation: 0,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Material(
+    return RepaintBoundary(
+      child: Card(
+        color: Colors.white,
+              shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: AppColors.neutral300, width: 1),
+        ),
+        elevation: 0,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
@@ -65,12 +66,12 @@ class EventListItem extends StatelessWidget {
                       'Connection': 'keep-alive',
                       'User-Agent': 'Flutter App',
                     },
-                    maxHeightDiskCache: 600,
-                    maxWidthDiskCache: 600,
-                    memCacheHeight: 600,
-                    memCacheWidth: 600,
-                    fadeInDuration: const Duration(milliseconds: 500),
-                    fadeOutDuration: const Duration(milliseconds: 200),
+                    maxHeightDiskCache: 400,
+                    maxWidthDiskCache: 400,
+                    memCacheHeight: 300,
+                    memCacheWidth: 300,
+                    fadeInDuration: const Duration(milliseconds: 200),
+                    fadeOutDuration: const Duration(milliseconds: 100),
                     placeholder: (context, url) => Container(
                       width: 150,
                       height: 150,
@@ -205,6 +206,7 @@ class EventListItem extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }
@@ -219,6 +221,9 @@ class EventList extends StatelessWidget {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
+      addAutomaticKeepAlives: true,
+      addRepaintBoundaries: true,
+      cacheExtent: 200,
       itemCount: events.length,
       itemBuilder: (context, index) {
         final event = events[index];
