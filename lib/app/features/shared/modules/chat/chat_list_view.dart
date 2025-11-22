@@ -5,126 +5,248 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../models/conversation.dart';
+import '../../../../common/widgets/rectangle_search_bar.dart';
 import 'chat_list_controller.dart';
 import 'chat_detail_view.dart';
 
 class ChatListView extends StatelessWidget {
   const ChatListView({super.key});
 
+  Future<void> _refreshData() async {
+    // Add a small delay to show the refresh indicator
+    await Future.delayed(const Duration(milliseconds: 500));
+    // Data will automatically refresh because we're using StreamBuilder
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ChatListController());
 
     return Scaffold(
-      backgroundColor: AppColors.neutral100,
+      extendBody: true,
       appBar: AppBar(
         title: Text(
           'Messages',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: _refreshData,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  RectangleSearchBar(
+                    hintText: 'Search messages...',
+                    onChanged: controller.onSearchChanged,
+                    controller: controller.searchTextController,
+                  ),
+                  const SizedBox(height: 24),
+                  Obx(() => _buildContent(controller)),
+                ],
+              ),
+            ),
           ),
         ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    );
+  }
 
-        if (controller.errorMessage.value.isNotEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.grey,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    controller.errorMessage.value,
-                    style: GoogleFonts.poppins(color: Colors.grey),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+  Widget _buildContent(ChatListController controller) {
+    // Show search results if searching
+    if (controller.searchQuery.value.trim().isNotEmpty) {
+      return _buildSearchResults(controller);
+    }
+
+    // Show regular conversation list
+    return _buildConversationList(controller);
+  }
+
+  Widget _buildSearchResults(ChatListController controller) {
+    final filteredConversations = controller.conversations.where((conversation) {
+      final query = controller.searchQuery.value.toLowerCase();
+      final userName = conversation.userName.toLowerCase();
+      final shelterName = conversation.shelterName.toLowerCase();
+      final petName = conversation.petName.toLowerCase();
+      final lastMessage = conversation.lastMessage.toLowerCase();
+      final isShelter = controller.userType.value == UserType.shelter;
+      final displayName = isShelter ? userName : shelterName;
+      
+      return displayName.contains(query) ||
+             petName.contains(query) ||
+             lastMessage.contains(query);
+    }).toList();
+
+    if (filteredConversations.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+              const SizedBox(height: 16),
+              Text(
+                'No messages found',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
               ),
-            ),
-          );
-        }
-
-        if (controller.conversations.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.chat_bubble_outline,
-                    size: 64,
-                    color: Colors.grey.shade400,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No messages yet',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    controller.userType.value == UserType.shelter
-                        ? 'You\'ll see messages from users interested in your pets here'
-                        : 'Start chatting with shelters about pets you\'re interested in',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+              const SizedBox(height: 8),
+              Text(
+                'Try searching with different keywords',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[500],
+                ),
               ),
-            ),
-          );
-        }
-
-        return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          itemCount: controller.conversations.length,
-          separatorBuilder: (context, index) => const Divider(
-            height: 1,
-            thickness: 1,
-            color: AppColors.neutral200,
+            ],
           ),
-          itemBuilder: (context, index) {
-            final conversation = controller.conversations[index];
-            final hasUnread = controller.getUnreadCount(conversation) > 0;
-            final unreadCount = controller.getUnreadCount(conversation);
+        ),
+      );
+    }
 
-            return _ConversationTile(
-              conversation: conversation,
-              hasUnread: hasUnread,
-              unreadCount: unreadCount,
-              isShelter: controller.userType.value == UserType.shelter,
-              onTap: () {
-                // Mark as read when opening chat
-                controller.markAsRead(conversation.conversationId);
-                
-                // Navigate to chat detail
-                Get.to(() => ChatDetailView(conversation: conversation));
-              },
-            );
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: filteredConversations.length,
+      separatorBuilder: (context, index) => const Divider(
+        height: 1,
+        thickness: 1,
+        color: AppColors.neutral200,
+      ),
+      itemBuilder: (context, index) {
+        final conversation = filteredConversations[index];
+        final hasUnread = controller.getUnreadCount(conversation) > 0;
+        final unreadCount = controller.getUnreadCount(conversation);
+        final isFirst = index == 0;
+        final isLast = index == filteredConversations.length - 1;
+
+        return _ConversationTile(
+          conversation: conversation,
+          hasUnread: hasUnread,
+          unreadCount: unreadCount,
+          isShelter: controller.userType.value == UserType.shelter,
+          isFirst: isFirst,
+          isLast: isLast,
+          onTap: () {
+            controller.markAsRead(conversation.conversationId);
+            Get.to(() => ChatDetailView(conversation: conversation));
           },
         );
-      }),
+      },
+    );
+  }
+
+  Widget _buildConversationList(ChatListController controller) {
+    if (controller.isLoading.value) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (controller.errorMessage.value.isNotEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                size: 64,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                controller.errorMessage.value,
+                style: GoogleFonts.poppins(color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (controller.conversations.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            children: [
+              Icon(
+                Icons.chat_bubble_outline,
+                size: 64,
+                color: Colors.grey[400],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No messages yet',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                controller.userType.value == UserType.shelter
+                    ? 'You\'ll see messages from users interested in your pets here'
+                    : 'Start chatting with shelters about pets you\'re interested in',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: controller.conversations.length,
+      separatorBuilder: (context, index) => const Divider(
+        height: 1,
+        thickness: 1,
+        color: AppColors.neutral200,
+      ),
+      itemBuilder: (context, index) {
+        final conversation = controller.conversations[index];
+        final hasUnread = controller.getUnreadCount(conversation) > 0;
+        final unreadCount = controller.getUnreadCount(conversation);
+        final isFirst = index == 0;
+        final isLast = index == controller.conversations.length - 1;
+
+        return _ConversationTile(
+          conversation: conversation,
+          hasUnread: hasUnread,
+          unreadCount: unreadCount,
+          isShelter: controller.userType.value == UserType.shelter,
+          isFirst: isFirst,
+          isLast: isLast,
+          onTap: () {
+            controller.markAsRead(conversation.conversationId);
+            Get.to(() => ChatDetailView(conversation: conversation));
+          },
+        );
+      },
     );
   }
 }
@@ -134,6 +256,8 @@ class _ConversationTile extends StatelessWidget {
   final bool hasUnread;
   final int unreadCount;
   final bool isShelter;
+  final bool isFirst;
+  final bool isLast;
   final VoidCallback onTap;
 
   const _ConversationTile({
@@ -141,6 +265,8 @@ class _ConversationTile extends StatelessWidget {
     required this.hasUnread,
     required this.unreadCount,
     required this.isShelter,
+    required this.isFirst,
+    required this.isLast,
     required this.onTap,
   });
 
@@ -167,10 +293,31 @@ class _ConversationTile extends StatelessWidget {
     // Show different name based on user type
     final displayName = isShelter ? conversation.userName : conversation.shelterName;
 
+    // Determine border radius based on position
+    BorderRadius? borderRadius;
+    if (isFirst && isLast) {
+      // Only one item - round all corners
+      borderRadius = BorderRadius.circular(12);
+    } else if (isFirst) {
+      // First item - round top corners
+      borderRadius = const BorderRadius.only(
+        topLeft: Radius.circular(12),
+        topRight: Radius.circular(12),
+      );
+    } else if (isLast) {
+      // Last item - round bottom corners
+      borderRadius = const BorderRadius.only(
+        bottomLeft: Radius.circular(12),
+        bottomRight: Radius.circular(12),
+      );
+    }
+
     return Material(
       color: hasUnread ? primaryColor.withOpacity(0.05) : Colors.white,
+      borderRadius: borderRadius,
       child: InkWell(
         onTap: onTap,
+        borderRadius: borderRadius,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(

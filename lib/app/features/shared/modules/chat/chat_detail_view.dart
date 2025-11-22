@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../models/conversation.dart';
 import '../../../../models/message.dart';
@@ -211,30 +212,79 @@ class ChatDetailView extends StatelessWidget {
   }
 
   Widget _buildPetCard(BuildContext context) {
-    final petData = {
-      'imageUrl': conversation.petImageUrl,
-      'name': conversation.petName,
-      'breed': 'Pet',
-      'age': '',
-      'shelter': conversation.shelterName,
-      'location': conversation.shelterLocation,
-      'gender': '',
-    };
-
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.all(12),
-      child: PetListItem(
-        imageUrl: petData['imageUrl']!,
-        name: petData['name']!,
-        breed: petData['breed']!,
-        age: petData['age']!,
-        shelter: petData['shelter']!,
-        location: petData['location']!,
-        gender: petData['gender']!,
-        onAdoptPressed: null, // No adopt button in chat
+      child: FutureBuilder<Map<String, dynamic>>(
+        future: _fetchPetData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
+          final petData = snapshot.data ?? {
+            'imageUrl': conversation.petImageUrl,
+            'name': conversation.petName,
+            'breed': 'Unknown',
+            'age': '0',
+            'shelter': conversation.shelterName,
+            'location': conversation.shelterLocation,
+            'gender': 'Unknown',
+          };
+
+          return PetListItem(
+            imageUrl: petData['imageUrl']!,
+            name: petData['name']!,
+            breed: petData['breed']!,
+            age: petData['age']!,
+            shelter: petData['shelter']!,
+            location: petData['location']!,
+            gender: petData['gender']!,
+            onAdoptPressed: null, // No adopt button in chat
+          );
+        },
       ),
     );
+  }
+
+  Future<Map<String, dynamic>> _fetchPetData() async {
+    try {
+      final petDoc = await FirebaseFirestore.instance
+          .collection('pets')
+          .doc(conversation.petId)
+          .get();
+
+      if (petDoc.exists) {
+        final data = petDoc.data()!;
+        return {
+          'imageUrl': conversation.petImageUrl,
+          'name': conversation.petName,
+          'breed': data['breed']?.toString() ?? 'Unknown',
+          'age': (data['ageMonths'] ?? 0).toString(),
+          'shelter': conversation.shelterName,
+          'location': conversation.shelterLocation,
+          'gender': data['gender']?.toString() ?? 'Unknown',
+        };
+      }
+    } catch (e) {
+      print('Error fetching pet data: $e');
+    }
+
+    // Return default values if fetch fails
+    return {
+      'imageUrl': conversation.petImageUrl,
+      'name': conversation.petName,
+      'breed': 'Unknown',
+      'age': '0',
+      'shelter': conversation.shelterName,
+      'location': conversation.shelterLocation,
+      'gender': 'Unknown',
+    };
   }
 
   Widget _buildMessageInput(BuildContext context, ChatDetailController controller) {

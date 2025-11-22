@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,11 +14,25 @@ class ChatListController extends GetxController {
   final RxBool isLoading = true.obs;
   final RxString errorMessage = ''.obs;
   final Rx<UserType> userType = UserType.unknown.obs;
+  
+  // Search functionality
+  final RxString searchQuery = ''.obs;
+  final TextEditingController searchTextController = TextEditingController();
 
   @override
   void onInit() {
     super.onInit();
     determineUserTypeAndLoadConversations();
+  }
+
+  @override
+  void onClose() {
+    searchTextController.dispose();
+    super.onClose();
+  }
+
+  void onSearchChanged(String value) {
+    searchQuery.value = value;
   }
 
   /// Determine if logged in user is a regular user or shelter
