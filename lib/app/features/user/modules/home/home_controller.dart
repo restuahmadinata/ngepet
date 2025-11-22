@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../../../../common/controllers/search_controller.dart' as search;
 
 class HomeController extends GetxController {
-  var currentIndex = 2.obs; // Default to Home (index 2)
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -15,10 +14,6 @@ class HomeController extends GetxController {
   // Search functionality for home page
   final searchController = Get.put(search.SearchController(), tag: 'home');
   final textController = TextEditingController();
-
-  void changePage(int index) {
-    currentIndex.value = index;
-  }
 
   @override
   void onInit() {

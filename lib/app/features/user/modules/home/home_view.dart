@@ -1,88 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../adopt/adopt_view.dart';
-import '../../../../features/shared/modules/event/event_view.dart';
-import '../../../shared/modules/chat/chat_list_view.dart';
-import '../profile/profile_view.dart';
 import 'home_controller.dart';
 import '../../../../common/widgets/rectangle_search_bar.dart';
 import '../../../../common/widgets/event_carousel.dart';
 import '../../../../common/widgets/pet_list.dart';
 import '../../../../common/widgets/event_list.dart';
-import '../../../../common/widgets/custom_bottom_navigation_bar.dart';
 import '../../../../utils/pet_photo_helper.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeView extends GetView<HomeController> {
-  const HomeView({super.key});
-
-  // 1. Page list moved outside 'build' to maintain state
-  final List<Widget> _pages = const [
-    AdoptView(),
-    EventView(),
-    HomePage(), // Index 2
-    ChatListView(),
-    ProfileView(),
-  ];
-
-  // 2. Define index for "Home" for readability
-  static const int _homeIndex = 2;
+/// AppBar title widget for Home page
+class HomeAppBarTitle extends StatelessWidget {
+  const HomeAppBarTitle({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final currentIndex = controller.currentIndex.value;
-      return Scaffold(
-        extendBody: true,
-        // 4. Use constant '_homeIndex'
-        appBar: currentIndex == _homeIndex
-            ? AppBar(
-              titleSpacing: 16,
-              toolbarHeight: 80,
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                Text(
-                  'Halo, ${_getFirstName()}',
-                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                  const Icon(
-                    Icons.location_on,
-                    size: 18,
-                    color: Colors.grey,
-                  ),
-                  const SizedBox(width: 4),
-                  Obx(() => Text(
-                      controller.userLocation.value.isNotEmpty
-                        ? controller.userLocation.value
-                        : 'Location not set',
-                      style: Theme.of(
-                      context,
-                      ).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                    )),
-                  ],
-                ),
-                ],
-              ),
-              elevation: 0,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              foregroundColor: Theme.of(context).textTheme.titleLarge?.color,
-              )
-            : null,
-
-        // Cukup panggil halaman dari list
-        body: _pages[currentIndex],
-
-        bottomNavigationBar: CustomBottomNavigationBar(
-          currentIndex: currentIndex,
-          onTap: controller.changePage,
+    final controller = Get.find<HomeController>();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Halo, ${_getFirstName()}',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
-      );
-    });
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            const Icon(
+              Icons.location_on,
+              size: 18,
+              color: Colors.grey,
+            ),
+            const SizedBox(width: 4),
+            Obx(() => Text(
+                  controller.userLocation.value.isNotEmpty
+                      ? controller.userLocation.value
+                      : 'Location not set',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                )),
+          ],
+        ),
+      ],
+    );
   }
 
   String _getFirstName() {

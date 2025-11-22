@@ -13,8 +13,8 @@ import '../features/auth/modules/suspended/suspended_account_view.dart';
 import '../features/auth/modules/suspended/suspended_account_binding.dart';
 
 // User Feature
-import '../features/user/modules/home/home_view.dart';
-import '../features/user/modules/home/home_binding.dart';
+import '../features/user/modules/navigation/user_navigation_view.dart';
+import '../features/user/modules/navigation/user_navigation_binding.dart';
 import '../features/user/modules/adopt/adopt_view.dart';
 import '../features/shared/modules/chat/chat_list_view.dart';
 import '../features/user/modules/profile/profile_view.dart';
@@ -114,8 +114,8 @@ class AppPages {
     // --- USER HOME PAGE (with Bottom Nav) ---
     GetPage(
       name: AppRoutes.userHome,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
+      page: () => const UserNavigationView(),
+      binding: UserNavigationBinding(),
     ),
 
     // --- Bottom Nav Pages (for direct navigation if needed) ---
