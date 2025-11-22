@@ -237,7 +237,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
     final String legalNumber = request['legalNumber'] ?? '-';
     final String verificationStatus =
         request['verificationStatus'] ?? 'pending';
-  final bool isActive = request['isActive'] ?? true;
+    final String accountStatus = request['accountStatus'] ?? 'active';
     final String? profilePicture = request['profilePicture'];
     
     // Format submitted date if available
@@ -307,16 +307,16 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: isActive
+                                color: accountStatus == 'active'
                                     ? AppColors.primary.withOpacity(0.1)
                                     : Colors.red.shade100,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
-                                isActive ? 'Aktif' : 'Nonaktif',
+                                accountStatus == 'active' ? 'Active' : 'Suspended',
                                 style: GoogleFonts.poppins(
                                   fontSize: 10,
-                                  color: isActive ? AppColors.primary : Colors.red,
+                                  color: accountStatus == 'active' ? AppColors.primary : Colors.red,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -368,21 +368,35 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
                   elevation: 0,
                   color: AppColors.neutral100,
                   onSelected: (value) {
-                    if (value == 'delete') {
-                      _showDeleteConfirmation(uid, shelterName);
+                    if (value == 'suspend') {
+                      _showSuspendDialog(uid, shelterName);
+                    } else if (value == 'lift_suspension') {
+                      controller.liftSuspension(uid, shelterName);
                     }
                   },
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          const Icon(Icons.delete, color: Colors.red),
-                          const SizedBox(width: 8),
-                          Text('Delete', style: TextStyle(color: Colors.red)),
-                        ],
+                    if (accountStatus != 'suspended')
+                      PopupMenuItem(
+                        value: 'suspend',
+                        child: Row(
+                          children: [
+                            Icon(Icons.schedule, color: AppColors.neutral700),
+                            const SizedBox(width: 8),
+                            const Text('Suspend'),
+                          ],
+                        ),
                       ),
-                    ),
+                    if (accountStatus == 'suspended')
+                      PopupMenuItem(
+                        value: 'lift_suspension',
+                        child: Row(
+                          children: [
+                            Icon(Icons.check_circle, color: Colors.green),
+                            const SizedBox(width: 8),
+                            const Text('Lift Suspension'),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ],
@@ -563,29 +577,217 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
     );
   }
 
-  void _showDeleteConfirmation(String uid, String shelterName) {
-    Get.dialog(
-      AlertDialog(
-        title: Text(
-          'Delete Confirmation',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          'Are you sure you want to delete shelter "$shelterName"?\nThis action cannot be undone.',
-          style: GoogleFonts.poppins(),
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              controller.deleteShelter(uid);
-              Get.back();
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Delete'),
-          ),
-        ],
+  void _showSuspendDialog(String uid, String shelterName) {
+    showDialog(
+      context: Get.context!,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return _SuspendShelterDialog(
+          uid: uid,
+          name: shelterName,
+          controller: controller,
+        );
+      },
+    );
+  }
+}
+
+class _SuspendShelterDialog extends StatefulWidget {
+  final String uid;
+  final String name;
+  final ShelterVerificationController controller;
+
+  const _SuspendShelterDialog({
+    required this.uid,
+    required this.name,
+    required this.controller,
+  });
+
+  @override
+  State<_SuspendShelterDialog> createState() => _SuspendShelterDialogState();
+}
+
+class _SuspendShelterDialogState extends State<_SuspendShelterDialog> {
+  late final TextEditingController _reasonController;
+  late DateTime _startDate;
+  late DateTime _endDate;
+  bool _isDisposing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _reasonController = TextEditingController();
+    _startDate = DateTime.now();
+    _endDate = DateTime.now().add(const Duration(days: 7));
+  }
+
+  @override
+  void dispose() {
+    _isDisposing = true;
+    try {
+      _reasonController.dispose();
+    } catch (e) {
+      // Ignore disposal errors
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isDisposing) {
+      return const SizedBox.shrink();
+    }
+    
+    return AlertDialog(
+      title: Text(
+        'Suspend Shelter',
+        style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
       ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Suspend shelter: "${widget.name}"',
+              style: GoogleFonts.poppins(fontSize: 14),
+            ),
+            const SizedBox(height: 16),
+            
+            // Start Date
+            Text(
+              'Suspension Start:',
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () async {
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: _startDate,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                );
+                if (picked != null && mounted && !_isDisposing) {
+                  setState(() {
+                    _startDate = picked;
+                    if (_endDate.isBefore(picked)) {
+                      _endDate = picked.add(const Duration(days: 1));
+                    }
+                  });
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 16, color: AppColors.neutral600),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${_startDate.day}/${_startDate.month}/${_startDate.year}',
+                      style: GoogleFonts.poppins(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            // End Date
+            Text(
+              'Suspension End:',
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () async {
+                final picked = await showDatePicker(
+                  context: context,
+                  initialDate: _endDate,
+                  firstDate: _startDate.add(const Duration(days: 1)),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                );
+                if (picked != null && mounted && !_isDisposing) {
+                  setState(() {
+                    _endDate = picked;
+                  });
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 16, color: AppColors.neutral600),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${_endDate.day}/${_endDate.month}/${_endDate.year}',
+                      style: GoogleFonts.poppins(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            
+            // Reason
+            Text(
+              'Reason for Suspension:',
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _reasonController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: 'Enter reason for suspension...',
+                hintStyle: GoogleFonts.poppins(fontSize: 13),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsets.all(12),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final reason = _reasonController.text.trim();
+            if (reason.isEmpty) {
+              return;
+            }
+            Navigator.of(context).pop();
+            widget.controller.suspendShelter(widget.uid, _startDate, _endDate, reason);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFFFC1C1),
+            foregroundColor: Colors.black,
+          ),
+          child: const Text('Suspend'),
+        ),
+      ],
     );
   }
 }

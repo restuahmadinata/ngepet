@@ -220,8 +220,6 @@ class UserManagementView extends GetView<UserManagementController> {
                       _showSuspendDialog(uid, name);
                     } else if (value == 'lift_suspension') {
                       controller.liftSuspension(uid, name);
-                    } else if (value == 'delete') {
-                      _showDeleteConfirmation(uid, name);
                     }
                   },
                   itemBuilder: (context) => [
@@ -247,48 +245,12 @@ class UserManagementView extends GetView<UserManagementController> {
                           ],
                         ),
                       ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          const Icon(Icons.delete, color: Colors.red),
-                          const SizedBox(width: 8),
-                          Text('Delete', style: TextStyle(color: Colors.red)),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ],
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showDeleteConfirmation(String uid, String name) {
-    Get.dialog(
-      AlertDialog(
-        title: Text(
-          'Delete Confirmation',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          'Are you sure you want to delete user "$name"?\nThis action cannot be undone.',
-          style: GoogleFonts.poppins(),
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
-          ElevatedButton(
-            onPressed: () {
-              controller.deleteUser(uid);
-              Get.back();
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Delete'),
-          ),
-        ],
       ),
     );
   }

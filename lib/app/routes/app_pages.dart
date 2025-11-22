@@ -57,8 +57,8 @@ import '../features/shelter/modules/shelter/followers/followers_view.dart';
 import '../features/shelter/modules/shelter/followers/followers_binding.dart';
 
 // Admin Feature
-import '../features/admin/modules/home/admin_home_view.dart';
-import '../features/admin/modules/home/admin_home_binding.dart';
+import '../features/admin/modules/navigation/admin_navigation_view.dart';
+import '../features/admin/modules/navigation/admin_navigation_binding.dart';
 import '../features/admin/modules/user_management/user_management_view.dart';
 import '../features/admin/modules/user_management/user_management_binding.dart';
 import '../features/admin/modules/shelter_verification/shelter_verification_view.dart';
@@ -236,11 +236,11 @@ class AppPages {
       binding: FollowersBinding(),
     ),
 
-    // --- ADMIN HOME PAGE ---
+    // --- ADMIN HOME PAGE (with Bottom Nav) ---
     GetPage(
       name: AppRoutes.adminHome,
-      page: () => const AdminHomeView(),
-      binding: AdminHomeBinding(),
+      page: () => const AdminNavigationView(),
+      binding: AdminNavigationBinding(),
     ),
 
     // --- ADMIN USER MANAGEMENT PAGE ---

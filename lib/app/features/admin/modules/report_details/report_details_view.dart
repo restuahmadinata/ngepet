@@ -190,25 +190,42 @@ class ReportDetailsView extends GetView<ReportDetailsController> {
                         report.adminNotes!,
                         style: GoogleFonts.poppins(fontSize: 13),
                       ),
-                      const SizedBox(height: 16),
+                      if (report.reportStatus != ReportStatus.resolved &&
+                          report.reportStatus != ReportStatus.rejected)
+                        const SizedBox(height: 16),
                     ],
-                    TextField(
-                      controller: controller.adminNotesController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        hintText: 'Add notes about this report...',
-                        hintStyle: GoogleFonts.poppins(
-                          fontSize: 13,
-                          color: Colors.grey[400],
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey.shade50,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                    // Only show TextField if report is not resolved or rejected
+                    if (report.reportStatus != ReportStatus.resolved &&
+                        report.reportStatus != ReportStatus.rejected)
+                      TextField(
+                        controller: controller.adminNotesController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: 'Add notes about this report...',
+                          hintStyle: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: Colors.grey[400],
+                          ),
+                          filled: true,
+                          fillColor: Colors.grey.shade50,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
                         ),
                       ),
-                    ),
+                    // Show a message if there are no notes and the report is closed
+                    if (report.adminNotes == null &&
+                        (report.reportStatus == ReportStatus.resolved ||
+                            report.reportStatus == ReportStatus.rejected))
+                      Text(
+                        'No notes added',
+                        style: GoogleFonts.poppins(
+                          fontSize: 13,
+                          color: Colors.grey[500],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
                   ],
                 ),
               ),

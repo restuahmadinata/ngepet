@@ -52,14 +52,17 @@ class ShelterVerificationController extends GetxController {
       isLoading.value = true;
 
       // Get all shelters with 'pending' verification status from shelters collection
+      // Exclude suspended shelters from verification requests
       final snapshot = await _firestore
           .collection('shelters')
           .where('verificationStatus', isEqualTo: 'pending')
           .get();
 
-      verificationRequests.value = snapshot.docs.map((doc) {
-        return {'uid': doc.id, ...doc.data()};
-      }).toList();
+      // Filter out suspended accounts
+      verificationRequests.value = snapshot.docs
+          .map((doc) => {'uid': doc.id, ...doc.data()})
+          .where((shelter) => shelter['accountStatus'] != 'suspended')
+          .toList();
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -162,9 +165,25 @@ class ShelterVerificationController extends GetxController {
     }
   }
 
-  Future<void> deleteShelter(String uid) async {
+  Future<void> suspendShelter(
+    String uid,
+    DateTime startDate,
+    DateTime endDate,
+    String reason,
+  ) async {
     try {
-      await _firestore.collection('shelters').doc(uid).delete();
+      await _firestore.collection('shelters').doc(uid).update({
+        'accountStatus': 'suspended',
+        'suspensionStartDate': startDate,
+        'suspensionEndDate': endDate,
+        'suspensionReason': reason,
+      });
+
+      Get.snackbar(
+        'Success',
+        'Shelter has been suspended',
+        snackPosition: SnackPosition.BOTTOM,
+      );
 
       // Refresh lists
       fetchAllShelters();
@@ -172,7 +191,34 @@ class ShelterVerificationController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Failed to delete shelter: $e',
+        'Failed to suspend shelter: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> liftSuspension(String uid, String shelterName) async {
+    try {
+      await _firestore.collection('shelters').doc(uid).update({
+        'accountStatus': 'active',
+        'suspensionStartDate': FieldValue.delete(),
+        'suspensionEndDate': FieldValue.delete(),
+        'suspensionReason': FieldValue.delete(),
+      });
+
+      Get.snackbar(
+        'Success',
+        'Suspension lifted for "$shelterName"',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+      // Refresh lists
+      fetchAllShelters();
+      fetchVerificationRequests();
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to lift suspension: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
