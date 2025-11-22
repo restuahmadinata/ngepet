@@ -127,25 +127,51 @@ service cloud.firestore {
       allow delete: if request.auth.uid == resource.data.userId || isAdmin();
     }
     
-    // Messages collection
-    match /messages/{messageId} {
-      // Read: users involved in the conversation or admin
+    // Conversations collection
+    match /conversations/{conversationId} {
+      // Read: user or shelter involved in the conversation or admin
       allow read: if request.auth != null && 
-        (request.auth.uid == resource.data.senderId || 
-         request.auth.uid == resource.data.receiverId || 
+        (request.auth.uid == resource.data.userId || 
+         request.auth.uid == resource.data.shelterId || 
          isAdmin());
       
-      // Create: authenticated user can send message
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.senderId;
+      // Create: authenticated user can create conversation
+      allow create: if request.auth != null && 
+        (request.auth.uid == request.resource.data.userId || 
+         request.auth.uid == request.resource.data.shelterId);
       
-      // Update: sender can update (for editing) or receiver (for read status)
+      // Update: participants can update (for last message, unread counts)
       allow update: if request.auth != null && 
-        (request.auth.uid == resource.data.senderId || 
-         request.auth.uid == resource.data.receiverId);
+        (request.auth.uid == resource.data.userId || 
+         request.auth.uid == resource.data.shelterId);
       
-      // Delete: only sender or admin can delete
-      allow delete: if request.auth != null && 
-        (request.auth.uid == resource.data.senderId || isAdmin());
+      // Delete: only admin can delete conversations
+      allow delete: if isAdmin();
+      
+      // Messages subcollection
+      match /messages/{messageId} {
+        // Read: participants in parent conversation or admin
+        allow read: if request.auth != null && 
+          (request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId || 
+           request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.shelterId || 
+           isAdmin());
+        
+        // Create: participants can send messages
+        allow create: if request.auth != null && 
+          request.auth.uid == request.resource.data.senderId &&
+          (request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId || 
+           request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.shelterId);
+        
+        // Update: sender can update their own messages (for editing, deleting) or receiver (for read status)
+        allow update: if request.auth != null && 
+          (request.auth.uid == resource.data.senderId || 
+           request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.userId || 
+           request.auth.uid == get(/databases/$(database)/documents/conversations/$(conversationId)).data.shelterId);
+        
+        // Delete: only sender or admin can delete
+        allow delete: if request.auth != null && 
+          (request.auth.uid == resource.data.senderId || isAdmin());
+      }
     }
     
     // Reports collection

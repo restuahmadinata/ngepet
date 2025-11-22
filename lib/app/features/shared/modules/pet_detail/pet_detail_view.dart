@@ -294,16 +294,16 @@ class _PetDetailViewState extends State<PetDetailView> {
                 // Chat Button
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {
-                      // TODO: Implement chat functionality
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Chat feature coming soon!'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.chat_bubble_outline),
+                    onPressed: controller.isLoadingChat.value 
+                        ? null 
+                        : () => controller.startChat(widget.petData),
+                    icon: controller.isLoadingChat.value
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.chat_bubble_outline),
                     label: Text(
                       'Chat Owner',
                       style: GoogleFonts.poppins(

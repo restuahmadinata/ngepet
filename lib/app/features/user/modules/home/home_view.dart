@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../adopt/adopt_view.dart';
 import '../../../../features/shared/modules/event/event_view.dart';
-import '../chat/chat_view.dart';
+import '../../../shared/modules/chat/chat_list_view.dart';
 import '../profile/profile_view.dart';
 import 'home_controller.dart';
 import '../../../../common/widgets/rectangle_search_bar.dart';
@@ -22,7 +22,7 @@ class HomeView extends GetView<HomeController> {
     AdoptView(),
     EventView(),
     HomePage(), // Index 2
-    ChatView(),
+    ChatListView(),
     ProfileView(),
   ];
 

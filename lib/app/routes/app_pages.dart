@@ -16,7 +16,7 @@ import '../features/auth/modules/suspended/suspended_account_binding.dart';
 import '../features/user/modules/home/home_view.dart';
 import '../features/user/modules/home/home_binding.dart';
 import '../features/user/modules/adopt/adopt_view.dart';
-import '../features/user/modules/chat/chat_view.dart';
+import '../features/shared/modules/chat/chat_list_view.dart';
 import '../features/user/modules/profile/profile_view.dart';
 import '../features/user/modules/profile/edit_profile/edit_profile_view.dart';
 import '../features/user/modules/profile/edit_profile/edit_profile_binding.dart';
@@ -121,7 +121,7 @@ class AppPages {
     // --- Bottom Nav Pages (for direct navigation if needed) ---
     GetPage(name: AppRoutes.adopt, page: () => const AdoptView()),
     GetPage(name: AppRoutes.event, page: () => const EventView()),
-    GetPage(name: AppRoutes.chat, page: () => const ChatView()),
+    GetPage(name: AppRoutes.chat, page: () => const ChatListView()),
     GetPage(name: AppRoutes.profile, page: () => const ProfileView()),
 
     // --- EDIT PROFILE PAGE ---

@@ -402,3 +402,48 @@ enum SuspensionStatus {
     }
   }
 }
+
+// ==================== CHAT & MESSAGING ENUMS ====================
+
+/// Sender type for messages
+enum SenderType {
+  user('user'),
+  shelter('shelter');
+
+  final String value;
+  const SenderType(this.value);
+
+  static SenderType fromString(String? value) {
+    switch (value?.toLowerCase()) {
+      case 'user':
+        return SenderType.user;
+      case 'shelter':
+        return SenderType.shelter;
+      default:
+        return SenderType.user;
+    }
+  }
+}
+
+/// Message type for chat messages
+enum MessageType {
+  text('text'),
+  image('image'),
+  deleted('deleted');
+
+  final String value;
+  const MessageType(this.value);
+
+  static MessageType fromString(String? value) {
+    switch (value?.toLowerCase()) {
+      case 'text':
+        return MessageType.text;
+      case 'image':
+        return MessageType.image;
+      case 'deleted':
+        return MessageType.deleted;
+      default:
+        return MessageType.text;
+    }
+  }
+}

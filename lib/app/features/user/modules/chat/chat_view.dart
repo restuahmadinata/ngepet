@@ -1,11 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'chat_list_item.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import '../../../../common/widgets/rectangle_search_bar.dart';
-import '../../../../models/enums.dart';
-import '../../../../routes/app_routes.dart';
+import '../../../shared/modules/chat/chat_list_view.dart' as shared;
 
 class ChatController extends GetxController {
   final RxString searchQuery = ''.obs;
@@ -40,110 +35,6 @@ class ChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(ChatController());
-    
-    // Dummy data
-    final chats = List.generate(30, (index) {
-      return {
-        'imageUrl':
-            'https://randomuser.me/api/portraits/${index % 2 == 0 ? 'men' : 'women'}/${(index % 10) + 1}.jpg',
-        'userName': 'User $index',
-        'lastMessage': 'This is message number $index',
-      };
-    });
-
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      extendBody: true,
-      appBar: AppBar(
-        title: Text(
-          'Chats',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.report_outlined),
-            tooltip: 'Report Shelter',
-            onPressed: () {
-              Get.toNamed(
-                AppRoutes.selectEntityToReport,
-                arguments: {'entityType': EntityType.shelter},
-              );
-            },
-          ),
-        ],
-      ),
-      body: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              RectangleSearchBar(
-                hintText: 'Search chats...',
-                onChanged: controller.onSearchChanged,
-                controller: controller.textController,
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: Obx(() {
-                  final filteredChats = controller.filterChats(chats);
-                  
-                  if (filteredChats.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No chats found',
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  
-                  return ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 100),
-                    itemCount: filteredChats.length,
-                    itemBuilder: (context, index) {
-                      final chat = filteredChats[index];
-                      return ChatListItem(
-                        // Use CachedNetworkImage for profile picture
-                        imageWidget: CachedNetworkImage(
-                          imageUrl: chat['imageUrl']!,
-                          imageBuilder: (context, imageProvider) =>
-                              CircleAvatar(backgroundImage: imageProvider, radius: 24),
-                          placeholder: (context, url) => CircleAvatar(
-                            backgroundColor: Colors.grey[200],
-                            radius: 24,
-                            child: Icon(Icons.person, color: Colors.grey),
-                          ),
-                          errorWidget: (context, url, error) => CircleAvatar(
-                            backgroundColor: Colors.grey[200],
-                            radius: 24,
-                            child: Icon(Icons.error, color: Colors.red),
-                          ),
-                        ),
-                        userName: chat['userName']!,
-                        lastMessage: chat['lastMessage']!,
-                        onTap: () {},
-                      );
-                    },
-                  );
-                }),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+    return const shared.ChatListView();
   }
 }

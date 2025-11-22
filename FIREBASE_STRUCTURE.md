@@ -196,24 +196,85 @@ adoption_applications/{application_id}
 
 ---
 
-### 6️⃣ **messages** Collection
-Stores messages in adoption chat.
+### 6️⃣ **conversations** Collection
+Stores conversation threads between users and shelters about specific pets.
 
 ```javascript
-messages/{message_id}
+conversations/{conversation_id}
 {
-  "messageId": string,           // PK - auto-generated
-  "applicationId": string,       // FK - related application
-  "senderId": string,            // FK - sender user
-  "messageContent": string,      // Message content
-  "isRead": boolean,             // Read status
-  "sentAt": Timestamp            // Sending time
+  // Identity
+  "conversationId": string,      // PK - auto-generated
+  "userId": string,              // FK - user participant
+  "shelterId": string,           // FK - shelter participant
+  "petId": string,               // FK - pet being discussed
+  
+  // Denormalized Data (for quick access)
+  "userName": string,            // User's full name
+  "shelterName": string,         // Shelter name
+  "shelterLocation": string,     // Shelter location/city
+  "petName": string,             // Pet name
+  "petImageUrl": string,         // Primary pet image
+  
+  // Last Message Info (for list preview)
+  "lastMessage": string,         // Content of last message
+  "lastMessageAt": Timestamp,    // Last message timestamp
+  "lastMessageSenderId": string, // Who sent the last message
+  
+  // Unread Tracking
+  "unreadCountUser": number,     // Unread count for user
+  "unreadCountShelter": number,  // Unread count for shelter
+  
+  // Timestamps
+  "createdAt": Timestamp,        // Conversation creation time
+  "updatedAt": Timestamp         // Last update time
 }
 ```
 
 **Indexes:**
-- `applicationId` + `sentAt`
+- Composite: `userId` + `lastMessageAt`
+- Composite: `shelterId` + `lastMessageAt`
+- Composite: `userId` + `petId` (for finding existing conversation)
+
+---
+
+### 6️⃣ **messages** Collection (Subcollection)
+Stores individual messages within conversations.
+
+```javascript
+conversations/{conversation_id}/messages/{message_id}
+{
+  // Identity
+  "messageId": string,           // PK - auto-generated
+  "conversationId": string,      // Parent conversation ID
+  "senderId": string,            // FK - sender (userId or shelterId)
+  "senderType": string,          // ENUM: "user", "shelter" (see SenderType enum)
+  
+  // Content
+  "messageContent": string,      // Message text content
+  "messageType": string,         // ENUM: "text", "image", "deleted" (see MessageType enum)
+  
+  // Status & Tracking
+  "isRead": boolean,             // Read status
+  "isEdited": boolean,           // Whether message was edited
+  "isDeleted": boolean,          // Whether message was deleted
+  
+  // Timestamps
+  "sentAt": Timestamp,           // Message send time
+  "readAt": Timestamp,           // Message read time (null if unread)
+  "editedAt": Timestamp,         // Last edit time (null if never edited)
+  "deletedAt": Timestamp         // Deletion time (null if not deleted)
+}
+```
+
+**Indexes:**
+- `conversationId` + `sentAt`
 - `senderId`
+
+**Business Rules:**
+- Messages can be edited within 15 minutes of sending
+- Messages can be deleted within 6 hours of sending
+- Deleted messages show as "Message deleted" placeholder
+- Read receipts update when receiver views the message
 
 ---
 
@@ -474,6 +535,17 @@ All enum fields in the database are strictly type-checked in the Dart applicatio
 - `active` - Suspension currently in effect
 - `lifted` - Suspension lifted early by admin
 - `expired` - Suspension period ended naturally
+
+### Chat & Messaging Enums
+
+**SenderType** (Who sent the message)
+- `user` - Message sent by user
+- `shelter` - Message sent by shelter
+
+**MessageType** (Type of message content)
+- `text` - Text message
+- `image` - Image message
+- `deleted` - Deleted message placeholder
 
 ---
 

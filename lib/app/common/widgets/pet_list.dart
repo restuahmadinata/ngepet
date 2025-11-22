@@ -182,22 +182,23 @@ class PetListItem extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      ElevatedButton(
-                        onPressed: onAdoptPressed,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.withOpacity(0.1),
-                          foregroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
+                      if (onAdoptPressed != null)
+                        ElevatedButton(
+                          onPressed: onAdoptPressed,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green.withOpacity(0.1),
+                            foregroundColor: Colors.green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          child: const Text('Ajukan Adopsi'),
                         ),
-                        child: const Text('Ajukan Adopsi'),
-                      ),
                     ],
                   ),
                 ),
