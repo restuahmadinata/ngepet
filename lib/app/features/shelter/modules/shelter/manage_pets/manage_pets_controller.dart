@@ -34,6 +34,7 @@ class ManagePetsController extends GetxController {
       final querySnapshot = await _firestore
           .collection('pets')
           .where('shelterId', isEqualTo: user.uid)
+          .where('adoptionStatus', whereIn: ['available', 'pending'])
           .orderBy('createdAt', descending: true)
           .get();
 

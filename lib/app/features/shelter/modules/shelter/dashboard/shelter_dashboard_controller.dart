@@ -62,6 +62,7 @@ class ShelterDashboardController extends GetxController {
       final petsQuery = await _firestore
           .collection('pets')
           .where('shelterId', isEqualTo: user.uid)
+          .where('adoptionStatus', whereIn: ['available', 'pending'])
           .get();
       petCount.value = petsQuery.docs.length;
 
