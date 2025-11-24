@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ngepet/app/theme/app_colors.dart';
 import 'shelter_profile_controller.dart';
 import '../../../../common/widgets/pet_list.dart';
 import '../../../../common/widgets/event_list.dart';
 import '../../../../common/widgets/lottie_loading.dart';
+import '../../../../common/widgets/button1.dart';
+import '../../../../common/widgets/button2.dart';
 
 class ShelterProfileView extends GetView<ShelterProfileController> {
   const ShelterProfileView({super.key});
@@ -13,7 +16,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.neutral100,
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
@@ -48,9 +51,9 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
 
         return CustomScrollView(
           slivers: [
-            // App Bar dengan foto shelter
+            // App Bar with Image
             SliverAppBar(
-              expandedHeight: 200,
+              expandedHeight: 350,
               pinned: true,
               backgroundColor: Colors.white,
               elevation: 0,
@@ -97,11 +100,11 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                             ),
                           )
                         : Container(
-                            color: const Color(0xFFE27B59).withOpacity(0.1),
+                            color: AppColors.primary.withOpacity(0.1),
                             child: Icon(
                               Icons.home,
                               size: 80,
-                              color: const Color(0xFFE27B59).withOpacity(0.5),
+                              color: AppColors.primary.withOpacity(0.5),
                             ),
                           ),
 
@@ -111,13 +114,13 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                       left: 0,
                       right: 0,
                       child: Container(
-                        height: 80,
+                        height: 100,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
                             colors: [
-                              Colors.black.withOpacity(0.7),
+                              Colors.black.withOpacity(0.6),
                               Colors.transparent,
                             ],
                           ),
@@ -134,140 +137,123 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Shelter Info Card
-                  Container(
-                    margin: const EdgeInsets.all(20),
+                  // Shelter Name & Basic Info
+                  Padding(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey.shade300, width: 1),
-                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Nama shelter
+                        // Shelter Name
                         Text(
                           shelter.shelterName,
                           style: GoogleFonts.poppins(
-                            fontSize: 24,
+                            fontSize: 28,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                           ),
                         ),
-                        const SizedBox(height: 8),
 
-                        // City
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              size: 18,
-                              color: Colors.grey[600],
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              shelter.city,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
-                        ),
+                        // Grid of attribute cards
+                        _buildAttributeGrid(shelter),
+
+                        // Location card
+                        _buildLocationCard(shelter),
+
+                        const SizedBox(height: 12),
+
+                        // Follow Button
+                        Obx(() => controller.isFollowing.value
+                            ? Button2(
+                                text: 'Following',
+                                onPressed: controller.toggleFollow,
+                                isLoading: controller.isFollowingLoading.value,
+                              )
+                            : Button1(
+                                text: 'Follow Shelter',
+                                onPressed: controller.toggleFollow,
+                                isLoading: controller.isFollowingLoading.value,
+                              )),
+
                         const SizedBox(height: 16),
 
-                        // Tombol Follow/Unfollow
-                        Obx(() => SizedBox(
+                        // Description
+                        SizedBox(
                           width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed: controller.isFollowingLoading.value
-                                ? null
-                                : controller.toggleFollow,
-                            icon: controller.isFollowingLoading.value
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: LottieLoading(width: 16, height: 16),
-                                  )
-                                : Icon(
-                                    controller.isFollowing.value
-                                        ? Icons.favorite
-                                        : Icons.favorite_border,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.grey.shade200),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'About Shelter',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
                                   ),
-                            label: Text(
-                              controller.isFollowingLoading.value
-                                  ? 'Please wait...'
-                                  : controller.isFollowing.value
-                                      ? 'Following'
-                                      : 'Follow Shelter',
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  shelter.description.isNotEmpty
+                                      ? shelter.description
+                                      : 'No description available.',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: Colors.black54,
+                                    height: 1.6,
+                                  ),
+                                ),
+                              ],
                             ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: controller.isFollowing.value
-                                  ? Colors.grey[600]
-                                  : const Color(0xFFE27B59),
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Contact Information
+                        if (shelter.shelterPhone.isNotEmpty || shelter.shelterEmail.isNotEmpty)
+                          SizedBox(
+                            width: double.infinity,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.grey.shade200),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Contact Information',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  if (shelter.shelterPhone.isNotEmpty)
+                                    _buildContactRow(
+                                      icon: Icons.phone,
+                                      text: shelter.shelterPhone,
+                                    ),
+                                  if (shelter.shelterEmail.isNotEmpty)
+                                    _buildContactRow(
+                                      icon: Icons.email,
+                                      text: shelter.shelterEmail,
+                                    ),
+                                ],
                               ),
                             ),
                           ),
-                        )),
 
-                        const SizedBox(height: 16),
-
-                        // Deskripsi
-                        Text(
-                          'About Shelter',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          shelter.description.isNotEmpty
-                              ? shelter.description
-                              : 'No description available.',
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: Colors.black54,
-                            height: 1.6,
-                          ),
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        // Contact
-                        if (shelter.shelterPhone.isNotEmpty ||
-                            shelter.shelterEmail.isNotEmpty) ...[
-                          Text(
-                            'Contact',
-                            style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          if (shelter.shelterPhone.isNotEmpty)
-                            _buildContactRow(
-                              icon: Icons.phone,
-                              text: shelter.shelterPhone,
-                            ),
-                          if (shelter.shelterEmail.isNotEmpty)
-                            _buildContactRow(
-                              icon: Icons.email,
-                              text: shelter.shelterEmail,
-                            ),
-                        ],
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
@@ -337,7 +323,6 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
 
                   // Content based on selected tab
                   Obx(() {
@@ -520,5 +505,138 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
         ),
       );
     });
+  }
+
+  Widget _buildAttributeGrid(shelter) {
+    final status = shelter.verificationStatus?.value ?? 'Unknown';
+    final founded = shelter.createdAt != null
+        ? '${shelter.createdAt!.year}'
+        : 'Unknown';
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = 2;
+        final targetCardHeight = 75.0;
+        final totalSpacing = 8.0 * (crossAxisCount - 1);
+        final columnWidth = (constraints.maxWidth - totalSpacing) / crossAxisCount;
+        final childAspectRatio = columnWidth / targetCardHeight;
+
+        return GridView.count(
+          crossAxisCount: crossAxisCount,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: childAspectRatio,
+          children: [
+            _buildAttributeCard(
+              icon: Icons.verified,
+              label: 'Status',
+              value: status,
+              color: status == 'approved' ? Colors.green : status == 'pending' ? Colors.orange : Colors.red,
+            ),
+            _buildAttributeCard(
+              icon: Icons.calendar_today,
+              label: 'Founded',
+              value: founded,
+              color: Colors.blue,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildAttributeCard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    label,
+                    style: GoogleFonts.poppins(fontSize: 13, color: Colors.black54),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Flexible(
+                  child: Text(
+                    value,
+                    style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationCard(shelter) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Icon(Icons.location_on, color: AppColors.primary, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Location',
+                  style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
+                ),
+                Text(
+                  shelter.city,
+                  style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
