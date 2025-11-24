@@ -18,6 +18,8 @@ class RegisterController extends GetxController {
   // Method yang akan dipanggil saat tombol register ditekan
   Future<void> register() async {
     if (isLoading.value) return;
+    
+    // Validasi field kosong
     if (nameController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.isEmpty ||
@@ -28,9 +30,59 @@ class RegisterController extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
       );
       return;
     }
+
+    // Validasi format email
+    if (!GetUtils.isEmail(emailController.text.trim())) {
+      Get.snackbar(
+        "Error",
+        "Please enter a valid email address",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
+      return;
+    }
+
+    // Validasi panjang nama
+    if (nameController.text.trim().length < 3) {
+      Get.snackbar(
+        "Error",
+        "Name must be at least 3 characters long",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
+      return;
+    }
+
+    // Validasi panjang password
+    if (passwordController.text.length < 6) {
+      Get.snackbar(
+        "Error",
+        "Password must be at least 6 characters long",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
+      return;
+    }
+
+    // Validasi password match
     if (passwordController.text != confirmPasswordController.text) {
       Get.snackbar(
         "Error",
@@ -38,6 +90,9 @@ class RegisterController extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
       );
       return;
     }
@@ -65,22 +120,43 @@ class RegisterController extends GetxController {
             'updatedAt': FieldValue.serverTimestamp(),
           });
 
+      // Tampilkan success message
+      Get.snackbar(
+        "Success",
+        "Registration successful! Welcome, ${nameController.text.trim()}!",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
+
       // Langsung masuk ke halaman userHome, kirim nama user
       Get.offAllNamed(
         '/user-home',
         arguments: {'name': nameController.text.trim()},
       );
-      Get.snackbar(
-        "Success",
-        "Registration successful! Welcome!",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
     } on FirebaseAuthException catch (e) {
-      String msg = e.message ?? 'An error occurred';
-      if (e.code == 'email-already-in-use') {
-        msg = 'Email already registered';
+      String msg;
+      switch (e.code) {
+        case 'email-already-in-use':
+          msg = 'This email is already registered. Please login instead.';
+          break;
+        case 'invalid-email':
+          msg = 'Invalid email address format.';
+          break;
+        case 'operation-not-allowed':
+          msg = 'Email/password accounts are not enabled.';
+          break;
+        case 'weak-password':
+          msg = 'Password is too weak. Please use a stronger password.';
+          break;
+        case 'network-request-failed':
+          msg = 'Network error. Please check your internet connection.';
+          break;
+        default:
+          msg = e.message ?? 'Registration failed. Please try again.';
       }
       Get.snackbar(
         "Registration Failed",
@@ -88,14 +164,20 @@ class RegisterController extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
       );
     } catch (e) {
       Get.snackbar(
         "Registration Failed",
-        e.toString(),
+        "An unexpected error occurred. Please try again.",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
       );
     } finally {
       isLoading.value = false;

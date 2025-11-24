@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ngepet/app/routes/app_routes.dart';
 
@@ -104,10 +105,52 @@ class AuthController extends GetxController {
         Get.offAllNamed(AppRoutes.userHome);
       }
     } on FirebaseAuthException catch (e) {
+      String msg;
+      switch (e.code) {
+        case 'user-not-found':
+          msg = 'No account found with this email.';
+          break;
+        case 'wrong-password':
+          msg = 'Incorrect password. Please try again.';
+          break;
+        case 'invalid-email':
+          msg = 'Invalid email address format.';
+          break;
+        case 'user-disabled':
+          msg = 'This account has been disabled.';
+          break;
+        case 'too-many-requests':
+          msg = 'Too many login attempts. Please try again later.';
+          break;
+        case 'network-request-failed':
+          msg = 'Network error. Please check your internet connection.';
+          break;
+        case 'invalid-credential':
+          msg = 'Invalid email or password. Please try again.';
+          break;
+        default:
+          msg = e.message ?? 'Login failed. Please try again.';
+      }
       Get.snackbar(
         "Login Failed",
-        e.message ?? "An error occurred",
+        msg,
         snackPosition: SnackPosition.TOP,
+        backgroundColor: Get.theme.colorScheme.error,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Login Failed",
+        "An unexpected error occurred. Please try again.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Get.theme.colorScheme.error,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
       );
     }
   }
@@ -127,10 +170,43 @@ class AuthController extends GetxController {
         });
       }
     } on FirebaseAuthException catch (e) {
+      String msg;
+      switch (e.code) {
+        case 'email-already-in-use':
+          msg = 'This email is already registered.';
+          break;
+        case 'invalid-email':
+          msg = 'Invalid email address format.';
+          break;
+        case 'weak-password':
+          msg = 'Password is too weak.';
+          break;
+        case 'network-request-failed':
+          msg = 'Network error. Please check your internet connection.';
+          break;
+        default:
+          msg = e.message ?? 'Registration failed.';
+      }
       Get.snackbar(
         "Registration Failed",
-        e.message ?? "An error occurred",
+        msg,
         snackPosition: SnackPosition.TOP,
+        backgroundColor: Get.theme.colorScheme.error,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Registration Failed",
+        "An unexpected error occurred.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Get.theme.colorScheme.error,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
       );
     }
   }
@@ -148,15 +224,50 @@ class AuthController extends GetxController {
     try {
       await _auth.sendPasswordResetEmail(email: email);
       Get.snackbar(
-        "Reset Password",
-        "Password reset email has been sent to $email",
+        "Success",
+        "Password reset email has been sent to $email. Please check your inbox.",
         snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
       );
     } on FirebaseAuthException catch (e) {
+      String msg;
+      switch (e.code) {
+        case 'user-not-found':
+          msg = 'No account found with this email address.';
+          break;
+        case 'invalid-email':
+          msg = 'Invalid email address format.';
+          break;
+        case 'network-request-failed':
+          msg = 'Network error. Please check your internet connection.';
+          break;
+        default:
+          msg = e.message ?? 'Failed to send reset email.';
+      }
       Get.snackbar(
         "Error",
-        e.message ?? "An error occurred",
+        msg,
         snackPosition: SnackPosition.TOP,
+        backgroundColor: Get.theme.colorScheme.error,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "An unexpected error occurred. Please try again.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Get.theme.colorScheme.error,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
       );
     }
   }

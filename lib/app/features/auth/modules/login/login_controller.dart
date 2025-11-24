@@ -26,17 +26,45 @@ class LoginController extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
+      return;
+    }
+
+    // Validasi format email
+    if (!GetUtils.isEmail(emailController.text.trim())) {
+      Get.snackbar(
+        "Error",
+        "Please enter a valid email address",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
       );
       return;
     }
 
     isLoading.value = true;
     
-
     try {
       // Panggil fungsi signIn dari AuthController
-      await authController.signIn(emailController.text, passwordController.text);
+      await authController.signIn(emailController.text.trim(), passwordController.text.trim());
+    } catch (e) {
+      // Handle any unexpected errors
+      Get.snackbar(
+        "Login Failed",
+        "An unexpected error occurred. Please try again.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -53,15 +81,44 @@ class LoginController extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
+      return;
+    }
+
+    // Validasi format email
+    if (!GetUtils.isEmail(emailController.text.trim())) {
+      Get.snackbar(
+        "Error",
+        "Please enter a valid email address",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
       );
       return;
     }
     
     isLoading.value = true;
-  
     
     try {
-      await authController.resetPassword(emailController.text);
+      await authController.resetPassword(emailController.text.trim());
+    } catch (e) {
+      // Handle any unexpected errors
+      Get.snackbar(
+        "Error",
+        "Failed to send password reset email. Please try again.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(10),
+        borderRadius: 8,
+      );
     } finally {
       isLoading.value = false;
     }
