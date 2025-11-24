@@ -15,10 +15,24 @@ class EventController extends GetxController {
   final searchController = Get.put(search.SearchController(), tag: 'event');
   final textController = TextEditingController();
 
+  // Pagination for Exploring tab
+  final RxList<Map<String, dynamic>> exploringEvents = <Map<String, dynamic>>[].obs;
+  final RxBool isLoadingExploring = false.obs;
+  final RxBool hasMoreExploring = true.obs;
+  DocumentSnapshot? lastExploringDoc;
+  static const int pageSize = 10;
+
+  // Pagination for Following tab
+  final RxList<Map<String, dynamic>> followingEvents = <Map<String, dynamic>>[].obs;
+  final RxBool isLoadingFollowing = false.obs;
+  final RxBool hasMoreFollowing = true.obs;
+  DocumentSnapshot? lastFollowingDoc;
+
   @override
   void onInit() {
     super.onInit();
     _listenToFollowedShelters();
+    loadExploringEvents();
   }
 
   @override
@@ -32,6 +46,11 @@ class EventController extends GetxController {
     _followerService.getFollowedShelterIdsStream().listen((shelterIds) {
       followedShelterIds.value = shelterIds;
       print('📊 Followed shelters updated: ${shelterIds.length} shelters');
+      // Reset and load following events when shelters change
+      if (selectedTab.value == 1) {
+        resetFollowingEvents();
+        loadFollowingEvents();
+      }
     });
   }
 
@@ -42,6 +61,10 @@ class EventController extends GetxController {
       textController.clear();
       searchController.clearResults();
     }
+    // Load data for the selected tab if not loaded yet
+    if (index == 1 && followingEvents.isEmpty && followedShelterIds.isNotEmpty) {
+      loadFollowingEvents();
+    }
   }
 
   void onSearchChanged(String value) {
@@ -50,15 +73,179 @@ class EventController extends GetxController {
       searchController.searchEvents();
     }
   }
+
+  Future<void> loadExploringEvents({bool refresh = false}) async {
+    if (isLoadingExploring.value) return;
+    if (!refresh && !hasMoreExploring.value) return;
+
+    try {
+      isLoadingExploring.value = true;
+
+      if (refresh) {
+        exploringEvents.clear();
+        lastExploringDoc = null;
+        hasMoreExploring.value = true;
+      }
+
+      Query query = FirebaseFirestore.instance
+          .collection('events')
+          .orderBy('dateTime', descending: false)
+          .limit(pageSize);
+
+      if (lastExploringDoc != null && !refresh) {
+        query = query.startAfterDocument(lastExploringDoc!);
+      }
+
+      final snapshot = await query.get();
+
+      if (snapshot.docs.isEmpty) {
+        hasMoreExploring.value = false;
+      } else {
+        lastExploringDoc = snapshot.docs.last;
+        
+        final newEvents = snapshot.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          String imageUrl = 'https://via.placeholder.com/400x200?text=Event';
+          if (data['imageUrls'] != null && (data['imageUrls'] as List).isNotEmpty) {
+            imageUrl = (data['imageUrls'] as List).first.toString();
+          } else if (data['imageUrl'] != null) {
+            imageUrl = data['imageUrl'].toString();
+          }
+
+          return {
+            'eventId': doc.id,
+            'shelterId': data['shelterId']?.toString() ?? '',
+            'imageUrl': imageUrl,
+            'eventTitle': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
+            'title': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
+            'eventDate': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
+            'date': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
+            'startTime': (data['startTime'] ?? data['time'] ?? '').toString(),
+            'time': (data['startTime'] ?? data['time'] ?? '').toString(),
+            'shelterName': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
+            'shelter': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
+            'location': (data['location'] ?? 'Location').toString(),
+            'eventDescription': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
+            'description': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
+            'imageUrls': data['imageUrls'] ?? [imageUrl],
+          };
+        }).toList();
+
+        exploringEvents.addAll(newEvents);
+        
+        if (snapshot.docs.length < pageSize) {
+          hasMoreExploring.value = false;
+        }
+      }
+    } catch (e) {
+      print('❌ Error loading exploring events: $e');
+      Get.snackbar('Error', 'Failed to load events');
+    } finally {
+      isLoadingExploring.value = false;
+    }
+  }
+
+  Future<void> loadFollowingEvents({bool refresh = false}) async {
+    if (followedShelterIds.isEmpty) {
+      followingEvents.clear();
+      return;
+    }
+
+    if (isLoadingFollowing.value) return;
+    if (!refresh && !hasMoreFollowing.value) return;
+
+    try {
+      isLoadingFollowing.value = true;
+
+      if (refresh) {
+        followingEvents.clear();
+        lastFollowingDoc = null;
+        hasMoreFollowing.value = true;
+      }
+
+      // Take up to 10 shelter IDs for Firestore whereIn limit
+      final shelterIdsToQuery = followedShelterIds.take(10).toList();
+
+      Query query = FirebaseFirestore.instance
+          .collection('events')
+          .where('shelterId', whereIn: shelterIdsToQuery)
+          .orderBy('dateTime', descending: false)
+          .limit(pageSize);
+
+      if (lastFollowingDoc != null && !refresh) {
+        query = query.startAfterDocument(lastFollowingDoc!);
+      }
+
+      final snapshot = await query.get();
+
+      if (snapshot.docs.isEmpty) {
+        hasMoreFollowing.value = false;
+      } else {
+        lastFollowingDoc = snapshot.docs.last;
+        
+        final newEvents = snapshot.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          String imageUrl = 'https://via.placeholder.com/400x200?text=Event';
+          if (data['imageUrls'] != null && (data['imageUrls'] as List).isNotEmpty) {
+            imageUrl = (data['imageUrls'] as List).first.toString();
+          } else if (data['imageUrl'] != null) {
+            imageUrl = data['imageUrl'].toString();
+          }
+
+          return {
+            'eventId': doc.id,
+            'shelterId': data['shelterId']?.toString() ?? '',
+            'imageUrl': imageUrl,
+            'eventTitle': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
+            'title': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
+            'eventDate': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
+            'date': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
+            'startTime': (data['startTime'] ?? data['time'] ?? '').toString(),
+            'time': (data['startTime'] ?? data['time'] ?? '').toString(),
+            'shelterName': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
+            'shelter': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
+            'location': (data['location'] ?? 'Location').toString(),
+            'eventDescription': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
+            'description': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
+            'imageUrls': data['imageUrls'] ?? [imageUrl],
+          };
+        }).toList();
+
+        followingEvents.addAll(newEvents);
+        
+        if (snapshot.docs.length < pageSize) {
+          hasMoreFollowing.value = false;
+        }
+      }
+    } catch (e) {
+      print('❌ Error loading following events: $e');
+      Get.snackbar('Error', 'Failed to load following events');
+    } finally {
+      isLoadingFollowing.value = false;
+    }
+  }
+
+  void resetFollowingEvents() {
+    followingEvents.clear();
+    lastFollowingDoc = null;
+    hasMoreFollowing.value = true;
+  }
+
+  Future<void> refreshEvents() async {
+    if (selectedTab.value == 0) {
+      await loadExploringEvents(refresh: true);
+    } else {
+      await loadFollowingEvents(refresh: true);
+    }
+  }
 }
 
 class EventView extends StatelessWidget {
   const EventView({super.key});
 
   Future<void> _refreshData() async {
-    // Add a small delay to show the refresh indicator
-    await Future.delayed(const Duration(milliseconds: 500));
-    // Data will automatically refresh because we're using StreamBuilder
+    final EventController controller = Get.find<EventController>();
+    await controller.refreshEvents();
   }
 
   @override
@@ -157,8 +344,8 @@ class EventView extends StatelessWidget {
                         const SizedBox(height: 24),
                         Obx(
                           () => controller.selectedTab.value == 0
-                              ? _buildEventStream()
-                              : _buildFollowingEvents(),
+                              ? _buildExploringTab()
+                              : _buildFollowingTab(),
                         ),
                       ],
                     );
@@ -172,121 +359,80 @@ class EventView extends StatelessWidget {
     );
   }
 
-  Widget _buildEventStream() {
-    print('🔍 DEBUG: Building event stream (Event View)...');
-    // Show all events (temporary fix - should filter by upcoming/ongoing in production)
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('events')
-          .orderBy('dateTime', descending: false)
-          .snapshots(),
-      builder: (context, snapshot) {
-        print('📊 DEBUG: Event stream state: ${snapshot.connectionState}');
-        if (snapshot.hasData) {
-          print('✅ DEBUG: Found ${snapshot.data!.docs.length} events');
-          if (snapshot.data!.docs.isNotEmpty) {
-            for (var doc in snapshot.data!.docs) {
-              final data = doc.data() as Map<String, dynamic>;
-              print('📋 DEBUG Event: ${data['eventTitle']} - Status: ${data['eventStatus']} - DateTime: ${data['dateTime']}');
-            }
-          }
-        }
-        if (snapshot.hasError) {
-          print('❌ DEBUG: Error loading events: ${snapshot.error}');
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(32.0),
-              child: LottieLoading(),
-            ),
-          );
-        }
+  Widget _buildExploringTab() {
+    final EventController controller = Get.find<EventController>();
+    
+    return Obx(() {
+      if (controller.isLoadingExploring.value && controller.exploringEvents.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: LottieLoading(),
+          ),
+        );
+      }
 
-        if (snapshot.hasError) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                children: [
-                  Icon(Icons.error, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'An error occurred',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
+      if (controller.exploringEvents.isEmpty && !controller.isLoadingExploring.value) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                Icon(Icons.event, size: 64, color: Colors.grey[400]),
+                const SizedBox(height: 16),
+                Text(
+                  'No events available yet',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    color: Colors.grey[600],
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      return Column(
+        children: [
+          EventList(events: controller.exploringEvents),
+          if (controller.hasMoreExploring.value)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: controller.isLoadingExploring.value
+                  ? const LottieLoading()
+                  : OutlinedButton.icon(
+                      onPressed: () => controller.loadExploringEvents(),
+                      icon: const Icon(Icons.refresh),
+                      label: Text(
+                        'Load More',
+                        style: GoogleFonts.poppins(),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.green,
+                        side: const BorderSide(color: Colors.green),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+            ),
+          if (!controller.hasMoreExploring.value && controller.exploringEvents.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                'No more events to load',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
               ),
             ),
-          );
-        }
-
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                children: [
-                  Icon(Icons.event, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No events available yet',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        // Convert Firestore data to format expected by EventList
-        final eventsData = snapshot.data!.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-
-          // Get first image from imageUrls array, fallback to imageUrl field or placeholder
-          String imageUrl = 'https://via.placeholder.com/400x200?text=Event';
-          if (data['imageUrls'] != null &&
-              (data['imageUrls'] as List).isNotEmpty) {
-            imageUrl = (data['imageUrls'] as List).first.toString();
-            print('DEBUG EventView - Using imageUrls[0]: $imageUrl');
-          } else if (data['imageUrl'] != null) {
-            imageUrl = data['imageUrl'].toString();
-            print('DEBUG EventView - Using imageUrl: $imageUrl');
-          } else {
-            print(
-              'DEBUG EventView - No image found, using placeholder for: ${data['title']}',
-            );
-          }
-
-          return {
-            'eventId': doc.id,
-            'shelterId': data['shelterId']?.toString() ?? '',
-            'imageUrl': imageUrl,
-            'eventTitle': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
-            'title': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
-            'eventDate': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
-            'date': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
-            'startTime': (data['startTime'] ?? data['time'] ?? '').toString(),
-            'time': (data['startTime'] ?? data['time'] ?? '').toString(),
-            'shelterName': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
-            'shelter': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
-            'location': (data['location'] ?? 'Location').toString(),
-            'eventDescription': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
-            'description': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
-            'imageUrls': data['imageUrls'] ?? [imageUrl],
-          };
-        }).toList();
-
-        return EventList(events: eventsData);
-      },
-    );
+        ],
+      );
+    });
   }
 
   Widget _buildSearchResults() {
@@ -354,7 +500,7 @@ class EventView extends StatelessWidget {
     });
   }
 
-  Widget _buildFollowingEvents() {
+  Widget _buildFollowingTab() {
     final EventController controller = Get.find<EventController>();
     
     return Obx(() {
@@ -383,114 +529,75 @@ class EventView extends StatelessWidget {
         );
       }
 
-      // Use a key based on the shelter IDs to prevent unnecessary rebuilds
-      final shelterIdsKey = controller.followedShelterIds.take(10).join(',');
-      return _FollowingEventsStream(key: ValueKey(shelterIdsKey), shelterIds: controller.followedShelterIds.take(10).toList());
+      if (controller.isLoadingFollowing.value && controller.followingEvents.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: LottieLoading(),
+          ),
+        );
+      }
+
+      if (controller.followingEvents.isEmpty && !controller.isLoadingFollowing.value) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                Icon(Icons.event, size: 64, color: Colors.grey[400]),
+                const SizedBox(height: 16),
+                Text(
+                  'No events available from followed shelters',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
+      return Column(
+        children: [
+          EventList(events: controller.followingEvents),
+          if (controller.hasMoreFollowing.value)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: controller.isLoadingFollowing.value
+                  ? const LottieLoading()
+                  : OutlinedButton.icon(
+                      onPressed: () => controller.loadFollowingEvents(),
+                      icon: const Icon(Icons.refresh),
+                      label: Text(
+                        'Load More',
+                        style: GoogleFonts.poppins(),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.green,
+                        side: const BorderSide(color: Colors.green),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+            ),
+          if (!controller.hasMoreFollowing.value && controller.followingEvents.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                'No more events to load',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ),
+        ],
+      );
     });
-  }
-}
-
-// Separate StatefulWidget to prevent StreamBuilder from rebuilding unnecessarily
-class _FollowingEventsStream extends StatelessWidget {
-  final List<String> shelterIds;
-
-  const _FollowingEventsStream({super.key, required this.shelterIds});
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('events')
-          .where('shelterId', whereIn: shelterIds)
-          .orderBy('dateTime', descending: false)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(32.0),
-              child: LottieLoading(),
-            ),
-          );
-        }
-
-        if (snapshot.hasError) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                children: [
-                  Icon(Icons.error, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'An error occurred',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                children: [
-                  Icon(Icons.event, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No events available from followed shelters',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        // Convert Firestore data to format expected by EventList
-        final eventsData = snapshot.data!.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-
-          // Get first image from imageUrls array, fallback to imageUrl field or placeholder
-          String imageUrl = 'https://via.placeholder.com/400x200?text=Event';
-          if (data['imageUrls'] != null &&
-              (data['imageUrls'] as List).isNotEmpty) {
-            imageUrl = (data['imageUrls'] as List).first.toString();
-          } else if (data['imageUrl'] != null) {
-            imageUrl = data['imageUrl'].toString();
-          }
-
-          return {
-            'eventId': doc.id,
-            'shelterId': data['shelterId']?.toString() ?? '',
-            'imageUrl': imageUrl,
-            'eventTitle': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
-            'title': (data['eventTitle'] ?? data['title'] ?? 'Event Title').toString(),
-            'eventDate': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
-            'date': (data['eventDate'] ?? data['date'] ?? 'TBA').toString(),
-            'startTime': (data['startTime'] ?? data['time'] ?? '').toString(),
-            'time': (data['startTime'] ?? data['time'] ?? '').toString(),
-            'shelterName': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
-            'shelter': (data['shelterName'] ?? data['shelter'] ?? 'Shelter').toString(),
-            'location': (data['location'] ?? 'Location').toString(),
-            'eventDescription': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
-            'description': (data['eventDescription'] ?? data['description'] ?? 'Event description').toString(),
-            'imageUrls': data['imageUrls'] ?? [imageUrl],
-          };
-        }).toList();
-
-        return EventList(events: eventsData);
-      },
-    );
   }
 }
