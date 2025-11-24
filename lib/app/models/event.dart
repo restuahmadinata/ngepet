@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'enums.dart';
 
 /// Model for Event
 /// Collection: events/{eventId}
@@ -10,10 +9,8 @@ class Event {
   final String eventDescription;
   final String location;
   final DateTime eventDate;
-  final String? startTime; // Format: HH:mm
-  final String? endTime; // Format: HH:mm
+  final String? eventTime; // Format: HH:mm
   final List<String> imageUrls; // Array of event image URLs
-  final EventStatus eventStatus; // upcoming, ongoing, completed, cancelled
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -24,10 +21,8 @@ class Event {
     required this.eventDescription,
     required this.location,
     required this.eventDate,
-    this.startTime,
-    this.endTime,
+    this.eventTime,
     this.imageUrls = const [],
-    this.eventStatus = EventStatus.upcoming,
     this.createdAt,
     this.updatedAt,
   });
@@ -43,12 +38,10 @@ class Event {
       eventDescription: data['eventDescription'] ?? '',
       location: data['location'] ?? '',
       eventDate: _parseEventDate(data['eventDate']),
-      startTime: data['startTime'],
-      endTime: data['endTime'],
+      eventTime: data['eventTime'] ?? data['startTime'], // Fallback to startTime for backward compatibility
       imageUrls: data['imageUrls'] != null 
           ? List<String>.from(data['imageUrls'])
           : [],
-      eventStatus: EventStatus.fromString(data['eventStatus']),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -63,12 +56,10 @@ class Event {
       eventDescription: data['eventDescription'] ?? '',
       location: data['location'] ?? '',
       eventDate: _parseEventDate(data['eventDate']),
-      startTime: data['startTime'],
-      endTime: data['endTime'],
+      eventTime: data['eventTime'] ?? data['startTime'], // Fallback to startTime for backward compatibility
       imageUrls: data['imageUrls'] != null 
           ? List<String>.from(data['imageUrls'])
           : [],
-      eventStatus: EventStatus.fromString(data['eventStatus']),
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
@@ -106,10 +97,8 @@ class Event {
       'eventDescription': eventDescription,
       'location': location,
       'eventDate': Timestamp.fromDate(eventDate),
-      'startTime': startTime,
-      'endTime': endTime,
+      'eventTime': eventTime,
       'imageUrls': imageUrls,
-      'eventStatus': eventStatus.value,
       'createdAt': createdAt != null 
           ? Timestamp.fromDate(createdAt!) 
           : FieldValue.serverTimestamp(),
@@ -125,10 +114,8 @@ class Event {
     String? eventDescription,
     String? location,
     DateTime? eventDate,
-    String? startTime,
-    String? endTime,
+    String? eventTime,
     List<String>? imageUrls,
-    EventStatus? eventStatus,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -139,10 +126,8 @@ class Event {
       eventDescription: eventDescription ?? this.eventDescription,
       location: location ?? this.location,
       eventDate: eventDate ?? this.eventDate,
-      startTime: startTime ?? this.startTime,
-      endTime: endTime ?? this.endTime,
+      eventTime: eventTime ?? this.eventTime,
       imageUrls: imageUrls ?? this.imageUrls,
-      eventStatus: eventStatus ?? this.eventStatus,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

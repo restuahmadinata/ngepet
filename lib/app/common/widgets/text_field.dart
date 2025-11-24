@@ -13,6 +13,8 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool readOnly;
   final VoidCallback? onTap;
+  final int? maxLines;
+  final int? minLines;
 
   const CustomTextField({
     super.key,
@@ -26,6 +28,8 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.readOnly = false,
     this.onTap,
+    this.maxLines,
+    this.minLines,
   });
 
   // Metode untuk mendapatkan OutlineInputBorder berdasarkan styling Figma
@@ -60,6 +64,8 @@ class CustomTextField extends StatelessWidget {
       validator: validator,
       readOnly: readOnly,
       onTap: onTap,
+      maxLines: obscureText ? 1 : maxLines,
+      minLines: obscureText ? 1 : minLines,
 
       // 1. Teks yang Diketik (TextFormField Style)
       style: poppinsBodyLarge.copyWith(color: colorScheme.onSurface),

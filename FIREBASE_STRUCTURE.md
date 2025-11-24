@@ -293,14 +293,10 @@ events/{event_id}
   "eventDescription": string,    // Event description
   "location": string,            // Event location
   "eventDate": Timestamp,        // Event date
-  "startTime": string,           // Start time (HH:mm)
-  "endTime": string,             // End time (HH:mm)
+  "eventTime": string,           // Event time (HH:mm)
   
   // Media
   "imageUrls": string,           // Event banner URL
-  
-  // Status
-  "eventStatus": string,         // ENUM: "upcoming", "ongoing", "completed", "cancelled" (see EventStatus enum)
   
   // Timestamps
   "createdAt": Timestamp,        // Creation time
@@ -310,7 +306,6 @@ events/{event_id}
 
 **Indexes:**
 - `shelterId`
-- `eventStatus`
 - `eventDate`
 
 ---
@@ -503,14 +498,6 @@ All enum fields in the database are strictly type-checked in the Dart applicatio
 - `not_started` - Handover not yet begun
 - `pending` - Handover scheduled
 - `completed` - Pet successfully handed over
-
-### Event Enums
-
-**EventStatus**
-- `upcoming` - Event scheduled for future
-- `ongoing` - Event currently happening
-- `completed` - Event finished
-- `cancelled` - Event cancelled
 
 ### Report & Moderation Enums
 

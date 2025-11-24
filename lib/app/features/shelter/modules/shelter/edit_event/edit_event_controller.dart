@@ -27,9 +27,11 @@ class EditEventController extends GetxController {
   // Observable variables
   final selectedDate = Rxn<DateTime>();
   final selectedTime = Rxn<TimeOfDay>();
-  final selectedStatus = 'upcoming'.obs;
   final isLoading = false.obs;
   final isSaving = false.obs;
+  final latitude = 0.0.obs;
+  final longitude = 0.0.obs;
+  final address = ''.obs;
   
   // Image management
   final existingImageUrls = <String>[].obs;
@@ -38,9 +40,6 @@ class EditEventController extends GetxController {
 
   // Event ID
   String? eventId;
-
-  // Options
-  final statusOptions = ['upcoming', 'ongoing', 'completed', 'cancelled'];
 
   @override
   void onInit() {
@@ -90,7 +89,10 @@ class EditEventController extends GetxController {
       dateController.text = data['eventDate']?.toString() ?? '';
       timeController.text = data['eventTime']?.toString() ?? '';
       
-      selectedStatus.value = data['eventStatus']?.toString() ?? 'upcoming';
+      // Load location data
+      latitude.value = (data['latitude'] as num?)?.toDouble() ?? 0.0;
+      longitude.value = (data['longitude'] as num?)?.toDouble() ?? 0.0;
+      address.value = data['location']?.toString() ?? '';
       
       // Parse date if available
       if (data['eventDate'] != null) {
@@ -149,9 +151,26 @@ class EditEventController extends GetxController {
   Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate.value ?? DateTime.now().add(const Duration(days: 1)),
+      initialDate:
+          selectedDate.value ?? DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (BuildContext context, Widget? child) {
+        return SafeArea(
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              datePickerTheme: const DatePickerThemeData(
+                headerHeadlineStyle: TextStyle(fontSize: 20),
+                headerHelpStyle: TextStyle(fontSize: 12),
+                dayStyle: TextStyle(fontSize: 14),
+                weekdayStyle: TextStyle(fontSize: 12),
+                yearStyle: TextStyle(fontSize: 14),
+              ),
+            ),
+            child: child!,
+          ),
+        );
+      },
     );
 
     if (picked != null) {
@@ -165,11 +184,94 @@ class EditEventController extends GetxController {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: selectedTime.value ?? const TimeOfDay(hour: 9, minute: 0),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: const TimePickerThemeData(
+              hourMinuteTextStyle: TextStyle(fontSize: 32),
+              dayPeriodTextStyle: TextStyle(fontSize: 16),
+              helpTextStyle: TextStyle(fontSize: 14),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
       selectedTime.value = picked;
       timeController.text = picked.format(context);
+    }
+  }
+
+  // Reverse geocoding - Convert coordinates to address using Nominatim (OpenStreetMap)
+  Future<void> reverseGeocode(double lat, double lng) async {
+    try {
+      final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lng&addressdetails=1'
+      );
+
+      final response = await http.get(
+        url,
+        headers: {'User-Agent': 'ngepet-app/1.0'},
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Extract address components
+        final addressData = data['address'] as Map<String, dynamic>?;
+
+        if (addressData != null) {
+          // Build full address
+          List<String> addressParts = [];
+
+          // Road/street
+          if (addressData['road'] != null) {
+            addressParts.add(addressData['road']);
+          }
+
+          // Suburb/neighbourhood
+          if (addressData['suburb'] != null) {
+            addressParts.add(addressData['suburb']);
+          } else if (addressData['neighbourhood'] != null) {
+            addressParts.add(addressData['neighbourhood']);
+          }
+
+          // City/town/village
+          if (addressData['city'] != null) {
+            addressParts.add(addressData['city']);
+          } else if (addressData['town'] != null) {
+            addressParts.add(addressData['town']);
+          } else if (addressData['village'] != null) {
+            addressParts.add(addressData['village']);
+          } else if (addressData['municipality'] != null) {
+            addressParts.add(addressData['municipality']);
+          }
+
+          // State/province
+          if (addressData['state'] != null) {
+            addressParts.add(addressData['state']);
+          }
+
+          // Country
+          if (addressData['country'] != null) {
+            addressParts.add(addressData['country']);
+          }
+
+          address.value = addressParts.join(', ');
+        } else {
+          throw Exception('No address data in response');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error reverse geocoding: $e');
+      // Set fallback values
+      address.value = 'Location selected';
+      // Rethrow to let caller handle the error
+      rethrow;
     }
   }
 
@@ -234,7 +336,24 @@ class EditEventController extends GetxController {
     }
 
     if (selectedDate.value == null) {
-      print('Error: Event date not selected');
+      Get.snackbar(
+        "Error",
+        "Please select event date",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    if (address.value.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please select event location",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
       return;
     }
 
@@ -282,11 +401,12 @@ class EditEventController extends GetxController {
       await _firestore.collection('events').doc(eventId).update({
         'eventTitle': titleController.text.trim(),
         'eventDescription': descriptionController.text.trim(),
-        'location': locationController.text.trim(),
+        'location': address.value,
+        'latitude': latitude.value,
+        'longitude': longitude.value,
         'eventDate': dateController.text,
         'eventTime': timeController.text,
         'dateTime': Timestamp.fromDate(eventDateTime),
-        'eventStatus': selectedStatus.value,
         'imageUrls': allImageUrls,
         'updatedAt': Timestamp.now(),
       });

@@ -31,6 +31,9 @@ class AddEventController extends GetxController {
   final selectedTime = Rxn<TimeOfDay>();
   final isLoading = false.obs;
   final selectedImages = <File>[].obs;
+  final latitude = 0.0.obs;
+  final longitude = 0.0.obs;
+  final address = ''.obs;
 
   @override
   void onClose() {
@@ -148,6 +151,22 @@ class AddEventController extends GetxController {
           selectedDate.value ?? DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (BuildContext context, Widget? child) {
+        return SafeArea(
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              datePickerTheme: const DatePickerThemeData(
+                headerHeadlineStyle: TextStyle(fontSize: 20),
+                headerHelpStyle: TextStyle(fontSize: 12),
+                dayStyle: TextStyle(fontSize: 14),
+                weekdayStyle: TextStyle(fontSize: 12),
+                yearStyle: TextStyle(fontSize: 14),
+              ),
+            ),
+            child: child!,
+          ),
+        );
+      },
     );
 
     if (picked != null) {
@@ -161,11 +180,94 @@ class AddEventController extends GetxController {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: selectedTime.value ?? const TimeOfDay(hour: 9, minute: 0),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            timePickerTheme: const TimePickerThemeData(
+              hourMinuteTextStyle: TextStyle(fontSize: 32),
+              dayPeriodTextStyle: TextStyle(fontSize: 16),
+              helpTextStyle: TextStyle(fontSize: 14),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
       selectedTime.value = picked;
       timeController.text = picked.format(context);
+    }
+  }
+
+  // Reverse geocoding - Convert coordinates to address using Nominatim (OpenStreetMap)
+  Future<void> reverseGeocode(double lat, double lng) async {
+    try {
+      final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$lat&lon=$lng&addressdetails=1'
+      );
+
+      final response = await http.get(
+        url,
+        headers: {'User-Agent': 'ngepet-app/1.0'},
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        // Extract address components
+        final addressData = data['address'] as Map<String, dynamic>?;
+
+        if (addressData != null) {
+          // Build full address
+          List<String> addressParts = [];
+
+          // Road/street
+          if (addressData['road'] != null) {
+            addressParts.add(addressData['road']);
+          }
+
+          // Suburb/neighbourhood
+          if (addressData['suburb'] != null) {
+            addressParts.add(addressData['suburb']);
+          } else if (addressData['neighbourhood'] != null) {
+            addressParts.add(addressData['neighbourhood']);
+          }
+
+          // City/town/village
+          if (addressData['city'] != null) {
+            addressParts.add(addressData['city']);
+          } else if (addressData['town'] != null) {
+            addressParts.add(addressData['town']);
+          } else if (addressData['village'] != null) {
+            addressParts.add(addressData['village']);
+          } else if (addressData['municipality'] != null) {
+            addressParts.add(addressData['municipality']);
+          }
+
+          // State/province
+          if (addressData['state'] != null) {
+            addressParts.add(addressData['state']);
+          }
+
+          // Country
+          if (addressData['country'] != null) {
+            addressParts.add(addressData['country']);
+          }
+
+          address.value = addressParts.join(', ');
+        } else {
+          throw Exception('No address data in response');
+        }
+      } else {
+        throw Exception('HTTP ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error reverse geocoding: $e');
+      // Set fallback values
+      address.value = 'Location selected';
+      // Rethrow to let caller handle the error
+      rethrow;
     }
   }
 
@@ -179,6 +281,17 @@ class AddEventController extends GetxController {
       Get.snackbar(
         "Error",
         "Please select event date",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    if (address.value.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please select event location",
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -249,7 +362,9 @@ class AddEventController extends GetxController {
       final docRef = await _firestore.collection('events').add({
         'eventTitle': titleController.text.trim(),
         'eventDescription': descriptionController.text.trim(),
-        'location': locationController.text.trim(),
+        'location': address.value,
+        'latitude': latitude.value,
+        'longitude': longitude.value,
         'eventDate':
             '${selectedDate.value!.day}/${selectedDate.value!.month}/${selectedDate.value!.year}',
         'eventTime': selectedTime.value != null ? timeController.text : '',
@@ -257,7 +372,6 @@ class AddEventController extends GetxController {
         'shelterName': shelterName,
         'shelterId': user.uid,
         'imageUrls': [], // Will be updated after upload
-        'eventStatus': 'upcoming',
         'createdAt': Timestamp.now(),
         'updatedAt': Timestamp.now(),
       });
@@ -319,6 +433,9 @@ class AddEventController extends GetxController {
     selectedDate.value = null;
     selectedTime.value = null;
     selectedImages.clear();
+    latitude.value = 0.0;
+    longitude.value = 0.0;
+    address.value = '';
   }
 
   // Validation methods

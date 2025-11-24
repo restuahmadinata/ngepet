@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../common/widgets/fullscreen_image_gallery.dart';
+import 'package:ngepet/app/theme/app_colors.dart';
 
 class EventDetailView extends StatefulWidget {
   final Map<String, dynamic> eventData;
@@ -41,12 +42,12 @@ class _EventDetailViewState extends State<EventDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.neutral100,
       body: CustomScrollView(
         slivers: [
           // App Bar with Image Carousel
           SliverAppBar(
-            expandedHeight: 300,
+            expandedHeight: 350,
             pinned: true,
             backgroundColor: Colors.white,
             elevation: 0,
@@ -95,7 +96,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                           placeholder: (context, url) => Container(
                             color: Colors.grey[200],
                             child: const Center(
-                              child: LottieLoading(),
+                              child: LottieLoading(width: 80, height: 80),
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
@@ -162,156 +163,79 @@ class _EventDetailViewState extends State<EventDetailView> {
 
           // Content
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Event Title
-                  Text(
-                    widget.eventData['eventTitle']?.toString() ?? 
-                        widget.eventData['title']?.toString() ?? 
-                        'Event Name',
-                    style: GoogleFonts.poppins(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Date & Time Card
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFFE27B59).withOpacity(0.1),
-                          const Color(0xFFE27B59).withOpacity(0.05),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFFE27B59).withOpacity(0.3),
-                        width: 1,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE27B59),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(
-                            Icons.calendar_today,
-                            color: Colors.white,
-                            size: 24,
-                          ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Event Name & Basic Info
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Event Title
+                      Text(
+                        widget.eventData['eventTitle']?.toString() ?? 
+                            widget.eventData['title']?.toString() ?? 
+                            'Event Name',
+                        style: GoogleFonts.poppins(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
+                      ),
+
+                      // Grid of attribute cards: Date, Time, Status, Type
+                      _buildAttributeGrid(),
+
+                      const SizedBox(height: 16),
+
+                      // Shelter + Location combined card (no shadow, gray border)
+                      _buildShelterLocationCard(context),
+                      const SizedBox(height: 12),
+
+                      // Description
+                      SizedBox(
+                        width: double.infinity,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.grey.shade200),
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.eventData['eventDate']?.toString() ?? 
-                                    widget.eventData['date']?.toString() ?? 'TBA',
+                                'Event Description',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 16,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black87,
                                 ),
                               ),
-                              if ((widget.eventData['startTime']?.toString().isNotEmpty ?? false) ||
-                                  (widget.eventData['time']?.toString().isNotEmpty ?? false))
-                                Text(
-                                  widget.eventData['startTime']?.toString() ?? 
-                                      widget.eventData['time']?.toString() ?? '',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    color: Colors.black54,
-                                  ),
+                              const SizedBox(height: 8),
+                              Text(
+                                widget.eventData['eventDescription']?.toString() ??
+                                    widget.eventData['description']?.toString() ??
+                                    'No description available for this event.',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  color: Colors.black54,
+                                  height: 1.6,
                                 ),
+                              ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+
+                      const SizedBox(height: 32),
+
+                    ],
                   ),
-
-                  const SizedBox(height: 20),
-
-                  // Location
-                  _buildDetailRow(
-                    icon: Icons.location_on,
-                    label: 'Location',
-                    value: widget.eventData['location']?.toString() ?? '-',
-                    iconColor: Colors.red,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Organizer
-                  GestureDetector(
-                    onTap: () {
-                      // Navigate to shelter profile
-                      print('🔍 Event data keys: ${widget.eventData.keys}');
-                      print('🔍 ShelterId: ${widget.eventData['shelterId']}');
-                      
-                      if (widget.eventData['shelterId'] != null && 
-                          widget.eventData['shelterId'].toString().isNotEmpty) {
-                        print('✅ Navigating to shelter profile');
-                        Get.toNamed(
-                          AppRoutes.shelterProfile,
-                          arguments: widget.eventData['shelterId'],
-                        );
-                      } else {
-                        print('❌ No shelterId found');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Shelter data not available'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                      }
-                    },
-                        child: _buildDetailRow(
-                      icon: Icons.business,
-                      label: 'Organizer',
-                      value: widget.eventData['shelterName']?.toString() ?? 
-                             widget.eventData['shelter']?.toString() ?? '-',
-                      iconColor: Colors.blue,
-                      // Keep tap handler but remove link styling and arrow icon
-                      isClickable: false,
-                    ),
-                  ),                  const SizedBox(height: 24),
-
-                  // Description
-                  Text(
-                    'Event Description',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    widget.eventData['eventDescription']?.toString() ??
-                        widget.eventData['description']?.toString() ??
-                        'No description available for this event.',
-                    style: GoogleFonts.poppins(
-                      fontSize: 14,
-                      color: Colors.black54,
-                      height: 1.6,
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -319,59 +243,196 @@ class _EventDetailViewState extends State<EventDetailView> {
     );
   }
 
-  Widget _buildDetailRow({
+  Widget _buildAttributeGrid() {
+    final date = widget.eventData['eventDate']?.toString() ?? widget.eventData['date']?.toString() ?? 'TBA';
+    final time = widget.eventData['eventTime']?.toString().isNotEmpty == true
+        ? widget.eventData['eventTime']?.toString() ?? ''
+        : 'TBA';
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = 2;
+        final targetCardHeight = 75.0;
+        final totalSpacing = 8.0 * (crossAxisCount - 1);
+        final columnWidth = (constraints.maxWidth - totalSpacing) / crossAxisCount;
+        final childAspectRatio = columnWidth / targetCardHeight;
+
+        return GridView.count(
+          crossAxisCount: crossAxisCount,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: childAspectRatio,
+          children: [
+            _buildAttributeCard(
+              icon: Icons.calendar_today,
+              label: 'Date',
+              value: date,
+              color: Colors.blue,
+            ),
+            _buildAttributeCard(
+              icon: Icons.access_time,
+              label: 'Time',
+              value: time,
+              color: Colors.green,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildAttributeCard({
     required IconData icon,
     required String label,
     required String value,
-    required Color iconColor,
-    bool isClickable = false,
+    required Color color,
   }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: color, size: 20),
           ),
-          child: Icon(icon, color: iconColor, size: 22),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
-              ),
-              const SizedBox(height: 2),
-              Row(
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Flexible(
+                  child: Text(
+                    label,
+                    style: GoogleFonts.poppins(fontSize: 13, color: Colors.black54),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Flexible(
+                  child: Text(
+                    value,
+                    style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShelterLocationCard(BuildContext context) {
+    final shelterName = widget.eventData['shelterName']?.toString() ?? widget.eventData['shelter']?.toString() ?? '-';
+    final shelterId = widget.eventData['shelterId']?.toString() ?? '';
+    final location = widget.eventData['location']?.toString() ?? '-';
+
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+            onTap: () {
+              if (shelterId.isNotEmpty) {
+                Get.toNamed(AppRoutes.shelterProfile, arguments: shelterId);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Shelter data not available')),
+                );
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
                 children: [
+                  const CircleAvatar(
+                    backgroundColor: Color(0xFFEEEFF3),
+                    child: Icon(Icons.apartment, color: Color(0xFF444654)),
+                  ),
+                  const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
-                      value,
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: isClickable ? Colors.blue[700] : Colors.black87,
-                        decoration: isClickable ? TextDecoration.underline : null,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          shelterName,
+                          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'View shelter profile',
+                          style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
+                        ),
+                      ],
                     ),
                   ),
-                  if (isClickable)
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 14,
-                      color: Colors.blue[700],
-                    ),
+                  const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black45),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ],
+
+          // Divider between shelter and location
+          Container(color: Colors.grey.shade50, height: 1),
+
+          // Location area
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Icon(Icons.location_on, color: Colors.red, size: 20),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Location',
+                        style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
+                      ),
+                      Text(
+                        location,
+                        style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

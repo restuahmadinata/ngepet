@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../common/widgets/text_field.dart';
 import '../../../../../common/widgets/button1.dart';
 import '../../../../../common/widgets/button2.dart';
+import '../../../../../common/widgets/location_picker.dart';
 import '../../../../../theme/app_colors.dart';
 import 'add_event_controller.dart';
 
@@ -250,17 +252,111 @@ class AddEventView extends GetView<AddEventController> {
                     prefixIcon: const Icon(Icons.description),
                     validator: controller.validateDescription,
                     keyboardType: TextInputType.multiline,
+                    maxLines: 4,
                   ),
                   const SizedBox(height: 16),
 
                   // Event location
-                  CustomTextField(
-                    controller: controller.locationController,
-                    labelText: 'Event Location *',
-                    hintText: 'Complete address of event venue',
-                    prefixIcon: const Icon(Icons.location_on),
-                    validator: controller.validateRequired,
-                  ),
+                  Obx(() => Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.neutral400),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextButton.icon(
+                      onPressed: () async {
+                        GeoPoint? initialLocation;
+                        if (controller.latitude.value != 0.0 && controller.longitude.value != 0.0) {
+                          initialLocation = GeoPoint(
+                            controller.latitude.value,
+                            controller.longitude.value,
+                          );
+                        }
+
+                        final result = await Get.to(() => LocationPickerView(
+                          initialLocation: initialLocation,
+                        ));
+
+                        if (result != null && result is GeoPoint) {
+                          controller.latitude.value = result.latitude;
+                          controller.longitude.value = result.longitude;
+
+                          // Show loading indicator while reverse geocoding
+                          Get.dialog(
+                            const Center(
+                              child: Card(
+                                child: Padding(
+                                  padding: EdgeInsets.all(20.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CircularProgressIndicator(),
+                                      SizedBox(height: 16),
+                                      Text('Getting address...'),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            barrierDismissible: false,
+                          );
+
+                          // Reverse geocode to get address
+                          try {
+                            await controller.reverseGeocode(
+                              result.latitude,
+                              result.longitude,
+                            );
+
+                            // Close loading dialog
+                            Get.back();
+
+                            // Show success message
+                            Get.snackbar(
+                              'Success',
+                              'Location selected successfully',
+                              snackPosition: SnackPosition.TOP,
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                              duration: const Duration(seconds: 2),
+                            );
+                          } catch (e) {
+                            // Close loading dialog
+                            Get.back();
+
+                            // Show error but keep the coordinates
+                            Get.snackbar(
+                              'Warning',
+                              'Location saved but address lookup failed. You can try again.',
+                              snackPosition: SnackPosition.TOP,
+                              backgroundColor: Colors.orange,
+                              colorText: Colors.white,
+                              duration: const Duration(seconds: 3),
+                            );
+                          }
+                        }
+                      },
+                      icon: const Icon(Icons.map, color: AppColors.neutral600),
+                      label: Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Text(
+                          controller.address.value.isEmpty
+                              ? 'Select Location on Map *'
+                              : controller.address.value,
+                          style: GoogleFonts.poppins(
+                            color: controller.address.value.isEmpty
+                                ? AppColors.neutral500
+                                : Colors.black,
+                          ),
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                        alignment: Alignment.centerLeft,
+                        minimumSize: const Size(double.infinity, 56),
+                      ),
+                    ),
+                  )),
                   const SizedBox(height: 16),
 
                   // Event date

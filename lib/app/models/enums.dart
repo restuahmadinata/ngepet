@@ -269,34 +269,6 @@ enum HandoverStatus {
   }
 }
 
-// ==================== EVENT ENUMS ====================
-
-/// Event status
-enum EventStatus {
-  upcoming('upcoming'),
-  ongoing('ongoing'),
-  completed('completed'),
-  cancelled('cancelled');
-
-  final String value;
-  const EventStatus(this.value);
-
-  static EventStatus fromString(String? value) {
-    switch (value?.toLowerCase()) {
-      case 'upcoming':
-        return EventStatus.upcoming;
-      case 'ongoing':
-        return EventStatus.ongoing;
-      case 'completed':
-        return EventStatus.completed;
-      case 'cancelled':
-        return EventStatus.cancelled;
-      default:
-        return EventStatus.upcoming;
-    }
-  }
-}
-
 // ==================== REPORT ENUMS ====================
 
 /// Entity type for reports

@@ -107,20 +107,6 @@
       ]
     },
     {
-      "collectionGroup": "events",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "eventStatus",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "eventDate",
-          "order": "ASCENDING"
-        }
-      ]
-    },
-    {
       "collectionGroup": "adoption_applications",
       "queryScope": "COLLECTION",
       "fields": [

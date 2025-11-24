@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../common/widgets/text_field.dart';
 import '../../../../../common/widgets/button1.dart';
 import '../../../../../common/widgets/button2.dart';
+import '../../../../../common/widgets/location_picker.dart';
 import '../../../../../theme/app_colors.dart';
 import '../../../../../common/widgets/lottie_loading.dart';
 import 'edit_event_controller.dart';
@@ -273,40 +275,118 @@ class EditEventView extends GetView<EditEventController> {
                     const SizedBox(height: 16),
 
                     // Event description
-                    Text(
-                      'Event Description *',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
+                    CustomTextField(
                       controller: controller.descriptionController,
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                        hintText: 'Describe your event...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        prefixIcon: const Padding(
-                          padding: EdgeInsets.only(bottom: 60),
-                          child: Icon(Icons.description),
-                        ),
-                      ),
+                      labelText: 'Event Description *',
+                      hintText:
+                          'Explain event details, purpose, and other important information',
+                      prefixIcon: const Icon(Icons.description),
                       validator: controller.validateDescription,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 4,
                     ),
                     const SizedBox(height: 16),
 
-                    // Location
-                    CustomTextField(
-                      controller: controller.locationController,
-                      labelText: 'Event Location *',
-                      hintText: 'Example: Central Park, Jakarta',
-                      prefixIcon: const Icon(Icons.location_on),
-                      validator: controller.validateRequired,
-                    ),
+                    // Event location
+                    Obx(() => Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.neutral400),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: TextButton.icon(
+                        onPressed: () async {
+                          GeoPoint? initialLocation;
+                          if (controller.latitude.value != 0.0 && controller.longitude.value != 0.0) {
+                            initialLocation = GeoPoint(
+                              controller.latitude.value,
+                              controller.longitude.value,
+                            );
+                          }
+
+                          final result = await Get.to(() => LocationPickerView(
+                            initialLocation: initialLocation,
+                          ));
+
+                          if (result != null && result is GeoPoint) {
+                            controller.latitude.value = result.latitude;
+                            controller.longitude.value = result.longitude;
+
+                            // Show loading indicator while reverse geocoding
+                            Get.dialog(
+                              const Center(
+                                child: Card(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(20.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CircularProgressIndicator(),
+                                        SizedBox(height: 16),
+                                        Text('Getting address...'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              barrierDismissible: false,
+                            );
+
+                            // Reverse geocode to get address
+                            try {
+                              await controller.reverseGeocode(
+                                result.latitude,
+                                result.longitude,
+                              );
+
+                              // Close loading dialog
+                              Get.back();
+
+                              // Show success message
+                              Get.snackbar(
+                                'Success',
+                                'Location updated successfully',
+                                snackPosition: SnackPosition.TOP,
+                                backgroundColor: Colors.green,
+                                colorText: Colors.white,
+                                duration: const Duration(seconds: 2),
+                              );
+                            } catch (e) {
+                              // Close loading dialog
+                              Get.back();
+
+                              // Show error but keep the coordinates
+                              Get.snackbar(
+                                'Warning',
+                                'Location saved but address lookup failed. You can try again.',
+                                snackPosition: SnackPosition.TOP,
+                                backgroundColor: Colors.orange,
+                                colorText: Colors.white,
+                                duration: const Duration(seconds: 3),
+                              );
+                            }
+                          }
+                        },
+                        icon: const Icon(Icons.map, color: AppColors.neutral600),
+                        label: Text(
+                          controller.address.value.isEmpty
+                              ? 'Select Location on Map *'
+                              : controller.address.value,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: controller.address.value.isEmpty
+                                ? AppColors.neutral500
+                                : Colors.black,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                          alignment: Alignment.centerLeft,
+                        ),
+                      ),
+                    )),
                     const SizedBox(height: 16),
 
                     // Event date
@@ -323,47 +403,11 @@ class EditEventView extends GetView<EditEventController> {
                     // Event time
                     CustomTextField(
                       controller: controller.timeController,
-                      labelText: 'Event Time (optional)',
+                      labelText: 'Event Time (Optional)',
                       hintText: 'Select event time',
                       prefixIcon: const Icon(Icons.access_time),
                       readOnly: true,
                       onTap: () => controller.selectTime(context),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Event Status
-                    Text(
-                      'Event Status *',
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Obx(
-                      () => DropdownButtonFormField<String>(
-                        initialValue: controller.selectedStatus.value,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          prefixIcon: const Icon(Icons.event_available),
-                        ),
-                        items: controller.statusOptions
-                            .map((status) => DropdownMenuItem(
-                                  value: status,
-                                  child: Text(
-                                    status[0].toUpperCase() + status.substring(1),
-                                  ),
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.selectedStatus.value = value;
-                          }
-                        },
-                      ),
                     ),
                     const SizedBox(height: 32),
 

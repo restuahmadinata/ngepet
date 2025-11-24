@@ -27,9 +27,6 @@ Created comprehensive enum definitions for all constrained string fields:
 - `SurveyStatus`: not_started, pending, approved, rejected
 - `HandoverStatus`: not_started, pending, completed
 
-#### Event
-- `EventStatus`: upcoming, ongoing, completed, cancelled
-
 #### Report & Moderation
 - `EntityType`: user, shelter, pet
 - `ViolationCategory`: fraud, animal_abuse, spam, inappropriate_content
@@ -44,7 +41,6 @@ All models now use enum types instead of strings:
 - `user.dart` - Gender and AccountStatus
 - `shelter.dart` - VerificationStatus
 - `pet.dart` - PetCategory, Gender, AdoptionStatus
-- `event.dart` - EventStatus
 - `report.dart` - EntityType, ViolationCategory, ReportStatus
 - `adoption_request.dart` - ResidenceStatus, ApplicationStatus, RequestStatus, SurveyStatus, HandoverStatus
 
