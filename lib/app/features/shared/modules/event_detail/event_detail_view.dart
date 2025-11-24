@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../common/widgets/fullscreen_image_gallery.dart';
 import 'package:ngepet/app/theme/app_colors.dart';
+import '../../../../common/controllers/auth_controller.dart';
 
 class EventDetailView extends StatefulWidget {
   final Map<String, dynamic> eventData;
@@ -355,6 +356,14 @@ class _EventDetailViewState extends State<EventDetailView> {
           InkWell(
             borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
             onTap: () {
+              final currentUserId = Get.find<AuthController>().user?.uid;
+              if (shelterId == currentUserId) {
+                // Already viewing own shelter, show message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('This is your shelter')),
+                );
+                return;
+              }
               if (shelterId.isNotEmpty) {
                 Get.toNamed(AppRoutes.shelterProfile, arguments: shelterId);
               } else {

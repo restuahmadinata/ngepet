@@ -7,6 +7,7 @@ import '../../../../routes/app_routes.dart';
 import '../../../../common/widgets/fullscreen_image_gallery.dart';
 import 'pet_detail_controller.dart';
 import '../../../../common/widgets/lottie_loading.dart';
+import '../../../../common/controllers/auth_controller.dart';
 
 class PetDetailView extends StatefulWidget {
   final Map<String, dynamic> petData;
@@ -524,6 +525,14 @@ class _PetDetailViewState extends State<PetDetailView> {
           InkWell(
             borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
             onTap: () {
+              final currentUserId = Get.find<AuthController>().user?.uid;
+              if (shelterId == currentUserId) {
+                // Already viewing own shelter, show message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('This is your shelter')),
+                );
+                return;
+              }
               if (shelterId.isNotEmpty) {
                 Get.toNamed(AppRoutes.shelterProfile, arguments: shelterId);
               } else {
