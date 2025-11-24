@@ -357,13 +357,29 @@ class AddPetView extends GetView<AddPetController> {
                   const SizedBox(height: 16),
 
                   // Description
-                  CustomTextField(
+                  Text(
+                    'Description (Optional)',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
                     controller: controller.descriptionController,
-                    labelText: 'Description (Optional)',
-                    hintText:
-                        'Tell about the pet\'s character, habits, or special conditions',
-                    prefixIcon: const Icon(Icons.description),
-                    keyboardType: TextInputType.multiline,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      hintText: 'Tell about the pet\'s character, habits, or special conditions',
+                      hintStyle: GoogleFonts.poppins(color: AppColors.neutral500),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      prefixIcon: const Padding(
+                        padding: EdgeInsets.only(bottom: 60),
+                        child: Icon(Icons.description),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 32),
 
