@@ -52,8 +52,8 @@ class _EventCarouselState extends State<EventCarousel> with AutomaticKeepAliveCl
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('events')
-          .orderBy('dateTime', descending: false)
-          .limit(5)
+          .orderBy('createdAt', descending: true)
+          .limit(3)
           .snapshots(),
       builder: (context, snapshot) {
         print('📊 DEBUG: Event stream state: ${snapshot.connectionState}');
@@ -187,29 +187,37 @@ class _EventCarouselState extends State<EventCarousel> with AutomaticKeepAliveCl
                         ),
                       ),
                       Positioned(
-                        left: 16,
-                        right: 16,
-                        bottom: 24,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              event['title']!,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.7),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  event['title']!,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${event['date']} | ${event['shelter']}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              '${event['date']} | ${event['shelter']}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ],

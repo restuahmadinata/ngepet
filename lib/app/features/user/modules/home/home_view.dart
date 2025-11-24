@@ -265,7 +265,8 @@ class HomePage extends StatelessWidget {
       stream: FirebaseFirestore.instance
           .collection('pets')
           .where('adoptionStatus', isEqualTo: 'available')
-          .limit(5)
+          .orderBy('createdAt', descending: true)
+          .limit(3)
           .snapshots(),
       builder: (context, snapshot) {
         print('📊 DEBUG: Stream state: ${snapshot.connectionState}');
