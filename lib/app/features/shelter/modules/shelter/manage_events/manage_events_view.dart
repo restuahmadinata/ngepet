@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../../features/shared/modules/event_detail/event_detail_view.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 import 'manage_events_controller.dart';
 
 class ManageEventsView extends GetView<ManageEventsController> {
@@ -59,9 +60,7 @@ class ManageEventsView extends GetView<ManageEventsController> {
             child: Obx(() {
               if (controller.isLoading.value) {
                 return const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.purple,
-                  ),
+                  child: LottieLoading(),
                 );
               }
 
@@ -191,10 +190,7 @@ class ManageEventsView extends GetView<ManageEventsController> {
                       height: 80,
                       color: Colors.grey[200],
                       child: const Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.purple,
-                          strokeWidth: 2,
-                        ),
+                        child: LottieLoading(width: 40, height: 40),
                       ),
                     ),
                     errorWidget: (context, url, error) => Container(

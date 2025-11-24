@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../theme/app_colors.dart';
 import '../../../../../models/enums.dart';
 import 'report_form_controller.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 
 class ReportFormView extends GetView<ReportFormController> {
   const ReportFormView({super.key});
@@ -310,10 +311,7 @@ class ReportFormView extends GetView<ReportFormController> {
                         ? const SizedBox(
                             height: 20,
                             width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
+                            child: LottieLoading(width: 20, height: 20),
                           )
                         : Text(
                             'Submit Report',

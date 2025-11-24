@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../models/user.dart' as app_user;
 import '../../../../routes/app_routes.dart';
 import '../../../../services/follower_service.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 
 class ProfileController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -79,7 +80,7 @@ class ProfileView extends StatelessWidget {
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: LottieLoading());
           }
 
           final user = controller.userData.value;

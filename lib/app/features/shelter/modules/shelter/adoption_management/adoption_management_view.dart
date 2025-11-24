@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../theme/app_colors.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 import 'adoption_management_controller.dart';
 
 class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementController> {
@@ -29,7 +30,7 @@ class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementCon
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+            child: LottieLoading(),
           );
         }
 
@@ -121,7 +122,7 @@ class ShelterAdoptionManagementView extends GetView<ShelterAdoptionManagementCon
                           width: 80,
                           height: 80,
                           color: Colors.grey[200],
-                          child: const Center(child: CircularProgressIndicator()),
+                          child: Center(child: LottieLoading(width: 40, height: 40)),
                         ),
                         errorWidget: (context, url, error) => Container(
                           width: 80,

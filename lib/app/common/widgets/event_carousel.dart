@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
+import 'lottie_loading.dart';
 import '../../features/shared/modules/event_detail/event_detail_view.dart';
 
 class EventCarousel extends StatefulWidget {
@@ -67,7 +68,7 @@ class _EventCarouselState extends State<EventCarousel> with AutomaticKeepAliveCl
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Center(child: CircularProgressIndicator()),
+            child: const Center(child: LottieLoading(width: 80, height: 80)),
           );
         }
 

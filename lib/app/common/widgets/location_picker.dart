@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'lottie_loading.dart';
 
 class LocationPickerView extends StatefulWidget {
   final GeoPoint? initialLocation;
@@ -165,10 +166,7 @@ class _LocationPickerViewState extends State<LocationPickerView> {
               child: SizedBox(
                 width: 24,
                 height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
+                child: LottieLoading(width: 24, height: 24),
               ),
             )
           else
@@ -216,7 +214,7 @@ class _LocationPickerViewState extends State<LocationPickerView> {
             Container(
               color: Colors.black26,
               child: const Center(
-                child: CircularProgressIndicator(),
+                child: LottieLoading(),
               ),
             ),
           
@@ -271,10 +269,7 @@ class _LocationPickerViewState extends State<LocationPickerView> {
                                 ? const SizedBox(
                                     width: 18,
                                     height: 18,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                    ),
+                                    child: LottieLoading(width: 18, height: 18),
                                   )
                                 : const Icon(Icons.check, size: 18),
                             label: Text(_isConfirming ? 'Confirming...' : 'Confirm'),

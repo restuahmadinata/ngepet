@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../../theme/app_colors.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 import '../../../../../common/widgets/text_field.dart';
 import '../../../../../common/widgets/button1.dart';
 import '../../../../../common/widgets/location_picker.dart';
@@ -31,7 +32,7 @@ class EditProfileView extends GetView<EditProfileController> {
       body: Obx(() {
         if (controller.isLoading.value && 
             controller.fullNameController.text.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: LottieLoading());
         }
 
         return SafeArea(
@@ -329,7 +330,7 @@ class EditProfileView extends GetView<EditProfileController> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      CircularProgressIndicator(),
+                                      LottieLoading(width: 80, height: 80),
                                       SizedBox(height: 16),
                                       Text('Getting address...'),
                                     ],

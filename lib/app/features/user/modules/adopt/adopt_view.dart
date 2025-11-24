@@ -7,6 +7,7 @@ import '../../../../common/widgets/pet_list.dart';
 import '../../../../utils/pet_photo_helper.dart';
 import '../../../../services/follower_service.dart';
 import '../../../../common/controllers/search_controller.dart' as search;
+import '../../../../common/widgets/lottie_loading.dart';
 
 class AdoptController extends GetxController {
   var selectedTab = 0.obs; // 0 for Exploring, 1 for Following
@@ -192,7 +193,7 @@ class AdoptView extends StatelessWidget {
           return const Center(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
+              child: LottieLoading(),
             ),
           );
         }
@@ -245,7 +246,7 @@ class AdoptView extends StatelessWidget {
           future: _buildPetsWithPhotos(snapshot.data!.docs),
           builder: (context, petsSnapshot) {
             if (petsSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: LottieLoading());
             }
 
             if (!petsSnapshot.hasData || petsSnapshot.data!.isEmpty) {
@@ -326,7 +327,7 @@ class AdoptView extends StatelessWidget {
         return const Center(
           child: Padding(
             padding: EdgeInsets.all(16.0),
-            child: CircularProgressIndicator(),
+            child: LottieLoading(),
           ),
         );
       }
@@ -369,7 +370,7 @@ class AdoptView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: controller.searchController.isLoadingMore.value
-                  ? const CircularProgressIndicator()
+                  ? const LottieLoading(width: 80, height: 80)
                   : OutlinedButton(
                       onPressed: () => controller.searchController.loadMorePets(),
                       child: Text(
@@ -498,7 +499,7 @@ class _FollowingPetsStreamState extends State<_FollowingPetsStream> {
           return const Center(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
+              child: LottieLoading(),
             ),
           );
         }
@@ -551,7 +552,7 @@ class _FollowingPetsStreamState extends State<_FollowingPetsStream> {
           future: _buildPetsWithPhotos(snapshot.data!.docs),
           builder: (context, petsSnapshot) {
             if (petsSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: LottieLoading());
             }
 
             if (!petsSnapshot.hasData || petsSnapshot.data!.isEmpty) {

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../common/widgets/text_field.dart';
 import '../../../../common/widgets/button1.dart';
 import '../../../../theme/app_colors.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 import 'adoption_request_controller.dart';
 
 class AdoptionRequestView extends GetView<AdoptionRequestController> {
@@ -288,9 +289,7 @@ class AdoptionRequestView extends GetView<AdoptionRequestController> {
                 // Submit Button
                 Obx(() => controller.isLoading.value
                     ? const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
-                        ),
+                        child: LottieLoading(width: 80, height: 80),
                       )
                     : Button1(
                         text: 'Submit Adoption Request',

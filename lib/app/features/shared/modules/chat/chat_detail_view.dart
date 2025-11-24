@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -114,7 +115,7 @@ class ChatDetailView extends StatelessWidget {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: LottieLoading());
               }
 
               if (controller.messages.isEmpty) {
@@ -222,7 +223,7 @@ class ChatDetailView extends StatelessWidget {
             return const Center(
               child: Padding(
                 padding: EdgeInsets.all(16.0),
-                child: CircularProgressIndicator(),
+                child: LottieLoading(),
               ),
             );
           }
@@ -356,12 +357,7 @@ class ChatDetailView extends StatelessWidget {
                           ? const SizedBox(
                               width: 24,
                               height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
+                              child: LottieLoading(width: 24, height: 24),
                             )
                           : Icon(
                               controller.editingMessage.value != null

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../theme/app_colors.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 import 'suspended_account_controller.dart';
 
 class SuspendedAccountView extends GetView<SuspendedAccountController> {
@@ -14,7 +15,7 @@ class SuspendedAccountView extends GetView<SuspendedAccountController> {
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: LottieLoading());
           }
 
           final suspension = controller.activeSuspension.value;

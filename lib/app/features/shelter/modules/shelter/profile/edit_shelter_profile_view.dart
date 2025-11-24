@@ -6,6 +6,7 @@ import '../../../../../theme/app_colors.dart';
 import '../../../../../common/widgets/text_field.dart';
 import '../../../../../common/widgets/button1.dart';
 import '../../../../../common/widgets/location_picker.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 import 'edit_shelter_profile_controller.dart';
 
 class EditShelterProfileView extends GetView<EditShelterProfileController> {
@@ -31,7 +32,7 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
       body: Obx(() {
         if (controller.isLoading.value && 
             controller.shelterNameController.text.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: LottieLoading());
         }
 
         return SafeArea(
@@ -255,7 +256,7 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      CircularProgressIndicator(),
+                                      LottieLoading(width: 80, height: 80),
                                       SizedBox(height: 16),
                                       Text('Getting address...'),
                                     ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ngepet/app/theme/app_colors.dart';
+import 'lottie_loading.dart';
 import '../../features/shared/modules/event_detail/event_detail_view.dart';
 
 class EventListItem extends StatelessWidget {
@@ -76,7 +77,7 @@ class EventListItem extends StatelessWidget {
                       width: 150,
                       height: 150,
                       color: Colors.grey.shade200,
-                      child: const Center(child: CircularProgressIndicator()),
+                      child: const Center(child: LottieLoading(width: 80, height: 80)),
                     ),
                     errorWidget: (context, url, error) {
                       print('Error loading event image: $url');

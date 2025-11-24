@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../../theme/app_colors.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 import 'shelter_dashboard_controller.dart';
 
 class ShelterDashboardView extends GetView<ShelterDashboardController> {
@@ -180,11 +181,8 @@ class ShelterDashboardView extends GetView<ShelterDashboardController> {
               const SizedBox(height: 12),
               Expanded(
                 child: isLoading
-                    ? Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(color),
-                        ),
+                    ? const Center(
+                        child: LottieLoading(width: 80, height: 80),
                       )
                     : timeSeriesData.isEmpty
                         ? Center(

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../../theme/app_colors.dart';
 import 'admin_dashboard_controller.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 
 class AdminDashboardView extends GetView<AdminDashboardController> {
   const AdminDashboardView({super.key});
@@ -130,12 +131,9 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                 const SizedBox(height: 12),
                 Expanded(
                   child: isLoading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(color),
-                        ),
-                      )
+                      ? const Center(
+                          child: LottieLoading(width: 80, height: 80),
+                        )
                     : timeSeriesData.isEmpty
                         ? Center(
                             child: Text(

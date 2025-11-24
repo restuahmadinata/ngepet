@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
@@ -94,7 +95,7 @@ class _EventDetailViewState extends State<EventDetailView> {
                           placeholder: (context, url) => Container(
                             color: Colors.grey[200],
                             child: const Center(
-                              child: CircularProgressIndicator(),
+                              child: LottieLoading(),
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(

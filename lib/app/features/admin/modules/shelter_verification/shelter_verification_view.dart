@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -77,7 +78,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
         Expanded(
           child: Obx(() {
             if (controller.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: LottieLoading());
             }
 
             if (controller.verificationRequests.isEmpty) {
@@ -160,7 +161,7 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
         Expanded(
           child: Obx(() {
             if (controller.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: LottieLoading());
             }
 
             if (controller.allShelters.isEmpty) {

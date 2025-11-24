@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 import 'following_controller.dart';
 
 class FollowingView extends GetView<FollowingController> {
@@ -25,7 +26,7 @@ class FollowingView extends GetView<FollowingController> {
         onRefresh: controller.refreshFollowing,
         child: Obx(() {
           if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: LottieLoading());
           }
 
           if (controller.followingShelters.isEmpty) {
@@ -93,7 +94,7 @@ class FollowingView extends GetView<FollowingController> {
                     width: 56,
                     height: 56,
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    placeholder: (context, url) => const LottieLoading(width: 30, height: 30),
                     errorWidget: (context, url, error) => const Icon(Icons.home, size: 28),
                   ),
                 )

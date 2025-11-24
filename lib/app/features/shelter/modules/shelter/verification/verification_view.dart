@@ -7,6 +7,7 @@ import '../../../../../common/widgets/button1.dart';
 import '../../../../../common/widgets/button2.dart';
 import '../../../../../common/widgets/location_picker.dart';
 import '../../../../../theme/app_colors.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 import 'verification_controller.dart';
 
 class VerificationView extends GetView<VerificationController> {
@@ -655,7 +656,7 @@ class VerificationView extends GetView<VerificationController> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      CircularProgressIndicator(),
+                                      LottieLoading(width: 80, height: 80),
                                       SizedBox(height: 16),
                                       Text('Getting address...'),
                                     ],

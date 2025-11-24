@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../theme/app_colors.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 import 'adoption_status_controller.dart';
 
 class AdoptionStatusView extends GetView<AdoptionStatusController> {
@@ -27,7 +28,7 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+            child: LottieLoading(),
           );
         }
 
@@ -121,7 +122,7 @@ class AdoptionStatusView extends GetView<AdoptionStatusController> {
                           width: 80,
                           height: 80,
                           color: Colors.grey[200],
-                          child: const Center(child: CircularProgressIndicator()),
+                          child: const Center(child: LottieLoading(width: 40, height: 40)),
                         ),
                         errorWidget: (context, url, error) => Container(
                           width: 80,

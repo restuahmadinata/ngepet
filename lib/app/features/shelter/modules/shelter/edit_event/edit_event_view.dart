@@ -6,6 +6,7 @@ import '../../../../../common/widgets/text_field.dart';
 import '../../../../../common/widgets/button1.dart';
 import '../../../../../common/widgets/button2.dart';
 import '../../../../../theme/app_colors.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 import 'edit_event_controller.dart';
 
 class EditEventView extends GetView<EditEventController> {
@@ -29,9 +30,7 @@ class EditEventView extends GetView<EditEventController> {
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.purple,
-            ),
+            child: LottieLoading(),
           );
         }
 
@@ -151,9 +150,7 @@ class EditEventView extends GetView<EditEventController> {
                                               height: 120,
                                               color: Colors.grey[200],
                                               child: const Center(
-                                                child: CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                ),
+                                                child: LottieLoading(width: 30, height: 30),
                                               ),
                                             ),
                                             errorWidget: (context, url, error) =>

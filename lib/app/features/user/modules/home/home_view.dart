@@ -8,6 +8,7 @@ import '../../../../common/widgets/pet_list.dart';
 import '../../../../common/widgets/event_list.dart';
 import '../../../../utils/pet_photo_helper.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 
 /// AppBar title widget for Home page
 class HomeAppBarTitle extends StatelessWidget {
@@ -155,7 +156,7 @@ class HomePage extends StatelessWidget {
         return const Center(
           child: Padding(
             padding: EdgeInsets.all(16.0),
-            child: CircularProgressIndicator(),
+            child: LottieLoading(),
           ),
         );
       }
@@ -212,7 +213,7 @@ class HomePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Center(
                     child: controller.searchController.isLoadingMore.value
-                        ? const CircularProgressIndicator()
+                        ? const LottieLoading(width: 80, height: 80)
                         : OutlinedButton(
                             onPressed: () => controller.searchController.loadMoreEvents(),
                             child: Text(
@@ -241,7 +242,7 @@ class HomePage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Center(
                     child: controller.searchController.isLoadingMore.value
-                        ? const CircularProgressIndicator()
+                        ? const LottieLoading(width: 80, height: 80)
                         : OutlinedButton(
                             onPressed: () => controller.searchController.loadMorePets(),
                             child: Text(
@@ -278,7 +279,7 @@ class HomePage extends StatelessWidget {
           return const Center(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
+              child: LottieLoading(),
             ),
           );
         }
@@ -312,7 +313,7 @@ class HomePage extends StatelessWidget {
           future: _buildPetsWithPhotos(snapshot.data!.docs),
           builder: (context, petsSnapshot) {
             if (petsSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: LottieLoading());
             }
 
             if (!petsSnapshot.hasData || petsSnapshot.data!.isEmpty) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -24,7 +25,7 @@ class ReportDetailsView extends GetView<ReportDetailsController> {
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.reporterInfo.value == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: LottieLoading());
         }
 
         final report = controller.report.value;
@@ -162,7 +163,7 @@ class ReportDetailsView extends GetView<ReportDetailsController> {
                             placeholder: (context, url) => Container(
                               color: Colors.grey[200],
                               child: const Center(
-                                child: CircularProgressIndicator(),
+                                child: LottieLoading(),
                               ),
                             ),
                             errorWidget: (context, url, error) => Container(
@@ -463,7 +464,7 @@ class ReportDetailsView extends GetView<ReportDetailsController> {
                 child: CachedNetworkImage(
                   imageUrl: imageUrl,
                   fit: BoxFit.contain,
-                  placeholder: (context, url) => const CircularProgressIndicator(),
+                  placeholder: (context, url) => const LottieLoading(),
                   errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.white),
                 ),
               ),

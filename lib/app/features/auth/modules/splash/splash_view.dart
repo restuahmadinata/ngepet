@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../../common/widgets/button1.dart';
 import '../../../../routes/app_routes.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -219,11 +220,7 @@ class _SplashViewState extends State<SplashView> {
                     ),
                     const SizedBox(height: 32),
                     const SizedBox(height: 20),
-                    CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.green[500]!,
-                      ),
-                    ),
+                    const LottieLoading(),
                   ],
                 ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'lottie_loading.dart';
 
 class FullscreenImageGallery extends StatefulWidget {
   final List<String> imageUrls;
@@ -63,16 +64,8 @@ class _FullscreenImageGalleryState extends State<FullscreenImageGallery> {
               );
             },
             itemCount: widget.imageUrls.length,
-            loadingBuilder: (context, event) => Center(
-              child: SizedBox(
-                width: 20.0,
-                height: 20.0,
-                child: CircularProgressIndicator(
-                  value: event == null
-                      ? 0
-                      : event.cumulativeBytesLoaded / (event.expectedTotalBytes ?? 1),
-                ),
-              ),
+            loadingBuilder: (context, event) => const Center(
+              child: LottieLoading(width: 80, height: 80),
             ),
             backgroundDecoration: const BoxDecoration(
               color: Colors.black,

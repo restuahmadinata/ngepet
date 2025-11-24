@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'lottie_loading.dart';
 
 class Button1 extends StatelessWidget {
   final String text;
@@ -58,14 +59,7 @@ class Button1 extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
+                  const LottieLoading(width: 20, height: 20),
                   const SizedBox(width: 12),
                   Text(text),
                 ],

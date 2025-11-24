@@ -6,6 +6,7 @@ import 'package:ngepet/app/theme/app_colors.dart';
 import '../../../../routes/app_routes.dart';
 import '../../../../common/widgets/fullscreen_image_gallery.dart';
 import 'pet_detail_controller.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 
 class PetDetailView extends StatefulWidget {
   final Map<String, dynamic> petData;
@@ -114,7 +115,7 @@ class _PetDetailViewState extends State<PetDetailView> {
                           placeholder: (context, url) => Container(
                             color: Colors.grey[200],
                             child: const Center(
-                              child: CircularProgressIndicator(),
+                              child: LottieLoading(width: 80, height: 80),
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
@@ -277,7 +278,7 @@ class _PetDetailViewState extends State<PetDetailView> {
             ),
             child: const SafeArea(
               child: Center(
-                child: CircularProgressIndicator(),
+                child: LottieLoading(),
               ),
             ),
           );
@@ -301,7 +302,7 @@ class _PetDetailViewState extends State<PetDetailView> {
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: LottieLoading(width: 16, height: 16),
                           )
                         : const Icon(Icons.chat_bubble_outline),
                     label: Text(

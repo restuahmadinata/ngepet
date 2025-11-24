@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../../theme/app_colors.dart';
 import '../../../../../features/shared/modules/pet_detail/pet_detail_view.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 import 'manage_pets_controller.dart';
 
 class ManagePetsView extends GetView<ManagePetsController> {
@@ -60,9 +61,7 @@ class ManagePetsView extends GetView<ManagePetsController> {
             child: Obx(() {
               if (controller.isLoading.value) {
                 return const Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.primary,
-                  ),
+                  child: LottieLoading(),
                 );
               }
 
@@ -234,9 +233,9 @@ class ManagePetsView extends GetView<ManagePetsController> {
                           height: 80,
                           color: Colors.grey[200],
                           child: const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primary,
-                              strokeWidth: 2,
+                            child: LottieLoading(
+                              width: 60,
+                              height: 60,
                             ),
                           ),
                         ),

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -197,7 +198,7 @@ class EventView extends StatelessWidget {
           return const Center(
             child: Padding(
               padding: EdgeInsets.all(32.0),
-              child: CircularProgressIndicator(),
+              child: LottieLoading(),
             ),
           );
         }
@@ -296,7 +297,7 @@ class EventView extends StatelessWidget {
         return const Center(
           child: Padding(
             padding: EdgeInsets.all(32.0),
-            child: CircularProgressIndicator(),
+            child: LottieLoading(),
           ),
         );
       }
@@ -339,7 +340,7 @@ class EventView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: controller.searchController.isLoadingMore.value
-                  ? const CircularProgressIndicator()
+                  ? const LottieLoading()
                   : OutlinedButton(
                       onPressed: () => controller.searchController.loadMoreEvents(),
                       child: Text(
@@ -408,7 +409,7 @@ class _FollowingEventsStream extends StatelessWidget {
           return const Center(
             child: Padding(
               padding: EdgeInsets.all(32.0),
-              child: CircularProgressIndicator(),
+              child: LottieLoading(),
             ),
           );
         }

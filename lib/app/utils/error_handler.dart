@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 /// Global error handler and debugger utility
 /// Provides centralized error logging and user feedback
@@ -166,7 +167,12 @@ class ErrorHandler {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(),
+                Lottie.asset(
+                  'assets/animation/pet-loading.json',
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.contain,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   message,

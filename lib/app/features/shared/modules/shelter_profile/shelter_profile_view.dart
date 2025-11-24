@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'shelter_profile_controller.dart';
 import '../../../../common/widgets/pet_list.dart';
 import '../../../../common/widgets/event_list.dart';
+import '../../../../common/widgets/lottie_loading.dart';
 
 class ShelterProfileView extends GetView<ShelterProfileController> {
   const ShelterProfileView({super.key});
@@ -16,9 +17,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFFE27B59),
-            ),
+            child: LottieLoading(),
           );
         }
 
@@ -85,7 +84,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                             placeholder: (context, url) => Container(
                               color: Colors.grey[200],
                               child: const Center(
-                                child: CircularProgressIndicator(),
+                                child: LottieLoading(width: 80, height: 80),
                               ),
                             ),
                             errorWidget: (context, url, error) => Container(
@@ -189,10 +188,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                                 ? const SizedBox(
                                     width: 16,
                                     height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                    ),
+                                    child: LottieLoading(width: 16, height: 16),
                                   )
                                 : Icon(
                                     controller.isFollowing.value
@@ -393,9 +389,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
         return const Padding(
           padding: EdgeInsets.all(40),
           child: Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFFE27B59),
-            ),
+            child: LottieLoading(),
           ),
         );
       }
@@ -464,9 +458,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
         return const Padding(
           padding: EdgeInsets.all(40),
           child: Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFFE27B59),
-            ),
+            child: LottieLoading(),
           ),
         );
       }

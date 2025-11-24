@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -38,7 +39,7 @@ class SelectEntityView extends GetView<SelectEntityController> {
                 child: Obx(() {
                   if (controller.isLoading.value) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: LottieLoading(),
                     );
                   }
 

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../../theme/app_colors.dart';
+import '../../../../../common/widgets/lottie_loading.dart';
 import 'shelter_profile_controller.dart';
 
 class ShelterProfileView extends GetView<ShelterProfileController> {
@@ -21,7 +22,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
         padding: const EdgeInsets.all(16),
         child: Obx(() {
           if (controller.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: LottieLoading());
           }
 
           return Column(
@@ -41,7 +42,7 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                             width: 120,
                             height: 120,
                             fit: BoxFit.cover,
-                            placeholder: (context, url) => const CircularProgressIndicator(),
+                            placeholder: (context, url) => const LottieLoading(width: 40, height: 40),
                             errorWidget: (context, url, error) => const Icon(Icons.home_work, size: 60),
                           ),
                         );

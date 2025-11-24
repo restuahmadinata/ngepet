@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'lottie_loading.dart';
 
 /// Widget untuk menampilkan gambar dari network dengan caching
 /// Memiliki error handling dan retry mechanism yang baik
@@ -58,10 +59,7 @@ class CachedImageWidget extends StatelessWidget {
             height: height,
             color: Colors.grey.shade200,
             child: const Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-              ),
+              child: LottieLoading(width: 80, height: 80),
             ),
           ),
       // Error widget
