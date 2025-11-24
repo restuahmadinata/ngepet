@@ -256,12 +256,24 @@ class AddPetController extends GetxController {
 
       final shelterName = shelterData?['shelterName'] ?? 'Shelter';
 
+      final age = int.tryParse(ageController.text.trim());
+      if (age == null || age <= 0) {
+        Get.snackbar(
+          "Error",
+          "Invalid age value",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
       // Add pet to Firestore (with imageUrls array - will be updated after upload)
       print('Debug - Adding pet to Firestore...');
       final docRef = await _firestore.collection('pets').add({
         'petName': nameController.text.trim(),
         'breed': breedController.text.trim(),
-        'ageMonths': ageController.text.trim(),
+        'ageMonths': age,
         'location': locationController.text.trim(),
         'description': descriptionController.text.trim(),
         'gender': selectedGender.value,
@@ -371,12 +383,9 @@ class AddPetController extends GetxController {
     if (value == null || value.trim().isEmpty) {
       return 'Age is required';
     }
-    // Allow formats like "2 years", "6 months", etc.
-    if (!RegExp(
-      r'^.+(year|month|week)s?.*$',
-      caseSensitive: false,
-    ).hasMatch(value)) {
-      return 'Invalid age format (example: 2 years, 6 months)';
+    final num? age = num.tryParse(value.trim());
+    if (age == null || age <= 0) {
+      return 'Please enter a valid age in months (numbers only)';
     }
     return null;
   }

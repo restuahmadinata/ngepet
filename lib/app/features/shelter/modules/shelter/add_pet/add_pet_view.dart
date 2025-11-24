@@ -297,8 +297,9 @@ class AddPetView extends GetView<AddPetController> {
                   CustomTextField(
                     controller: controller.ageController,
                     labelText: 'Age (months) *',
-                    hintText: 'Example: 2 years, 6 months',
+                    hintText: 'Example: 24 months',
                     prefixIcon: const Icon(Icons.cake),
+                    keyboardType: TextInputType.number,
                     validator: controller.validateAge,
                   ),
                   const SizedBox(height: 16),

@@ -201,6 +201,18 @@ class EditPetController extends GetxController {
     try {
       isSaving.value = true;
 
+      final age = int.tryParse(ageController.text.trim());
+      if (age == null || age <= 0) {
+        Get.snackbar(
+          "Error",
+          "Invalid age value",
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
       // Upload new images
       List<String> newUploadedUrls = [];
       if (newImages.isNotEmpty) {
@@ -222,7 +234,7 @@ class EditPetController extends GetxController {
       await _firestore.collection('pets').doc(petId).update({
         'petName': nameController.text.trim(),
         'breed': breedController.text.trim(),
-        'ageMonths': ageController.text.trim(),
+        'ageMonths': age,
         'description': descriptionController.text.trim(),
         'gender': selectedGender.value,
         'category': selectedType.value,
