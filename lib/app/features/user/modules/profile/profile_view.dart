@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:ngepet/app/common/controllers/auth_controller.dart';
-import 'package:ngepet/app/theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -145,12 +144,11 @@ class ProfileView extends StatelessWidget {
                   const SizedBox(height: 40),
 
                   // Section 2: Option Menu (including Following count)
-                  Card(
-                    color: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: AppColors.neutral400, width: 1),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300, width: 1),
                     ),
                     child: Column(
                       children: [
@@ -160,42 +158,45 @@ class ProfileView extends StatelessWidget {
                           title: 'My Adoption Requests',
                           onTap: controller.goToAdoptionStatus,
                         ),
+                        Divider(height: 1, color: Colors.grey.shade300),
                         Material(
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: controller.goToFollowing,
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
                               child: Row(
                                 children: [
-                                  Icon(Icons.favorite, color: AppColors.neutral400, size: 24),
+                                  Icon(Icons.favorite, color: Colors.grey[700], size: 24),
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: Obx(() => Text(
                                       '${controller.followingCount.value} Following',
                                       style: GoogleFonts.poppins(
-                                        fontSize: 15,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.black,
+                                        color: Colors.black87,
                                       ),
                                     )),
                                   ),
                                   Icon(
                                     Icons.arrow_forward_ios,
-                                    size: 18,
-                                    color: AppColors.neutral400,
+                                    size: 16,
+                                    color: Colors.grey[400],
                                   ),
                                 ],
                               ),
                             ),
                           ),
                         ),
+                        Divider(height: 1, color: Colors.grey.shade300),
                         _buildMenuItem(
                           icon: Icons.edit,
                           title: 'Edit Profile',
                           onTap: controller.goToEditProfile,
                         ),
+                        Divider(height: 1, color: Colors.grey.shade300),
                         _buildMenuItem(
                           icon: Icons.info,
                           title: 'About Us',
@@ -209,12 +210,11 @@ class ProfileView extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   // Section 4: Logout
-                  Card(
-                    color: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: AppColors.neutral400, width: 1),
+                      border: Border.all(color: Colors.grey.shade300, width: 1),
                     ),
                     child: _buildMenuItem(
                       icon: Icons.logout,
@@ -236,42 +236,38 @@ class ProfileView extends StatelessWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-    Color textColor = Colors.black,
+    Color textColor = Colors.black87,
   }) {
-    return Column(
-      children: [
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: Row(
-                children: [
-                  Icon(icon, color: AppColors.neutral400, size: 24),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: textColor,
-                      ),
-                    ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.grey[700], size: 24),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
                   ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 18,
-                    color: AppColors.neutral400,
-                  ),
-                ],
+                ),
               ),
-            ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.grey[400],
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 
