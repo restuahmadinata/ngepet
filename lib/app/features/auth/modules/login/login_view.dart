@@ -71,6 +71,7 @@ class LoginView extends GetView<LoginController> {
 
                 // 2. Email Input - USING CustomTextField
                 CustomTextField(
+                  key: const Key('input_email'),
                   controller: controller.emailController,
                   keyboardType: TextInputType.emailAddress,
                   labelText: 'Email',
@@ -84,6 +85,7 @@ class LoginView extends GetView<LoginController> {
                 // 3. Password Input - USING CustomTextField
                 Obx(
                   () => CustomTextField(
+                    key: const Key('input_password'),
                     controller: controller.passwordController,
                     obscureText: controller.isPasswordHidden.value,
                     labelText: 'Password',
@@ -132,6 +134,7 @@ class LoginView extends GetView<LoginController> {
 
                 // 4. Login Button dengan Loading Indicator
                 Obx(() => Button1(
+                  key: const Key('btn_login'),
                   text: 'LOGIN',
                   onPressed: controller.login,
                   isLoading: controller.isLoading.value,

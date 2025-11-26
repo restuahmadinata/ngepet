@@ -68,3 +68,9 @@ firebase.json
 **/secrets.dart
 **/api_keys.dart
 **/imgbb_config.dart
+
+# Integration Test & Documentation
+integration_test/
+INTEGRATION_TESTING.md
+integration_test/README.md
+SETUP_TEST_ACCOUNT.md
