@@ -177,30 +177,11 @@ class PetListItem extends StatelessWidget {
                             child: Text(
                               location,
                               style: const TextStyle(fontSize: 12),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                              maxLines: 2,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      if (onAdoptPressed != null)
-                        ElevatedButton(
-                          onPressed: onAdoptPressed,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green.withOpacity(0.1),
-                            foregroundColor: Colors.green,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                          child: const Text('Ajukan Adopsi'),
-                        ),
                     ],
                   ),
                 ),
@@ -239,11 +220,6 @@ class PetListWidget extends StatelessWidget {
           location: pet['location']?.toString() ?? '',
           gender: pet['gender']?.toString() ?? '',
           fullData: pet,
-          onAdoptPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Mengajukan adopsi untuk ${pet['name']}')),
-            );
-          },
         );
       },
     );

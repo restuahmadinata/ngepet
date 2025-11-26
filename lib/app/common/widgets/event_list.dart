@@ -176,28 +176,10 @@ class EventListItem extends StatelessWidget {
                                 fontSize: 12,
                                 color: Colors.grey,
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                              maxLines: 2,
                             ),
                           ),
                         ],
-                      ),
-                      const SizedBox(height: 8),
-                      ElevatedButton(
-                        onPressed: onJoinPressed,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.withOpacity(0.1),
-                          foregroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text('Detail Acara'),
                       ),
                     ],
                   ),
@@ -236,11 +218,6 @@ class EventList extends StatelessWidget {
           location: event['location']?.toString() ?? '',
           description: event['description']?.toString() ?? '',
           fullData: event,
-          onJoinPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Melihat detail event ${event['title']}')),
-            );
-          },
         );
       },
     );
