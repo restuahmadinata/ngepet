@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../../../../theme/app_colors.dart';
 import '../../../../models/conversation.dart';
+import '../../../../models/enums.dart';
 import '../../../../common/widgets/rectangle_search_bar.dart';
 import 'chat_list_controller.dart';
 import 'chat_detail_view.dart';
@@ -32,6 +33,18 @@ class ChatListView extends StatelessWidget {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          Obx(() {
+            if (controller.userType.value == UserType.unknown) return SizedBox.shrink();
+            return IconButton(
+              icon: Icon(Icons.report),
+              onPressed: () {
+                final entityType = controller.userType.value == UserType.shelter ? EntityType.user : EntityType.shelter;
+                Get.toNamed('/select-entity-to-report', arguments: {'entityType': entityType});
+              },
+            );
+          }),
+        ],
       ),
       body: SafeArea(
         child: RefreshIndicator(

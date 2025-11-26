@@ -9,7 +9,7 @@ class ReportService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   /// Submit a new report
-  Future<bool> submitReport({
+  Future<String?> submitReport({
     required String reportedId,
     required EntityType entityType,
     required ViolationCategory violationCategory,
@@ -21,7 +21,7 @@ class ReportService {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
         print('Error: User not authenticated');
-        return false;
+        return null;
       }
 
       final reportData = {
@@ -36,12 +36,12 @@ class ReportService {
         'reportDate': FieldValue.serverTimestamp(),
       };
 
-      await _firestore.collection('reports').add(reportData);
+      final docRef = await _firestore.collection('reports').add(reportData);
       print('✅ Report submitted successfully');
-      return true;
+      return docRef.id;
     } catch (e) {
       print('❌ Error submitting report: $e');
-      return false;
+      return null;
     }
   }
 

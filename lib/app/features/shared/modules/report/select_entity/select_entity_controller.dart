@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../../../../models/enums.dart';
+import '../report_timeline/report_timeline_view.dart';
 
 class SelectEntityController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -95,15 +96,37 @@ class SelectEntityController extends GetxController {
     }
   }
 
-  /// Navigate to report form with selected entity
-  void selectEntity(Map<String, dynamic> entity) {
-    Get.toNamed(
-      '/report-form',
-      arguments: {
-        'reportedId': entity['id'],
-        'reportedName': entity['name'],
+  /// Navigate to report form with selected entity or timeline if already reported
+  Future<void> selectEntity(Map<String, dynamic> entity) async {
+    final currentUserId = _auth.currentUser?.uid;
+    if (currentUserId == null) return;
+
+    // Check if already reported
+    final existingReport = await _firestore.collection('reports')
+        .where('reporterId', isEqualTo: currentUserId)
+        .where('reportedId', isEqualTo: entity['id'])
+        .limit(1)
+        .get();
+
+    if (existingReport.docs.isNotEmpty) {
+      final reportData = existingReport.docs.first.data();
+      // Show timeline
+      Get.to(() => ReportTimelineView(), arguments: {
+        'reportId': existingReport.docs.first.id,
         'entityType': entityType.value,
-      },
-    );
+        'reportedId': reportData['reportedId'],
+        'reportedName': entity['name'], // Assuming entity name is passed
+      });
+    } else {
+      // Go to report form
+      Get.toNamed(
+        '/report-form',
+        arguments: {
+          'reportedId': entity['id'],
+          'reportedName': entity['name'],
+          'entityType': entityType.value,
+        },
+      );
+    }
   }
 }

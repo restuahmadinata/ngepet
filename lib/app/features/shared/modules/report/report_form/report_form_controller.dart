@@ -8,6 +8,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import '../../../../../models/enums.dart';
 import '../../../../../services/report_service.dart';
 import '../../../../../config/imgbb_config.dart';
+import '../report_timeline/report_timeline_view.dart';
 
 class ReportFormController extends GetxController {
   final ReportService _reportService = ReportService();
@@ -142,7 +143,7 @@ class ReportFormController extends GetxController {
         evidenceUrls = await _uploadEvidenceImages();
       }
 
-      final success = await _reportService.submitReport(
+      final reportId = await _reportService.submitReport(
         reportedId: reportedId.value,
         entityType: entityType.value,
         violationCategory: selectedViolationCategory.value!,
@@ -153,7 +154,7 @@ class ReportFormController extends GetxController {
         evidenceAttachments: evidenceUrls.isNotEmpty ? evidenceUrls : null,
       );
 
-      if (success) {
+      if (reportId != null) {
         Get.dialog(
           AlertDialog(
             title: const Text('Report Submitted'),
@@ -164,8 +165,13 @@ class ReportFormController extends GetxController {
               TextButton(
                 onPressed: () {
                   Get.back(); // Close dialog
-                  Get.back(); // Go back to previous screen
-                  Get.back(); // Go back to select entity screen
+                  // Navigate to timeline with new report
+                  Get.off(() => ReportTimelineView(), arguments: {
+                    'reportId': reportId,
+                    'entityType': entityType.value,
+                    'reportedId': reportedId.value,
+                    'reportedName': reportedName.value,
+                  });
                 },
                 child: const Text('OK'),
               ),
