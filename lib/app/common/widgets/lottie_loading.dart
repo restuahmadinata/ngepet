@@ -18,8 +18,8 @@ class LottieLoading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Lottie.asset(
       'assets/animation/pet-loading.json',
-      width: width ?? 150,
-      height: height ?? 150,
+      width: width ?? 80,
+      height: height ?? 80,
       fit: fit,
     );
   }
