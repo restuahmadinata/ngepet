@@ -21,7 +21,7 @@ class HomeAppBarTitle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Halo, ${_getFirstName()}',
+           _getGreeting(),
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
@@ -51,6 +51,20 @@ class HomeAppBarTitle extends StatelessWidget {
         ? args['name'] as String
         : 'User';
     return name.split(' ').first;
+  }
+
+  String _getGreeting() {
+    final name = _getFirstName();
+    final hour = DateTime.now().hour;
+    String greeting;
+    if (hour >= 5 && hour < 12) {
+      greeting = 'Good morning';
+    } else if (hour >= 12 && hour < 18) {
+      greeting = 'Good afternoon';
+    } else {
+      greeting = 'Good evening';
+    }
+    return '$greeting, $name';
   }
 }
 
