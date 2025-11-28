@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import '../../../../../config/imgbb_config.dart';
+import '../../../../../models/enums.dart';
 
 class EditPetController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -16,7 +17,8 @@ class EditPetController extends GetxController {
 
   // Form controllers
   final nameController = TextEditingController();
-  final breedController = TextEditingController();
+  // Breed selection
+  final selectedBreed = Rxn<dynamic>(); // Will hold DogBreed, CatBreed, RabbitBreed, etc.
   final ageController = TextEditingController();
   final descriptionController = TextEditingController();
 
@@ -26,6 +28,11 @@ class EditPetController extends GetxController {
   // Observable variables
   final selectedGender = 'Male'.obs;
   final selectedType = 'Dog'.obs;
+
+  void onTypeChanged(String newType) {
+    selectedType.value = newType;
+    selectedBreed.value = null;
+  }
   final selectedStatus = 'available'.obs;
   final isLoading = false.obs;
   final isSaving = false.obs;
@@ -40,7 +47,31 @@ class EditPetController extends GetxController {
 
   // Options
   final genderOptions = ['Male', 'Female'];
-  final typeOptions = ['Dog', 'Cat', 'Rabbit', 'Other'];
+  final typeOptions = PetCategory.values.map((e) => e.value).toList();
+
+  // Breed options (dynamic)
+  List<String> get breedOptions {
+    switch (selectedType.value) {
+      case 'Dog':
+        return DogBreed.allValues;
+      case 'Cat':
+        return CatBreed.allValues;
+      case 'Rabbit':
+        return RabbitBreed.allValues;
+      case 'Bird':
+        return BirdBreed.allValues;
+      case 'Hamster':
+        return HamsterBreed.allValues;
+      case 'Guinea Pig':
+        return GuineaPigBreed.allValues;
+      case 'Fish':
+        return FishBreed.allValues;
+      case 'Turtle':
+        return TurtleBreed.allValues;
+      default:
+        return ['Other'];
+    }
+  }
   final statusOptions = ['available', 'pending', 'adopted'];
 
   @override
@@ -60,7 +91,6 @@ class EditPetController extends GetxController {
   @override
   void onClose() {
     nameController.dispose();
-    breedController.dispose();
     ageController.dispose();
     descriptionController.dispose();
     super.onClose();
@@ -85,7 +115,21 @@ class EditPetController extends GetxController {
       
       // Populate form fields
       nameController.text = data['petName']?.toString() ?? '';
-      breedController.text = data['breed']?.toString() ?? '';
+      // Parse breed from string to enum
+      final breedStr = data['breed']?.toString() ?? '';
+      switch (selectedType.value) {
+        case 'Dog':
+          selectedBreed.value = DogBreed.fromString(breedStr);
+          break;
+        case 'Cat':
+          selectedBreed.value = CatBreed.fromString(breedStr);
+          break;
+        case 'Rabbit':
+          selectedBreed.value = RabbitBreed.fromString(breedStr);
+          break;
+        default:
+          selectedBreed.value = null;
+      }
       ageController.text = data['ageMonths']?.toString() ?? '';
       descriptionController.text = data['description']?.toString() ?? '';
       
@@ -233,7 +277,7 @@ class EditPetController extends GetxController {
       // Update pet document
       await _firestore.collection('pets').doc(petId).update({
         'petName': nameController.text.trim(),
-        'breed': breedController.text.trim(),
+        'breed': selectedBreed.value?.value ?? 'Other',
         'ageMonths': age,
         'description': descriptionController.text.trim(),
         'gender': selectedGender.value,
@@ -256,6 +300,13 @@ class EditPetController extends GetxController {
   String? validateRequired(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'This field is required';
+    }
+    return null;
+  }
+
+  String? validateBreed(dynamic value) {
+    if (value == null) {
+      return 'Breed is required';
     }
     return null;
   }

@@ -8,6 +8,7 @@ import '../../../../../common/widgets/button2.dart';
 import '../../../../../theme/app_colors.dart';
 import '../../../../../common/widgets/lottie_loading.dart';
 import 'edit_pet_controller.dart';
+import '../../../../../models/enums.dart';
 
 class EditPetView extends GetView<EditPetController> {
   const EditPetView({super.key});
@@ -306,14 +307,47 @@ class EditPetView extends GetView<EditPetController> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Breed
-                    CustomTextField(
-                      controller: controller.breedController,
-                      labelText: 'Breed *',
-                      hintText: 'Example: Golden Retriever',
-                      prefixIcon: const Icon(Icons.info_outline),
-                      validator: controller.validateRequired,
+                    // Breed (Dropdown based on pet type)
+                    Text(
+                      'Breed *',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
                     ),
+                    const SizedBox(height: 8),
+                    Obx(() => DropdownButtonFormField<String>(
+                          value: controller.selectedBreed.value?.value,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            prefixIcon: const Icon(Icons.info_outline),
+                          ),
+                          items: controller.breedOptions
+                              .map((breed) => DropdownMenuItem<String>(
+                                    value: breed,
+                                    child: Text(breed),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            switch (controller.selectedType.value) {
+                              case 'Dog':
+                                controller.selectedBreed.value = DogBreed.fromString(value);
+                                break;
+                              case 'Cat':
+                                controller.selectedBreed.value = CatBreed.fromString(value);
+                                break;
+                              case 'Rabbit':
+                                controller.selectedBreed.value = RabbitBreed.fromString(value);
+                                break;
+                              default:
+                                controller.selectedBreed.value = null;
+                            }
+                          },
+                          validator: (value) => controller.validateBreed(controller.selectedBreed.value),
+                        )),
                     const SizedBox(height: 16),
 
                     // Gender
@@ -341,11 +375,11 @@ class EditPetView extends GetView<EditPetController> {
                                   child: Text(gender),
                                 ))
                             .toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            controller.selectedGender.value = value;
-                          }
-                        },
+                          onChanged: (value) {
+                            if (value != null) {
+                              controller.onTypeChanged(value);
+                            }
+                          },
                       ),
                     ),
                     const SizedBox(height: 16),

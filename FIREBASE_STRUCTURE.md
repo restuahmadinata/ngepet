@@ -126,7 +126,7 @@ pets/{pet_id}
   "petName": string,             // Pet name
   "gender": string,              // ENUM: "Male", "Female" (see Gender enum)
   "ageMonths": number,           // Age in months (MUST be in months - strictly enforced)
-  "breed": string,               // Pet breed
+  "breed": string,               // ENUM: Breed by pet type (see breed enums: DogBreed, CatBreed, RabbitBreed, etc.)
   "description": string,         // Pet description
   
   // Health & Status
@@ -469,6 +469,12 @@ All enum fields in the database are strictly type-checked in the Dart applicatio
 - `available` - Pet can be adopted
 - `pending` - Adoption application in progress
 - `adopted` - Pet has been adopted
+
+**Breed (by Pet Type)**
+- **DogBreed**: Golden Retriever, Labrador Retriever, German Shepherd, Poodle, Bulldog, Beagle, Shih Tzu, Pomeranian, Siberian Husky, Dachshund, Other
+- **CatBreed**: Persian, Siamese, Maine Coon, Bengal, Sphynx, Ragdoll, British Shorthair, Scottish Fold, Munchkin, Other
+- **RabbitBreed**: Holland Lop, Netherland Dwarf, Rex, Lionhead, Mini Rex, Flemish Giant, Angora, Other
+- *(Add more for Bird, Hamster, etc. as needed)*
 
 ### Adoption Application Enums
 

@@ -66,5 +66,4 @@ abstract class _Paths {
   static const suspendedAccount = '/suspended-account';
   static const selectEntityToReport = '/select-entity-to-report';
   static const reportForm = '/report-form';
-  static const reportTimeline = '/report-timeline';
 }

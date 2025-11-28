@@ -6,6 +6,7 @@ import '../../../../../common/widgets/button1.dart';
 import '../../../../../common/widgets/button2.dart';
 import '../../../../../theme/app_colors.dart';
 import 'add_pet_controller.dart';
+import '../../../../../models/enums.dart';
 
 class AddPetView extends GetView<AddPetController> {
   const AddPetView({super.key});
@@ -274,7 +275,7 @@ class AddPetView extends GetView<AddPetController> {
                           }).toList(),
                           onChanged: (String? newValue) {
                             if (newValue != null) {
-                              controller.selectedType.value = newValue;
+                              controller.onTypeChanged(newValue);
                             }
                           },
                         ),
@@ -283,14 +284,62 @@ class AddPetView extends GetView<AddPetController> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Breed
-                  CustomTextField(
-                    controller: controller.breedController,
-                    labelText: 'Breed *',
-                    hintText: 'Example: Golden Retriever, Persian, etc',
-                    prefixIcon: const Icon(Icons.category),
-                    validator: controller.validateRequired,
+                  // Breed (Dropdown based on pet type)
+                  Text(
+                    'Breed *',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
                   ),
+                  const SizedBox(height: 8),
+                  Obx(() => DropdownButtonFormField<String>(
+                        value: controller.selectedBreed.value?.value,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          prefixIcon: const Icon(Icons.category),
+                        ),
+                        items: controller.breedOptions
+                            .map((breed) => DropdownMenuItem<String>(
+                                  value: breed,
+                                  child: Text(breed),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          switch (controller.selectedType.value) {
+                            case 'Dog':
+                              controller.selectedBreed.value = DogBreed.fromString(value);
+                              break;
+                            case 'Cat':
+                              controller.selectedBreed.value = CatBreed.fromString(value);
+                              break;
+                            case 'Rabbit':
+                              controller.selectedBreed.value = RabbitBreed.fromString(value);
+                              break;
+                            case 'Bird':
+                              controller.selectedBreed.value = BirdBreed.fromString(value);
+                              break;
+                            case 'Hamster':
+                              controller.selectedBreed.value = HamsterBreed.fromString(value);
+                              break;
+                            case 'Guinea Pig':
+                              controller.selectedBreed.value = GuineaPigBreed.fromString(value);
+                              break;
+                            case 'Fish':
+                              controller.selectedBreed.value = FishBreed.fromString(value);
+                              break;
+                            case 'Turtle':
+                              controller.selectedBreed.value = TurtleBreed.fromString(value);
+                              break;
+                            default:
+                              controller.selectedBreed.value = null;
+                          }
+                        },
+                        validator: (value) => controller.validateBreed(controller.selectedBreed.value),
+                      )),
                   const SizedBox(height: 16),
 
                   // Age

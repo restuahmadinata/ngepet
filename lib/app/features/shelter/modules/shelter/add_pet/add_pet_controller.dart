@@ -10,15 +10,23 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import '../../../../../config/imgbb_config.dart';
 import '../../../../../routes/app_routes.dart';
 import '../dashboard/shelter_dashboard_controller.dart';
+import '../../../../../models/enums.dart';
 
 class AddPetController extends GetxController {
+    String? validateBreed(dynamic value) {
+      if (value == null) {
+        return 'Breed is required';
+      }
+      return null;
+    }
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ImagePicker _picker = ImagePicker();
 
   // Form controllers
   final nameController = TextEditingController();
-  final breedController = TextEditingController();
+  // Breed selection
+  final selectedBreed = Rxn<dynamic>(); // Will hold DogBreed, CatBreed, RabbitBreed, etc.
   final ageController = TextEditingController();
   final locationController = TextEditingController();
   final descriptionController = TextEditingController();
@@ -29,12 +37,41 @@ class AddPetController extends GetxController {
   // Observable variables
   final selectedGender = 'Male'.obs;
   final selectedType = 'Dog'.obs;
+
+  void onTypeChanged(String newType) {
+    selectedType.value = newType;
+    selectedBreed.value = null;
+  }
   final isLoading = false.obs;
   final selectedImages = <File>[].obs;
 
   // Gender options
   final genderOptions = ['Male', 'Female'];
-  final typeOptions = ['Dog', 'Cat', 'Rabbit', 'Other'];
+  final typeOptions = PetCategory.values.map((e) => e.value).toList();
+
+  // Breed options (dynamic)
+  List<String> get breedOptions {
+    switch (selectedType.value) {
+      case 'Dog':
+        return DogBreed.allValues;
+      case 'Cat':
+        return CatBreed.allValues;
+      case 'Rabbit':
+        return RabbitBreed.allValues;
+      case 'Bird':
+        return BirdBreed.allValues;
+      case 'Hamster':
+        return HamsterBreed.allValues;
+      case 'Guinea Pig':
+        return GuineaPigBreed.allValues;
+      case 'Fish':
+        return FishBreed.allValues;
+      case 'Turtle':
+        return TurtleBreed.allValues;
+      default:
+        return ['Other'];
+    }
+  }
 
   @override
   void onInit() {
@@ -45,7 +82,6 @@ class AddPetController extends GetxController {
   @override
   void onClose() {
     nameController.dispose();
-    breedController.dispose();
     ageController.dispose();
     locationController.dispose();
     descriptionController.dispose();
@@ -272,7 +308,7 @@ class AddPetController extends GetxController {
       print('Debug - Adding pet to Firestore...');
       final docRef = await _firestore.collection('pets').add({
         'petName': nameController.text.trim(),
-        'breed': breedController.text.trim(),
+        'breed': selectedBreed.value?.value ?? 'Other',
         'ageMonths': age,
         'location': locationController.text.trim(),
         'description': descriptionController.text.trim(),
@@ -362,7 +398,7 @@ class AddPetController extends GetxController {
 
   void _clearForm() {
     nameController.clear();
-    breedController.clear();
+    selectedBreed.value = null;
     ageController.clear();
     locationController.clear();
     descriptionController.clear();
