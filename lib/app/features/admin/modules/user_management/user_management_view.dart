@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../common/widgets/lottie_loading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +17,16 @@ class UserManagementView extends GetView<UserManagementController> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: SvgPicture.asset(
+            'assets/images/back-icon.svg',
+            colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+            width: 24,
+            height: 24,
+          ),
+          onPressed: () => Get.back(),
+        ),
         title: Text(
           'Manage Users',
           style: GoogleFonts.poppins(

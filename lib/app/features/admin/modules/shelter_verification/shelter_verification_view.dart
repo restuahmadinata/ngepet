@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../common/widgets/lottie_loading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,7 +20,24 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          iconTheme: const IconThemeData(color: Colors.black),
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+          icon: SvgPicture.asset(
+            'assets/images/back-icon.svg',
+            colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+            width: 24,
+            height: 24,
+          ),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(
+          'Manage Shelters',
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48),
             child: Container(

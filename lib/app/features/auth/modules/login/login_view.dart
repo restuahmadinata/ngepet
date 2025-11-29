@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ngepet/app/common/widgets/button1.dart';
 import 'package:ngepet/app/common/widgets/text_field.dart';
+import 'package:ngepet/app/theme/app_colors.dart';
 import 'login_controller.dart';
 
 class LoginView extends GetView<LoginController> {
@@ -16,16 +17,6 @@ class LoginView extends GetView<LoginController> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface, size: 28),
-          onPressed: () => Get.back(),
-          iconSize: 28,
-          padding: const EdgeInsets.all(12),
-        ),
-      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -75,10 +66,6 @@ class LoginView extends GetView<LoginController> {
                   controller: controller.emailController,
                   keyboardType: TextInputType.emailAddress,
                   labelText: 'Email',
-                  prefixIcon: Icon(
-                    Icons.email_outlined,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
                 ),
                 const SizedBox(height: 16),
 
@@ -90,10 +77,6 @@ class LoginView extends GetView<LoginController> {
                     obscureText: controller.isPasswordHidden.value,
                     labelText: 'Password',
                     keyboardType: TextInputType.visiblePassword,
-                    prefixIcon: Icon(
-                      Icons.lock_outline,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
 
                     // Logika Icon Mata dimasukkan ke suffixIcon
                     suffixIcon: IconButton(
@@ -101,7 +84,7 @@ class LoginView extends GetView<LoginController> {
                         controller.isPasswordHidden.value
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: colorScheme.onSurfaceVariant,
+                        color: AppColors.neutral600,
                       ),
                       onPressed: () {
                         controller.isPasswordHidden.toggle();

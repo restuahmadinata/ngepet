@@ -15,11 +15,6 @@ class VerificationView extends GetView<VerificationController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
       body: Obx(() {
         // Show approved notification if status is approved
         if (controller.verificationStatus.value == 'approved') {
@@ -496,7 +491,7 @@ class VerificationView extends GetView<VerificationController> {
                                   controller.isPasswordHidden.value
                                       ? Icons.visibility_off_outlined
                                       : Icons.visibility_outlined,
-                                  color: colorScheme.onSurfaceVariant,
+                                  color: AppColors.neutral600,
                                 ),
                                 onPressed: () {
                                   controller.isPasswordHidden.toggle();
@@ -519,7 +514,7 @@ class VerificationView extends GetView<VerificationController> {
                                   controller.isConfirmPasswordHidden.value
                                       ? Icons.visibility_off_outlined
                                       : Icons.visibility_outlined,
-                                  color: colorScheme.onSurfaceVariant,
+                                  color: AppColors.neutral600,
                                 ),
                                 onPressed: () {
                                   controller.isConfirmPasswordHidden.toggle();

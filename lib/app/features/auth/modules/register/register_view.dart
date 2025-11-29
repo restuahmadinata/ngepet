@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ngepet/app/common/widgets/button1.dart';
 import 'package:ngepet/app/common/widgets/text_field.dart';
+import 'package:ngepet/app/theme/app_colors.dart';
 import 'register_controller.dart';
 
 class RegisterView extends GetView<RegisterController> {
@@ -16,16 +17,6 @@ class RegisterView extends GetView<RegisterController> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: colorScheme.onSurface, size: 28),
-          onPressed: () => Get.back(),
-          iconSize: 28,
-          padding: const EdgeInsets.all(12),
-        ),
-      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -74,10 +65,6 @@ class RegisterView extends GetView<RegisterController> {
                   controller: controller.nameController,
                   keyboardType: TextInputType.name,
                   labelText: 'Name',
-                  prefixIcon: Icon(
-                    Icons.person_outline,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
                 ),
                 const SizedBox(height: 16),
 
@@ -86,10 +73,6 @@ class RegisterView extends GetView<RegisterController> {
                   controller: controller.emailController,
                   keyboardType: TextInputType.emailAddress,
                   labelText: 'Email',
-                  prefixIcon: Icon(
-                    Icons.email_outlined,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
                 ),
                 const SizedBox(height: 16),
 
@@ -100,10 +83,6 @@ class RegisterView extends GetView<RegisterController> {
                     obscureText: controller.isPasswordHidden.value,
                     labelText: 'Password',
                     keyboardType: TextInputType.visiblePassword,
-                    prefixIcon: Icon(
-                      Icons.lock_outline,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
 
                     // Logika Icon Mata dimasukkan ke suffixIcon
                     suffixIcon: IconButton(
@@ -111,7 +90,7 @@ class RegisterView extends GetView<RegisterController> {
                         controller.isPasswordHidden.value
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: colorScheme.onSurfaceVariant,
+                        color: AppColors.neutral600,
                       ),
                       onPressed: () {
                         controller.isPasswordHidden.toggle();
@@ -128,10 +107,6 @@ class RegisterView extends GetView<RegisterController> {
                     obscureText: controller.isConfirmPasswordHidden.value,
                     labelText: 'Confirm Password',
                     keyboardType: TextInputType.visiblePassword,
-                    prefixIcon: Icon(
-                      Icons.lock_outline,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
 
                     // Eye Icon logic added to suffixIcon
                     suffixIcon: IconButton(
@@ -139,7 +114,7 @@ class RegisterView extends GetView<RegisterController> {
                         controller.isConfirmPasswordHidden.value
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: colorScheme.onSurfaceVariant,
+                        color: AppColors.neutral600,
                       ),
                       onPressed: () {
                         controller.isConfirmPasswordHidden.toggle();

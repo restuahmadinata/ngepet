@@ -27,6 +27,7 @@ class UserNavigationView extends GetView<UserNavigationController> {
         extendBody: true,
         appBar: currentIndex == 2 // Home index
             ? AppBar(
+                automaticallyImplyLeading: false,
                 titleSpacing: 16,
                 toolbarHeight: 80,
                 title: HomeAppBarTitle(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,6 +13,16 @@ class FollowersView extends GetView<FollowersController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: SvgPicture.asset(
+            'assets/images/back-icon.svg',
+            colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+            width: 24,
+            height: 24,
+          ),
+          onPressed: () => Get.back(),
+        ),
         title: Text(
           'Followers',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),

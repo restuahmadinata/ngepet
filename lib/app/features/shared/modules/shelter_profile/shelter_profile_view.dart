@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -71,7 +72,12 @@ class ShelterProfileView extends GetView<ShelterProfileController> {
                   ],
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.black),
+                  icon: SvgPicture.asset(
+                    'assets/images/back-icon.svg',
+                    colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                    width: 24,
+                    height: 24,
+                  ),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),

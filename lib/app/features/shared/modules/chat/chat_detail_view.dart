@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../common/widgets/lottie_loading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,7 +29,12 @@ class ChatDetailView extends StatelessWidget {
         elevation: 1,
         toolbarHeight: 72,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87, size: 26),
+          icon: SvgPicture.asset(
+            'assets/images/back-icon.svg',
+            colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
+            width: 26,
+            height: 26,
+          ),
           onPressed: () => Get.back(),
         ),
         titleSpacing: 0,

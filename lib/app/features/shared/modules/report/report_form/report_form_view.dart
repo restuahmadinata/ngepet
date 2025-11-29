@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../theme/app_colors.dart';
@@ -14,6 +15,16 @@ class ReportFormView extends GetView<ReportFormController> {
     return Scaffold(
       backgroundColor: AppColors.neutral100,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: SvgPicture.asset(
+            'assets/images/back-icon.svg',
+            colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+            width: 24,
+            height: 24,
+          ),
+          onPressed: () => Get.back(),
+        ),
         title: Text(
           'Report ${controller.entityType.value.value == 'user' ? 'User' : 'Shelter'}',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
