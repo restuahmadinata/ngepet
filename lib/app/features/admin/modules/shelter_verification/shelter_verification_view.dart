@@ -19,14 +19,6 @@ class ShelterVerificationView extends GetView<ShelterVerificationController> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text(
-            'Shelter Verification',
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
           iconTheme: const IconThemeData(color: Colors.black),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(48),
