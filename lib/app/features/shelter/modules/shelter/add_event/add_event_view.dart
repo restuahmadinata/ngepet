@@ -271,7 +271,7 @@ class AddEventView extends GetView<AddEventController> {
                   Obx(() => Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.neutral400),
+                      border: Border.all(color: Colors.black),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: TextButton.icon(
@@ -347,7 +347,7 @@ class AddEventView extends GetView<AddEventController> {
                           }
                         }
                       },
-                      icon: const Icon(Icons.map, color: AppColors.neutral600),
+                      icon: const Icon(Icons.map, color: Colors.black),
                       label: Padding(
                         padding: const EdgeInsets.only(left: 8),
                         child: Text(
@@ -358,7 +358,7 @@ class AddEventView extends GetView<AddEventController> {
                             fontSize: 16,
                             color: controller.address.value.isEmpty
                                 ? AppColors.neutral500
-                                : AppColors.neutral700,
+                                : Colors.black,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
