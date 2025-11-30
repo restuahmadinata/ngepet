@@ -378,23 +378,25 @@ class EditEventView extends GetView<EditEventController> {
                           }
                         },
                         icon: const Icon(Icons.map, color: AppColors.neutral600),
-                        label: Text(
-                          controller.address.value.isEmpty
-                              ? 'Select Location on Map *'
-                              : controller.address.value,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: controller.address.value.isEmpty
-                                ? AppColors.neutral500
-                                : Colors.black,
+                        label: Padding(
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Text(
+                            controller.address.value.isEmpty
+                                ? 'Select Location on Map *'
+                                : controller.address.value,
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              color: controller.address.value.isEmpty
+                                  ? AppColors.neutral500
+                                  : AppColors.neutral700,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
                         style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
+                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                           alignment: Alignment.centerLeft,
+                          minimumSize: const Size(double.infinity, 56),
                         ),
                       ),
                     )),

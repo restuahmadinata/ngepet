@@ -355,9 +355,11 @@ class AddEventView extends GetView<AddEventController> {
                               ? 'Select Location on Map *'
                               : controller.address.value,
                           style: GoogleFonts.poppins(
+                            fontSize: 16,
                             color: controller.address.value.isEmpty
                                 ? AppColors.neutral500
-                                : Colors.black,
+                                : AppColors.neutral700,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                       ),

@@ -167,79 +167,14 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                   ),
                   const SizedBox(height: 8),
 
-                  // Display address if available
-                  Obx(() {
-                    if (controller.address.value.isNotEmpty) {
-                      return Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        margin: const EdgeInsets.only(bottom: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade50,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.green.shade200),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.location_on, 
-                                    color: Colors.green.shade700, size: 20),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    'Selected Address:',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.green.shade700,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              controller.address.value,
-                              style: GoogleFonts.poppins(
-                                fontSize: 13,
-                                color: AppColors.neutral700,
-                              ),
-                            ),
-                            if (controller.city.value.isNotEmpty) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                'City: ${controller.city.value}',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  color: AppColors.neutral600,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ],
-                            if (controller.latitude.value != null &&
-                                controller.longitude.value != null) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                'Coordinates: ${controller.latitude.value!.toStringAsFixed(6)}, ${controller.longitude.value!.toStringAsFixed(6)}',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  color: AppColors.neutral500,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }),
-
-                  // Map picker button
-                  SizedBox(
+                  // Location
+                  Obx(() => Container(
                     width: double.infinity,
-                    child: ElevatedButton.icon(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.neutral400),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: TextButton.icon(
                       onPressed: () async {
                         GeoPoint? initialLocation;
                         if (controller.latitude.value != null && 
@@ -313,21 +248,25 @@ class EditShelterProfileView extends GetView<EditShelterProfileController> {
                           }
                         }
                       },
-                      icon: const Icon(Icons.map),
-                      label: Text(
-                        controller.address.value.isEmpty 
-                            ? 'Select Location on Map'
-                            : 'Change Location',
-                        style: GoogleFonts.poppins(fontSize: 14),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
+                      icon: const Icon(Icons.map, color: AppColors.neutral600),
+                      label: Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Text(
+                          controller.address.value.isEmpty ? 'Select Location on Map' : controller.address.value,
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            color: controller.address.value.isEmpty ? AppColors.neutral500 : AppColors.neutral700,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                        alignment: Alignment.centerLeft,
+                        minimumSize: const Size(double.infinity, 56),
+                      ),
                     ),
-                  ),
+                  )),
                   const SizedBox(height: 32),
 
                   // Save Button

@@ -306,7 +306,7 @@ class AddPetView extends GetView<AddPetController> {
                   ),
                   const SizedBox(height: 8),
                   Obx(() => DropdownButtonFormField<String>(
-                        value: controller.selectedBreed.value?.value,
+                        initialValue: controller.selectedBreed.value?.value,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
