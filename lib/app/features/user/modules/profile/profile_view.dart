@@ -196,14 +196,6 @@ class ProfileView extends StatelessWidget {
                           title: 'Edit Profile',
                           onTap: controller.goToEditProfile,
                         ),
-                        Divider(height: 1, color: Colors.grey.shade300),
-                        _buildMenuItem(
-                          icon: Icons.info,
-                          title: 'About Us',
-                          onTap: () {
-                            // Handle about us
-                          },
-                        ),
                       ],
                     ),
                   ),
