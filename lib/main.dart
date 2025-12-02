@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'app/routes/app_pages.dart';
 import 'app/theme/app_theme.dart';
 import 'app/common/controllers/auth_controller.dart';
+import 'app/services/chat_notification_service.dart';
 
 // Import Firebase Core
 import 'package:firebase_core/firebase_core.dart';
@@ -34,6 +35,9 @@ void main() async {
 
   // Register AuthController permanently
   Get.put(AuthController(), permanent: true);
+
+  // Initialize Chat Notification Service (FREE - no Firebase required)
+  await Get.putAsync(() => ChatNotificationService().init(), permanent: true);
 
   runApp(const MyApp());
 }
