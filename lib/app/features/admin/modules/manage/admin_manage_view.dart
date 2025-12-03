@@ -59,21 +59,18 @@ class AdminManageView extends GetView<AdminManageController> {
                     _buildMenuCard(
                       icon: Icons.people,
                       title: 'Manage Users',
-                      description: 'CRUD & Change Role',
                       color: AppColors.primary,
                       onTap: () => Get.toNamed('/admin/user-management'),
                     ),
                     _buildMenuCard(
                       icon: Icons.store,
                       title: 'Manage Shelter',
-                      description: 'Manage Submissions',
                       color: AppColors.green700,
                       onTap: () => Get.toNamed('/admin/shelter-verification'),
                     ),
                     _buildMenuCard(
                       icon: Icons.report,
                       title: 'Reports',
-                      description: 'Review Reports',
                       color: Colors.red,
                       onTap: () => Get.toNamed('/admin/report-management'),
                     ),
@@ -90,7 +87,6 @@ class AdminManageView extends GetView<AdminManageController> {
   Widget _buildMenuCard({
     required IconData icon,
     required String title,
-    required String description,
     required Color color,
     required VoidCallback onTap,
   }) {
@@ -132,17 +128,6 @@ class AdminManageView extends GetView<AdminManageController> {
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  description,
-                  style: GoogleFonts.poppins(
-                    fontSize: 11,
-                    color: AppColors.neutral500,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],

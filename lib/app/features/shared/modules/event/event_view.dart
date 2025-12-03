@@ -87,8 +87,12 @@ class EventController extends GetxController {
         hasMoreExploring.value = true;
       }
 
+      // Get current time for filtering upcoming events
+      final now = Timestamp.fromDate(DateTime.now());
+
       Query query = FirebaseFirestore.instance
           .collection('events')
+          .where('dateTime', isGreaterThanOrEqualTo: now)
           .orderBy('dateTime', descending: false)
           .limit(pageSize);
 
@@ -166,9 +170,13 @@ class EventController extends GetxController {
       // Take up to 10 shelter IDs for Firestore whereIn limit
       final shelterIdsToQuery = followedShelterIds.take(10).toList();
 
+      // Get current time for filtering upcoming events
+      final now = Timestamp.fromDate(DateTime.now());
+
       Query query = FirebaseFirestore.instance
           .collection('events')
           .where('shelterId', whereIn: shelterIdsToQuery)
+          .where('dateTime', isGreaterThanOrEqualTo: now)
           .orderBy('dateTime', descending: false)
           .limit(pageSize);
 

@@ -30,7 +30,6 @@ class ReportManagementView extends GetView<ReportManagementController> {
           'Report Management',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: SafeArea(
@@ -39,7 +38,6 @@ class ReportManagementView extends GetView<ReportManagementController> {
             // Filter Chips
             Container(
               padding: const EdgeInsets.all(16),
-              color: Colors.white,
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Obx(() => Row(
@@ -124,6 +122,7 @@ class ReportManagementView extends GetView<ReportManagementController> {
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       elevation: 0,
+                      color: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(color: Colors.grey.shade300),

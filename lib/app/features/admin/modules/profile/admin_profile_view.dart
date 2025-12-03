@@ -54,6 +54,7 @@ class AdminProfileView extends GetView<AdminProfileController> {
                 // Profile Card
                 Card(
                   elevation: 0,
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                     side: BorderSide(color: Colors.grey.shade300, width: 1),
@@ -124,6 +125,7 @@ class AdminProfileView extends GetView<AdminProfileController> {
                 const SizedBox(height: 12),
                 Card(
                   elevation: 0,
+                  color: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                     side: BorderSide(color: Colors.grey.shade300, width: 1),
@@ -182,10 +184,10 @@ class AdminProfileView extends GetView<AdminProfileController> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppColors.neutral100,
-          borderRadius: BorderRadius.circular(8),
+          color: AppColors.primary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Icon(icon, size: 20, color: AppColors.neutral700),
+        child: Icon(icon, size: 20, color: AppColors.primary),
       ),
       title: Text(
         title,

@@ -156,8 +156,12 @@ class SearchController extends GetxController {
         _lastEventDoc = null;
       }
 
+      // Get current time for filtering upcoming events
+      final now = Timestamp.fromDate(DateTime.now());
+
       Query query = _firestore
           .collection('events')
+          .where('dateTime', isGreaterThanOrEqualTo: now)
           .orderBy('dateTime', descending: false)
           .limit(_pageSize);
 

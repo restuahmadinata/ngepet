@@ -49,10 +49,14 @@ class _EventCarouselState extends State<EventCarousel> with AutomaticKeepAliveCl
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     
     print('🔍 DEBUG: Building event carousel stream...');
+    // Get current time for filtering upcoming events
+    final now = Timestamp.fromDate(DateTime.now());
+    
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('events')
-          .orderBy('createdAt', descending: true)
+          .where('dateTime', isGreaterThanOrEqualTo: now)
+          .orderBy('dateTime', descending: false)
           .limit(3)
           .snapshots(),
       builder: (context, snapshot) {

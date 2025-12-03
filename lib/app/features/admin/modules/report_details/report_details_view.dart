@@ -31,7 +31,6 @@ class ReportDetailsView extends GetView<ReportDetailsController> {
           'Report Details',
           style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: Obx(() {
@@ -52,6 +51,7 @@ class ReportDetailsView extends GetView<ReportDetailsController> {
               // Status Card
               Card(
                 elevation: 0,
+                color: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                   side: BorderSide(color: Colors.grey.shade300),
@@ -331,6 +331,7 @@ class ReportDetailsView extends GetView<ReportDetailsController> {
   }) {
     return Card(
       elevation: 0,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(color: Colors.grey.shade300),
