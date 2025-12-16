@@ -121,6 +121,20 @@
       ]
     },
     {
+      "collectionGroup": "events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "shelterId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "dateTime",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "adoption_applications",
       "queryScope": "COLLECTION",
       "fields": [

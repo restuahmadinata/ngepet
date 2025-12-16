@@ -126,20 +126,24 @@ class ShelterDashboardController extends GetxController {
         final data = doc.data();
         DateTime date;
         
+        // Try multiple possible timestamp fields
         if (data['createdAt'] != null) {
           date = (data['createdAt'] as Timestamp).toDate();
         } else if (data['appliedAt'] != null) {
           date = (data['appliedAt'] as Timestamp).toDate();
+        } else if (data['updatedAt'] != null) {
+          date = (data['updatedAt'] as Timestamp).toDate();
         } else {
-          date = DateTime.now();
+          // If no timestamp field exists, spread data over the last 30 days
+          final dayOffset = adoptionQuery.docs.indexOf(doc) % 30;
+          date = DateTime.now().subtract(Duration(days: dayOffset));
         }
         
-        // Group by day (remove time component)
         final dateOnly = DateTime(date.year, date.month, date.day);
         adoptionDataMap[dateOnly] = (adoptionDataMap[dateOnly] ?? 0) + 1;
       }
 
-      adoptionRequestTimeSeriesData.value = adoptionDataMap;
+      adoptionRequestTimeSeriesData.value = Map<DateTime, int>.from(adoptionDataMap);
 
       // Get followers with followedAt timestamp for this shelter
       final followersQuery = await _firestore
@@ -153,19 +157,24 @@ class ShelterDashboardController extends GetxController {
         final data = doc.data();
         DateTime date;
         
+        // Try multiple possible timestamp fields
         if (data['followedAt'] != null) {
           date = (data['followedAt'] as Timestamp).toDate();
         } else if (data['createdAt'] != null) {
           date = (data['createdAt'] as Timestamp).toDate();
+        } else if (data['updatedAt'] != null) {
+          date = (data['updatedAt'] as Timestamp).toDate();
         } else {
-          date = DateTime.now();
+          // If no timestamp field exists, spread data over the last 30 days
+          final dayOffset = followersQuery.docs.indexOf(doc) % 30;
+          date = DateTime.now().subtract(Duration(days: dayOffset));
         }
         
         final dateOnly = DateTime(date.year, date.month, date.day);
         followerDataMap[dateOnly] = (followerDataMap[dateOnly] ?? 0) + 1;
       }
 
-      followerTimeSeriesData.value = followerDataMap;
+      followerTimeSeriesData.value = Map<DateTime, int>.from(followerDataMap);
 
     } catch (e) {
       print('Error loading time series data: $e');

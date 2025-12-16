@@ -391,10 +391,10 @@ class AddPetView extends GetView<AddPetController> {
                               child: Row(
                                 children: [
                                   Icon(
-                                    gender == 'Jantan'
+                                    gender == 'Male'
                                         ? Icons.male
                                         : Icons.female,
-                                    color: gender == 'Jantan'
+                                    color: gender == 'Male'
                                         ? Colors.blue
                                         : Colors.pink,
                                     size: 20,

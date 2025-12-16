@@ -60,54 +60,34 @@ class EditProfileView extends GetView<EditProfileController> {
                       children: [
                         GestureDetector(
                           onTap: controller.pickProfileImage,
-                          child: Stack(
-                            children: [
-                              Obx(() {
-                                // Show selected image or existing profile photo
-                                if (controller.profileImage.value != null) {
-                                  return CircleAvatar(
-                                    radius: 60,
-                                    backgroundImage: FileImage(
-                                      controller.profileImage.value!,
-                                    ),
-                                  );
-                                } else if (controller.profileImageUrl.value != null) {
-                                  return CircleAvatar(
-                                    radius: 60,
-                                    backgroundImage: NetworkImage(
-                                      controller.profileImageUrl.value!,
-                                    ),
-                                  );
-                                } else {
-                                  return CircleAvatar(
-                                    radius: 60,
-                                    backgroundColor: AppColors.neutral300,
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 60,
-                                      color: AppColors.neutral600,
-                                    ),
-                                  );
-                                }
-                              }),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.camera_alt,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
+                          child: Obx(() {
+                            // Show selected image or existing profile photo
+                            if (controller.profileImage.value != null) {
+                              return CircleAvatar(
+                                radius: 60,
+                                backgroundImage: FileImage(
+                                  controller.profileImage.value!,
                                 ),
-                              ),
-                            ],
-                          ),
+                              );
+                            } else if (controller.profileImageUrl.value != null) {
+                              return CircleAvatar(
+                                radius: 60,
+                                backgroundImage: NetworkImage(
+                                  controller.profileImageUrl.value!,
+                                ),
+                              );
+                            } else {
+                              return CircleAvatar(
+                                radius: 60,
+                                backgroundColor: AppColors.neutral300,
+                                child: Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: AppColors.neutral600,
+                                ),
+                              );
+                            }
+                          }),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -158,9 +138,9 @@ class EditProfileView extends GetView<EditProfileController> {
                   Obx(() => Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.neutral400),
+                          border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(8),
-                          color: Colors.white,
+                          color: Colors.transparent,
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
@@ -205,9 +185,9 @@ class EditProfileView extends GetView<EditProfileController> {
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.neutral400),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(8),
-                            color: Colors.white,
+                            color: Colors.transparent,
                           ),
                           child: Row(
                             children: [

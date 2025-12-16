@@ -46,6 +46,7 @@ class ShelterDashboardView extends GetView<ShelterDashboardController> {
       body: RefreshIndicator(
         onRefresh: controller.refreshData,
         child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,7 +312,7 @@ class ShelterDashboardView extends GetView<ShelterDashboardController> {
                                         GoogleFonts.poppins(
                                           color: Colors.white,
                                           fontSize: 10,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       );
                                     }).toList();
