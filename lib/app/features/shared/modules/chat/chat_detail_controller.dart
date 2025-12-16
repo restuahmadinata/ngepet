@@ -111,8 +111,14 @@ class ChatDetailController extends GetxController {
             .toList();
         isLoading.value = false;
         
-        // Mark new messages as read
-        markMessagesAsRead();
+        // Only mark messages as read if there are unread messages from the other person
+        final hasUnreadFromOthers = messages.any(
+          (msg) => !msg.isRead && msg.senderId != currentUserId,
+        );
+        
+        if (hasUnreadFromOthers) {
+          markMessagesAsRead();
+        }
       },
       onError: (error) {
         print('Error loading messages: $error');
